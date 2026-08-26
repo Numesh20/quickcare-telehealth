@@ -32,8 +32,10 @@ IT-PM-Project-02/
 │   └── 📄 04_Sprint_Plan_and_Ceremonies.md       # Sprints 1–4, standup notes & burndown tracking
 ├── 📁 05_Risk_and_Quality/
 │   └── 📄 05_Risk_Register_and_QA_Plan.md        # RAID log, risk mitigation & test acceptance
-└── 📁 06_Release_and_Closure/
-    └── 📄 06_Release_and_Lessons_Learned.md      # App store release & retrospective post-mortem
+├── 📁 06_Release_and_Closure/
+│   └── 📄 06_Release_and_Lessons_Learned.md      # App store release & retrospective post-mortem
+└── 📁 07_Interview_Preparation/
+    └── 📄 07_IT_PM_Interview_Cheat_Sheet.md      # STAR method interview questions & model answers
 ```
 
 ---
@@ -90,5 +92,5 @@ sequenceDiagram
 ## 👤 Author & Project Manager
 
 * **Project Manager:** Aspiring IT Project Manager / Scrum Master
-* **Portfolio Repo:** [GitHub Repository](https://github.com/)
+* **Portfolio Repo:** [GitHub Repository](https://github.com/Numesh20/quickcare-telehealth)
 * **LinkedIn:** [Your LinkedIn Profile URL](https://linkedin.com/)

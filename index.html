@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QuickCare Telehealth — App & IT PM Dashboard</title>
+  <title>QuickCare Telehealth — Live App & IT PM Suite</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -21,7 +21,7 @@
         </div>
         <div class="brand-text">
           <span class="brand-title">QuickCare</span>
-          <span class="brand-tag">Telehealth MVP</span>
+          <span class="brand-tag">Telehealth MVP • IT PM Portfolio</span>
         </div>
       </div>
 
@@ -39,16 +39,22 @@
       </nav>
 
       <div class="header-actions">
+        <button class="audio-toggle-btn" id="audio-toggle-btn" onclick="toggleAudioFx()" title="Toggle Sound FX">
+          <i class="fa-solid fa-volume-high"></i>
+        </button>
         <div class="live-status-pill">
           <span class="pulse-dot"></span>
-          <span>Sprint 4: Active</span>
+          <span>Sprint 4: Ready for Release</span>
         </div>
-        <a href="https://github.com/Numesh20/quickcare-telehealth" target="_blank" class="github-btn" title="View Source on GitHub">
+        <a href="https://github.com/Numesh20/quickcare-telehealth" target="_blank" class="github-btn" title="View Source Repository">
           <i class="fa-brands fa-github"></i>
         </a>
       </div>
     </div>
   </header>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
 
   <!-- Main Application Body -->
   <main class="app-main">
@@ -60,7 +66,18 @@
       <div class="phone-frame-container">
         <div class="phone-mockup">
           <div class="phone-speaker"></div>
-          <div class="phone-screen">
+          
+          <!-- Inner App Sub-Navbar -->
+          <div class="patient-sub-nav">
+            <button class="p-nav-btn active" id="p-sub-home" onclick="switchPatientSubTab('home')">
+              <i class="fa-solid fa-house"></i> Home
+            </button>
+            <button class="p-nav-btn" id="p-sub-history" onclick="switchPatientSubTab('history')">
+              <i class="fa-solid fa-file-medical"></i> My Records (<span id="record-count">1</span>)
+            </button>
+          </div>
+
+          <div class="phone-screen" id="patient-sub-home-panel">
             
             <!-- Patient Screen Header -->
             <div class="patient-header">
@@ -113,6 +130,36 @@
             </div>
 
           </div>
+
+          <!-- Patient History Sub-Tab -->
+          <div class="phone-screen hidden" id="patient-sub-history-panel">
+            <div class="section-title-row">
+              <h4>Your Medical Consultations</h4>
+              <span class="see-all">HIPAA Vault</span>
+            </div>
+
+            <div class="history-list" id="patient-history-list">
+              <div class="history-card">
+                <div class="history-header">
+                  <div>
+                    <strong>Dr. Marcus Vance, MD</strong>
+                    <span class="history-date">Aug 27, 2026 • Video Call</span>
+                  </div>
+                  <span class="badge-status resolved">Completed</span>
+                </div>
+                <div class="history-diag">
+                  <strong>Diagnosis:</strong> Acute Upper Respiratory Tract Infection
+                </div>
+                <div class="history-rx">
+                  <span>💊 Amoxicillin 500mg (5 Days)</span>
+                </div>
+                <button class="btn-sm btn-outline full-width" onclick="viewHistoricalRx()">
+                  <i class="fa-solid fa-download"></i> View & Download Rx PDF
+                </button>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>
@@ -147,23 +194,23 @@
           <div class="doctor-queue-card">
             <h4><i class="fa-solid fa-clock"></i> Today's Queue (3 Patients)</h4>
             <div class="patient-queue-list">
-              <div class="queue-item active-queue">
+              <div class="queue-item active-queue" onclick="selectQueuePatient('Sarah Jenkins', 'Flu, Fever (38.5°C), Sore Throat')">
                 <div class="queue-info">
-                  <strong>Sarah Jenkins (You)</strong>
+                  <strong>Sarah Jenkins (Active)</strong>
                   <span>Flu & Fever • 10:30 AM</span>
                 </div>
                 <button class="btn-sm btn-success" onclick="launchVideoCall('Dr. Marcus Vance', 'General Medicine')">
                   <i class="fa-solid fa-video"></i> Connect
                 </button>
               </div>
-              <div class="queue-item">
+              <div class="queue-item" onclick="selectQueuePatient('Michael Chang', 'Skin rash on forearm, itchiness for 2 days')">
                 <div class="queue-info">
                   <strong>Michael Chang</strong>
                   <span>Skin Rash Check • 11:00 AM</span>
                 </div>
                 <span class="status-waiting">Waiting</span>
               </div>
-              <div class="queue-item">
+              <div class="queue-item" onclick="selectQueuePatient('Elena Rostova', 'Hypertension routine monthly refill')">
                 <div class="queue-info">
                   <strong>Elena Rostova</strong>
                   <span>Prescription Refill • 11:30 AM</span>
@@ -177,7 +224,23 @@
         <div class="doctor-workspace">
           <div class="workspace-header">
             <h3><i class="fa-solid fa-file-prescription"></i> Digital Rx Prescription Studio</h3>
-            <p>Generate HIPAA-compliant digital prescriptions for patient download</p>
+            <p>Generate HIPAA-compliant official digital prescriptions with verified signature</p>
+          </div>
+
+          <!-- Clinical Vitals Row -->
+          <div class="vitals-strip">
+            <div class="vital-item">
+              <span class="v-label">Blood Pressure:</span>
+              <input type="text" id="vit-bp" value="120/80 mmHg" class="vital-input">
+            </div>
+            <div class="vital-item">
+              <span class="v-label">Heart Rate:</span>
+              <input type="text" id="vit-hr" value="76 bpm" class="vital-input">
+            </div>
+            <div class="vital-item">
+              <span class="v-label">Temperature:</span>
+              <input type="text" id="vit-temp" value="98.6 °F" class="vital-input">
+            </div>
           </div>
 
           <form id="rx-form" class="rx-form" onsubmit="generatePrescription(event)">
@@ -193,16 +256,16 @@
             </div>
 
             <div class="form-group">
-              <label>Diagnosis / Clinical Notes</label>
+              <label>Diagnosis / Clinical Assessment</label>
               <input type="text" id="rx-diagnosis" value="Acute Upper Respiratory Tract Infection (Viral Rhinitis)" required>
             </div>
 
             <div class="medications-block">
-              <label>Prescribed Medications</label>
+              <label>Prescribed Medications & Dosages</label>
               <div class="form-row-3">
-                <input type="text" id="rx-med1" placeholder="Medication (e.g. Amoxicillin 500mg)" value="Amoxicillin 500mg Capsules" required>
-                <input type="text" id="rx-dose1" placeholder="Dosage (e.g. 1 capsule every 8 hrs)" value="1 Capsule 3x Daily (with food)" required>
-                <input type="text" id="rx-dur1" placeholder="Duration (e.g. 7 Days)" value="5 Days" required>
+                <input type="text" id="rx-med1" placeholder="Medication" value="Amoxicillin 500mg Capsules" required>
+                <input type="text" id="rx-dose1" placeholder="Dosage" value="1 Capsule 3x Daily (with food)" required>
+                <input type="text" id="rx-dur1" placeholder="Duration" value="5 Days" required>
               </div>
               <div class="form-row-3">
                 <input type="text" id="rx-med2" placeholder="Medication 2" value="Paracetamol 650mg Tablet">
@@ -212,7 +275,7 @@
             </div>
 
             <div class="form-group">
-              <label>Doctor Advice / Instructions</label>
+              <label>Doctor Advice / Recovery Instructions</label>
               <textarea id="rx-advice" rows="3">Drink plenty of fluids, rest for 48 hours, and monitor body temperature. Contact clinic if fever persists beyond 3 days.</textarea>
             </div>
 
@@ -227,16 +290,39 @@
             </div>
           </form>
 
-          <!-- Generated Rx Output Card -->
+          <!-- Generated Rx Output Hospital Pad -->
           <div id="rx-preview-card" class="rx-preview-card hidden">
-            <div class="rx-card-header">
-              <div class="rx-logo"><i class="fa-solid fa-heart-pulse"></i> QuickCare Rx</div>
-              <div class="rx-id">Rx-ID: #QC-2026-8891</div>
+            <div class="rx-pad-header">
+              <div class="rx-hospital-brand">
+                <div class="rx-logo-box"><i class="fa-solid fa-heart-pulse"></i></div>
+                <div>
+                  <h4>QUICKCARE DIGITAL CLINIC</h4>
+                  <small>Telehealth & Urgent Care Network • HIPAA Certified</small>
+                </div>
+              </div>
+              <div class="rx-pad-meta">
+                <span>Rx No: <strong>#QC-2026-8891</strong></span>
+                <span id="rx-pad-date">Date: Aug 27, 2026</span>
+              </div>
             </div>
+
             <div class="rx-details" id="rx-details-output"></div>
+
+            <div class="rx-pad-footer">
+              <div class="rx-qr-code">
+                <i class="fa-solid fa-qrcode"></i>
+                <span>Verify Rx Online</span>
+              </div>
+              <div class="rx-signature-seal">
+                <div class="seal-line"></div>
+                <strong>Dr. Marcus Vance, MD</strong>
+                <small>State License: #MED-884210</small>
+              </div>
+            </div>
+
             <div class="rx-actions">
-              <button class="btn-sm btn-outline" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Rx</button>
-              <button class="btn-sm btn-success" onclick="alert('Prescription successfully saved and sent to patient phone via Push Notification!')"><i class="fa-solid fa-check"></i> Send to Patient App</button>
+              <button class="btn-sm btn-outline" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Prescription</button>
+              <button class="btn-sm btn-success" onclick="pushRxToPatientApp()"><i class="fa-solid fa-cloud-arrow-up"></i> Sync to Patient App</button>
             </div>
           </div>
 
@@ -296,13 +382,20 @@
           <button class="pm-subtab" onclick="switchPmTab('velocity-tab')"><i class="fa-solid fa-chart-line"></i> Velocity & Burndown</button>
           <button class="pm-subtab" onclick="switchPmTab('raid-tab')"><i class="fa-solid fa-triangle-exclamation"></i> RAID Risk Heatmap</button>
           <button class="pm-subtab" onclick="switchPmTab('raci-tab')"><i class="fa-solid fa-users-gear"></i> RACI Matrix</button>
+          <button class="pm-subtab special" onclick="switchPmTab('exec-tab')"><i class="fa-solid fa-briefcase"></i> Executive Report</button>
         </div>
 
         <!-- SUBTAB 1: KANBAN BOARD -->
         <div id="kanban-tab" class="pm-tab-content active">
           <div class="kanban-header-row">
-            <h4>Interactive Scrum Story Board (Click any card to move status)</h4>
-            <button class="btn-sm btn-outline" onclick="resetKanban()"><i class="fa-solid fa-rotate-left"></i> Reset Board</button>
+            <div>
+              <h4>Interactive Scrum Story Board</h4>
+              <small style="color: var(--text-secondary);">Click any story card to advance its sprint state, or create a new user story.</small>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn-sm btn-primary" onclick="openNewStoryModal()"><i class="fa-solid fa-plus"></i> Add User Story</button>
+              <button class="btn-sm btn-outline" onclick="resetKanban()"><i class="fa-solid fa-rotate-left"></i> Reset Board</button>
+            </div>
           </div>
 
           <div class="kanban-board-grid">
@@ -422,8 +515,31 @@
           </div>
         </div>
 
-        <!-- SUBTAB 3: RAID LOG -->
+        <!-- SUBTAB 3: RAID LOG & INTERACTIVE RISK CALCULATOR -->
         <div id="raid-tab" class="pm-tab-content">
+          
+          <!-- Live Interactive Risk Calculator Widget -->
+          <div class="risk-calc-card">
+            <div class="calc-header">
+              <h4><i class="fa-solid fa-calculator"></i> Interactive PM Risk Matrix Calculator</h4>
+              <small>Score risks using the formula: Risk Score = Probability (P) × Impact (I)</small>
+            </div>
+            <div class="calc-grid">
+              <div class="slider-group">
+                <label>Probability (1 = Rare, 5 = Highly Likely): <strong id="lbl-prob" class="val-tag">3</strong></label>
+                <input type="range" id="input-prob" min="1" max="5" value="3" oninput="updateRiskScore()">
+              </div>
+              <div class="slider-group">
+                <label>Impact (1 = Minor bug, 5 = Fatal / Outage): <strong id="lbl-imp" class="val-tag">4</strong></label>
+                <input type="range" id="input-imp" min="1" max="5" value="4" oninput="updateRiskScore()">
+              </div>
+              <div class="score-display">
+                <span class="score-num" id="calc-score-val">12</span>
+                <span class="score-badge med" id="calc-score-badge">MEDIUM RISK</span>
+              </div>
+            </div>
+          </div>
+
           <div class="raid-table-container">
             <table class="pm-table">
               <thead>
@@ -431,14 +547,14 @@
                   <th>ID</th>
                   <th>Category</th>
                   <th>Risk Description</th>
-                  <th>Probability</th>
-                  <th>Impact</th>
+                  <th>P</th>
+                  <th>I</th>
                   <th>Score (P×I)</th>
                   <th>Mitigation Strategy</th>
                   <th>Status</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="raid-table-body">
                 <tr>
                   <td><strong>RSK-01</strong></td>
                   <td><span class="badge tech">Technical</span></td>
@@ -565,6 +681,44 @@
           </div>
         </div>
 
+        <!-- SUBTAB 5: EXECUTIVE REPORT -->
+        <div id="exec-tab" class="pm-tab-content">
+          <div class="exec-report-card">
+            <div class="exec-report-header">
+              <div>
+                <h3>QuickCare Telehealth MVP — Executive Project Status Report</h3>
+                <span>Prepared by IT Project Manager for VP of Digital Health & Steering Committee</span>
+              </div>
+              <button class="btn-sm btn-outline" onclick="window.print()"><i class="fa-solid fa-print"></i> Export PDF</button>
+            </div>
+
+            <div class="exec-summary-grid">
+              <div class="exec-box">
+                <span class="exec-box-lbl">Overall Project Health</span>
+                <strong class="text-success"><i class="fa-solid fa-circle-check"></i> GREEN (On Track)</strong>
+              </div>
+              <div class="exec-box">
+                <span class="exec-box-lbl">Total Financial Spend</span>
+                <strong>$116,400 / $120,000</strong>
+              </div>
+              <div class="exec-box">
+                <span class="exec-box-lbl">Launch Milestone</span>
+                <strong>Dec 15, 2026 (Passed)</strong>
+              </div>
+            </div>
+
+            <div class="exec-text-block">
+              <h4>Key Project Accomplishments:</h4>
+              <ul>
+                <li>Delivered 100% of defined MVP in-scope features across 4 two-week Sprints.</li>
+                <li>Completed rigorous HIPAA Security & Penetration audit with zero critical vulnerabilities.</li>
+                <li>Successfully published on Apple App Store & Google Play Store with an initial 4.7-star rating.</li>
+                <li>Managed project budget effectively, yielding a 3% ($3,600) favorable cost variance.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -588,6 +742,14 @@
       </div>
 
       <div class="modal-body">
+        <label class="modal-label">Select Consultation Reason</label>
+        <div class="symptom-tag-grid">
+          <button class="sym-tag active" onclick="toggleSymptom(this)">🤒 Fever / Flu</button>
+          <button class="sym-tag" onclick="toggleSymptom(this)">😷 Cough & Cold</button>
+          <button class="sym-tag" onclick="toggleSymptom(this)">✨ Skin Rash</button>
+          <button class="sym-tag" onclick="toggleSymptom(this)">💊 Rx Refill</button>
+        </div>
+
         <label class="modal-label">Select Available Time Slot Today</label>
         <div class="slot-grid" id="modal-slot-grid">
           <button class="time-slot active" onclick="selectSlot(this)">10:30 AM (In 15m)</button>
@@ -653,10 +815,28 @@
           </div>
         </div>
 
-        <!-- Patient Picture-in-Picture (PiP) -->
+        <!-- Patient Picture-in-Picture (PiP) with Real Camera Support -->
         <div class="pip-video-feed">
+          <video id="webcam-video" autoplay playsinline muted class="hidden"></video>
           <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80" alt="Patient Stream" id="video-patient-stream">
           <div class="pip-label">You (Sarah)</div>
+        </div>
+
+        <!-- In-Call Live Chat Drawer -->
+        <div id="call-chat-drawer" class="call-chat-drawer hidden">
+          <div class="chat-drawer-header">
+            <span><i class="fa-solid fa-comments"></i> Consultation Chat</span>
+            <button class="chat-close" onclick="toggleChatDrawer()">&times;</button>
+          </div>
+          <div class="chat-messages" id="chat-messages">
+            <div class="chat-bubble doc">
+              <strong>Dr. Marcus:</strong> Hello Sarah! I can see you clearly. Please tell me about your symptoms today.
+            </div>
+          </div>
+          <form class="chat-input-row" onsubmit="sendChatMessage(event)">
+            <input type="text" id="chat-input-field" placeholder="Type a message..." required>
+            <button type="submit" class="btn-send"><i class="fa-solid fa-paper-plane"></i></button>
+          </form>
         </div>
       </div>
 
@@ -668,7 +848,10 @@
         <button class="control-btn" id="btn-toggle-cam" onclick="toggleCam()" title="Toggle Camera">
           <i class="fa-solid fa-video"></i>
         </button>
-        <button class="control-btn" onclick="openChatDrawer()" title="Chat with Doctor">
+        <button class="control-btn" id="btn-real-camera" onclick="toggleRealWebcam()" title="Use Real Webcam">
+          <i class="fa-solid fa-camera-rotate"></i>
+        </button>
+        <button class="control-btn" onclick="toggleChatDrawer()" title="Open Chat">
           <i class="fa-solid fa-message"></i>
         </button>
         <button class="control-btn end-call-btn" onclick="endCallAndShowRx()" title="End Consultation">
@@ -676,6 +859,65 @@
         </button>
       </div>
 
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL 3: ADD NEW USER STORY (IT PM TOOL)       -->
+  <!-- ============================================== -->
+  <div id="new-story-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeModal('new-story-modal')">&times;</button>
+      
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-plus-circle"></i> Create New Agile User Story</h3>
+      </div>
+
+      <form id="new-story-form" onsubmit="submitNewUserStory(event)">
+        <div class="form-group">
+          <label>Story Title / User Requirement</label>
+          <input type="text" id="new-story-title" placeholder="As a patient, I want to..." required>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Epic Category</label>
+            <select id="new-story-epic" class="custom-select">
+              <option value="Authentication">Authentication</option>
+              <option value="Discovery">Discovery & Search</option>
+              <option value="Telehealth">Video Consultation</option>
+              <option value="Payments">Payments & Billing</option>
+              <option value="Prescriptions">Prescriptions</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Story Points (Fibonacci)</label>
+            <select id="new-story-pts" class="custom-select">
+              <option value="1">1 Point (Trivial)</option>
+              <option value="2">2 Points (Small)</option>
+              <option value="3" selected>3 Points (Medium)</option>
+              <option value="5">5 Points (Large)</option>
+              <option value="8">8 Points (Complex)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Assigned Scrum Role</label>
+          <select id="new-story-assignee" class="custom-select">
+            <option value="MD">Mobile Developer (MD)</option>
+            <option value="LA">Lead Architect (LA)</option>
+            <option value="QA">QA Lead (QA)</option>
+            <option value="UI">UI Designer (UI)</option>
+          </select>
+        </div>
+
+        <div class="modal-footer" style="margin-top: 16px;">
+          <button type="submit" class="btn-primary full-width">
+            <i class="fa-solid fa-check"></i> Add to Sprint Backlog
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 

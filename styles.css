@@ -1,5 +1,5 @@
 /* ==========================================================================
-   QuickCare Telehealth & IT PM Showcase Design System
+   QuickCare Telehealth & IT PM Showcase Design System (Upgraded)
    ========================================================================== */
 
 :root {
@@ -162,6 +162,24 @@ body {
   gap: 12px;
 }
 
+.audio-toggle-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-color);
+  color: var(--accent-cyan);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.audio-toggle-btn:hover {
+  background: #334155;
+}
+
 .live-status-pill {
   display: flex;
   align-items: center;
@@ -210,6 +228,43 @@ body {
 }
 
 /* ==========================================================================
+   Toast Notifications
+   ========================================================================== */
+
+.toast-container {
+  position: fixed;
+  top: 76px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.toast {
+  background: #1e293b;
+  color: white;
+  border-left: 4px solid var(--accent-cyan);
+  padding: 12px 18px;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: toastSlide 0.3s ease;
+}
+
+.toast.success { border-left-color: var(--accent-emerald); }
+.toast.info { border-left-color: var(--accent-cyan); }
+
+@keyframes toastSlide {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* ==========================================================================
    Main Application View Container
    ========================================================================== */
 
@@ -246,7 +301,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px 0;
+  padding: 10px 0;
 }
 
 .phone-mockup {
@@ -275,14 +330,46 @@ body {
   z-index: 10;
 }
 
+.patient-sub-nav {
+  display: flex;
+  background: #0b1120;
+  border-bottom: 1px solid var(--border-color);
+  padding: 24px 16px 8px;
+}
+
+.p-nav-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  padding: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.p-nav-btn.active {
+  color: var(--accent-cyan);
+  border-bottom-color: var(--accent-cyan);
+}
+
 .phone-screen {
   flex: 1;
   overflow-y: auto;
-  padding: 28px 16px 20px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 16px;
   background: #0f172a;
+}
+
+.phone-screen.hidden {
+  display: none;
 }
 
 .phone-screen::-webkit-scrollbar {
@@ -297,7 +384,6 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 6px;
 }
 
 .greeting-sub {
@@ -519,8 +605,69 @@ body {
   background: #0369a1;
 }
 
+/* History Card */
+.history-card {
+  background: #1e293b;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.history-date {
+  font-size: 11px;
+  color: var(--text-muted);
+  display: block;
+}
+
+.history-diag {
+  font-size: 12px;
+  color: var(--text-primary);
+}
+
+.history-rx {
+  font-size: 12px;
+  color: var(--accent-cyan);
+  background: rgba(6, 182, 212, 0.08);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+}
+
+/* Symptom Tags in Booking */
+.symptom-tag-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.sym-tag {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sym-tag.active {
+  border-color: var(--accent-cyan);
+  background: rgba(6, 182, 212, 0.15);
+  color: var(--accent-cyan);
+}
+
 /* ==========================================================================
-   VIEW 2: Doctor Portal
+   VIEW 2: Doctor Portal & Hospital Pad
    ========================================================================== */
 
 .doctor-portal-layout {
@@ -620,6 +767,12 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.queue-item:hover {
+  border-color: var(--accent-cyan);
 }
 
 .queue-item.active-queue {
@@ -641,6 +794,38 @@ body {
   font-size: 11px;
   color: var(--accent-amber);
   font-weight: 600;
+}
+
+/* Vitals Strip */
+.vitals-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  background: var(--bg-surface-elevated);
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 16px;
+}
+
+.vital-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.v-label {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.vital-input {
+  background: #0f172a;
+  border: 1px solid var(--border-color);
+  color: var(--accent-cyan);
+  font-weight: 700;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 12px;
 }
 
 /* Rx Studio Workspace */
@@ -679,7 +864,7 @@ body {
   color: var(--text-secondary);
 }
 
-.form-group input, .form-group textarea, .form-row-3 input {
+.form-group input, .form-group textarea, .form-row-3 input, .custom-select {
   background: var(--bg-surface-elevated);
   border: 1px solid var(--border-color);
   color: white;
@@ -690,7 +875,7 @@ body {
   transition: border-color 0.15s ease;
 }
 
-.form-group input:focus, .form-group textarea:focus, .form-row-3 input:focus {
+.form-group input:focus, .form-group textarea:focus, .form-row-3 input:focus, .custom-select:focus {
   border-color: var(--primary);
 }
 
@@ -733,34 +918,100 @@ body {
   color: var(--accent-cyan);
 }
 
-/* Rx Preview Card (Generated Output) */
+/* Rx Hospital Pad Layout (Generated Output) */
 .rx-preview-card {
   margin-top: 24px;
   background: #0f172a;
   border: 2px solid var(--accent-cyan);
   border-radius: var(--radius-md);
-  padding: 20px;
+  padding: 24px;
 }
 
-.rx-card-header {
+.rx-pad-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 12px;
-  border-bottom: 1px dashed #334155;
-  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid #334155;
+  margin-bottom: 16px;
 }
 
-.rx-logo {
-  font-size: 16px;
-  font-weight: 800;
+.rx-hospital-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rx-logo-box {
+  width: 44px;
+  height: 44px;
+  background: var(--primary);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: white;
+}
+
+.rx-hospital-brand h4 {
+  font-size: 15px;
+  color: white;
+  letter-spacing: 0.5px;
+}
+
+.rx-hospital-brand small {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.rx-pad-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.rx-pad-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px dashed #334155;
+}
+
+.rx-qr-code {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 28px;
   color: var(--accent-cyan);
 }
 
-.rx-id {
-  font-size: 12px;
+.rx-qr-code span {
+  font-size: 10px;
   color: var(--text-muted);
-  font-family: monospace;
+  text-transform: uppercase;
+}
+
+.rx-signature-seal {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.seal-line {
+  width: 140px;
+  height: 1px;
+  background: #64748b;
+  margin-bottom: 4px;
+}
+
+.rx-signature-seal strong {
+  font-size: 12px;
+  color: var(--accent-emerald);
 }
 
 .rx-actions {
@@ -771,7 +1022,7 @@ body {
 }
 
 /* ==========================================================================
-   VIEW 3: IT PM Control Center Dashboard
+   VIEW 3: IT PM Control Center Dashboard & Tool Suite
    ========================================================================== */
 
 .pm-dashboard {
@@ -874,6 +1125,11 @@ body {
   background: var(--bg-surface-elevated);
   border-color: var(--accent-cyan);
   color: var(--accent-cyan);
+}
+
+.pm-subtab.special.active {
+  border-color: var(--accent-indigo);
+  color: #a5b4fc;
 }
 
 .pm-tab-content {
@@ -1132,6 +1388,94 @@ body {
   text-align: center;
 }
 
+/* Risk Calculator Card */
+.risk-calc-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.calc-header {
+  margin-bottom: 16px;
+}
+
+.calc-header h4 {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.calc-header small {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.calc-grid {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr;
+  gap: 20px;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .calc-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.slider-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.slider-group label {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.slider-group input[type="range"] {
+  accent-color: var(--accent-cyan);
+  cursor: pointer;
+}
+
+.val-tag {
+  color: var(--accent-cyan);
+  font-weight: 800;
+}
+
+.score-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-surface-elevated);
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+}
+
+.score-num {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.score-badge {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-top: 4px;
+}
+
+.score-badge.low { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+.score-badge.med { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+.score-badge.high { background: rgba(244, 63, 94, 0.2); color: #f43f5e; }
+
 /* Tables (RAID & RACI) */
 .raid-table-container, .raci-table-container {
   background: var(--bg-surface);
@@ -1212,6 +1556,73 @@ body {
   font-size: 12px;
   color: var(--text-secondary);
   border-top: 1px solid var(--border-color);
+}
+
+/* Executive Report Card */
+.exec-report-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 24px;
+}
+
+.exec-report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+}
+
+.exec-report-header h3 {
+  font-size: 18px;
+  color: white;
+}
+
+.exec-report-header span {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.exec-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.exec-box {
+  background: var(--bg-surface-elevated);
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.exec-box-lbl {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.text-success {
+  color: var(--accent-emerald);
+}
+
+.exec-text-block h4 {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.exec-text-block ul {
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
 }
 
 /* ==========================================================================
@@ -1512,9 +1923,10 @@ body {
   border: 2px solid var(--accent-cyan);
   overflow: hidden;
   box-shadow: var(--shadow-lg);
+  background: #000;
 }
 
-.pip-video-feed img {
+.pip-video-feed video, .pip-video-feed img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -1528,6 +1940,103 @@ body {
   background: rgba(0, 0, 0, 0.6);
   padding: 2px 6px;
   border-radius: 4px;
+}
+
+/* In-Call Live Chat Drawer */
+.call-chat-drawer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 280px;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(12px);
+  border-left: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  z-index: 20;
+  animation: slideLeft 0.25s ease;
+}
+
+.call-chat-drawer.hidden {
+  display: none;
+}
+
+@keyframes slideLeft {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.chat-drawer-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.chat-close {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat-bubble {
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.chat-bubble.doc {
+  background: var(--bg-surface-elevated);
+  border-left: 3px solid var(--accent-cyan);
+}
+
+.chat-bubble.patient {
+  background: var(--primary);
+  align-self: flex-end;
+  color: white;
+}
+
+.chat-input-row {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid var(--border-color);
+  gap: 6px;
+}
+
+.chat-input-row input {
+  flex: 1;
+  background: #020617;
+  border: 1px solid var(--border-color);
+  color: white;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  outline: none;
+}
+
+.btn-send {
+  background: var(--primary);
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
 }
 
 .video-controls-bar {

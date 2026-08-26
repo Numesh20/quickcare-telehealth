@@ -3294,6 +3294,291 @@ body.light-theme .p-card.active-card {
   color: var(--text-primary);
 }
 
+/* ==========================================================================
+   AI Symptom Checker Card & Triage Chatbot Modal
+   ========================================================================== */
+
+.ai-checker-card {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(6, 182, 212, 0.15));
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ai-checker-card:hover {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(6, 182, 212, 0.25));
+  border-color: var(--accent-cyan);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.2);
+}
+
+.ai-sparkle-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-indigo), var(--accent-cyan));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 14px;
+}
+
+.ai-checker-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.ai-checker-text strong {
+  font-size: 12px;
+  color: white;
+}
+
+.ai-checker-text span {
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+.ai-new-pill {
+  background: var(--accent-indigo);
+  color: white;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 9px;
+  font-weight: 800;
+}
+
+/* AI Modal Styling */
+.ai-chat-modal-card {
+  max-width: 440px;
+  width: 95%;
+  height: 580px;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-surface);
+  padding: 0;
+  overflow: hidden;
+}
+
+.ai-modal-header {
+  background: var(--bg-surface-elevated);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.ai-bot-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-indigo), var(--accent-cyan));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 16px;
+}
+
+.ai-header-info h4 {
+  font-size: 13px;
+  color: white;
+}
+
+.ai-header-info span {
+  font-size: 10px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ai-chat-messages {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--bg-main);
+}
+
+.ai-bubble-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  max-width: 88%;
+}
+
+.ai-bubble-row.bot {
+  align-self: flex-start;
+}
+
+.ai-bubble-row.user {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.ai-mini-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent-indigo);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.ai-bubble {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-color);
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 12px;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.ai-bubble-row.user .ai-bubble {
+  background: linear-gradient(135deg, var(--primary), #0284c7);
+  border-color: #38bdf8;
+  color: white;
+}
+
+.ai-triage-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.triage-level-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 800;
+  width: fit-content;
+}
+
+.triage-level-pill.mild {
+  background: rgba(16, 185, 129, 0.2);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.triage-level-pill.mod {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fde68a;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.triage-match-box {
+  background: var(--bg-surface);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  padding: 8px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.triage-doc-img {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.ai-quick-symptoms {
+  padding: 8px 12px;
+  background: var(--bg-surface-elevated);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.quick-title {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.quick-sym-btn {
+  background: var(--bg-main);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 4px 8px;
+  border-radius: var(--radius-full);
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.quick-sym-btn:hover {
+  background: rgba(6, 182, 212, 0.15);
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+
+.ai-chat-form {
+  display: flex;
+  gap: 8px;
+  padding: 12px 14px;
+  background: var(--bg-surface);
+  border-top: 1px solid var(--border-color);
+}
+
+.ai-chat-form input {
+  flex: 1;
+  background: var(--bg-main);
+  border: 1px solid var(--border-color);
+  color: white;
+  padding: 8px 12px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  outline: none;
+}
+
+.btn-ai-send {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--accent-cyan));
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.btn-ai-send:hover {
+  transform: scale(1.08);
+}
+
+
 
 
 

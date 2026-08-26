@@ -100,6 +100,16 @@
               <button class="search-clear-btn hidden" id="search-clear-btn" onclick="clearDoctorSearch()">&times;</button>
             </div>
 
+            <!-- AI Symptom Checker & Doctor Matcher Card -->
+            <div class="ai-checker-card" onclick="openAiTriageModal()">
+              <div class="ai-sparkle-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+              <div class="ai-checker-text">
+                <strong>AI Clinical Symptom Checker</strong>
+                <span>Unsure who to see? Describe symptoms to our AI ➔</span>
+              </div>
+              <span class="ai-new-pill">AI BOT</span>
+            </div>
+
             <!-- Health Status Card -->
             <div class="urgent-consult-card">
               <div class="consult-content">
@@ -1476,6 +1486,50 @@
           <button class="btn-sm btn-primary" onclick="closeModal('invoice-modal')"><i class="fa-solid fa-check"></i> Done</button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL 6: AI CLINICAL SYMPTOM CHECKER CHATBOT   -->
+  <!-- ============================================== -->
+  <div id="ai-triage-modal" class="modal-overlay hidden">
+    <div class="modal-card ai-chat-modal-card">
+      <button class="modal-close" onclick="closeModal('ai-triage-modal')">&times;</button>
+      
+      <div class="ai-modal-header">
+        <div class="ai-bot-avatar">
+          <i class="fa-solid fa-robot"></i>
+        </div>
+        <div class="ai-header-info">
+          <h4>QuickCare AI Health Assistant</h4>
+          <span><span class="pulse-dot green"></span> Clinical Triage Engine Online</span>
+        </div>
+      </div>
+
+      <!-- Chat History Area -->
+      <div class="ai-chat-messages" id="ai-chat-messages">
+        <div class="ai-bubble-row bot">
+          <div class="ai-mini-avatar"><i class="fa-solid fa-robot"></i></div>
+          <div class="ai-bubble">
+            <p>Hello <strong>Sarah</strong>! 👋 I'm your AI Clinical Assistant. What symptoms or health concerns are you experiencing today?</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Symptom Selector Pills -->
+      <div class="ai-quick-symptoms">
+        <span class="quick-title">Quick Select:</span>
+        <button class="quick-sym-btn" onclick="sendAiQuickSymptom('Fever, sore throat, and body chills for 2 days')">🌡️ Fever & Sore Throat</button>
+        <button class="quick-sym-btn" onclick="sendAiQuickSymptom('Red itchy skin rash with small bumps')">🔴 Skin Rash & Itch</button>
+        <button class="quick-sym-btn" onclick="sendAiQuickSymptom('Chest palpitations and rapid heart rate')">💓 Heart Palpitations</button>
+        <button class="quick-sym-btn" onclick="sendAiQuickSymptom('My 3-year-old child has a fever of 39C')">👶 Child High Fever</button>
+      </div>
+
+      <!-- Chat Input Form -->
+      <form class="ai-chat-form" onsubmit="handleAiChatSubmit(event)">
+        <input type="text" id="ai-chat-input" placeholder="Type your symptoms (e.g. sharp headache, nausea)..." autocomplete="off">
+        <button type="submit" class="btn-ai-send" title="Send to AI"><i class="fa-solid fa-paper-plane"></i></button>
+      </form>
     </div>
   </div>
 

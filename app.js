@@ -972,5 +972,108 @@ function resetBurndownSim() {
   showToast("Reset to Standard 6-Dev Baseline Velocity", "info");
 }
 
+// ==========================================================================
+// QuickCare AI Clinical Symptom Checker & Smart Doctor Matcher
+// ==========================================================================
+
+function openAiTriageModal() {
+  document.getElementById("ai-triage-modal").classList.remove("hidden");
+  playChime("click");
+}
+
+function sendAiQuickSymptom(text) {
+  document.getElementById("ai-chat-input").value = text;
+  handleAiChatSubmit(new Event("submit"));
+}
+
+function handleAiChatSubmit(e) {
+  e.preventDefault();
+  const input = document.getElementById("ai-chat-input");
+  const query = input.value.trim();
+  if (!query) return;
+
+  const messagesBox = document.getElementById("ai-chat-messages");
+
+  // Append Patient Message
+  const userRow = document.createElement("div");
+  userRow.className = "ai-bubble-row user";
+  userRow.innerHTML = `<div class="ai-bubble"><p>${query}</p></div>`;
+  messagesBox.appendChild(userRow);
+  input.value = "";
+  messagesBox.scrollTop = messagesBox.scrollHeight;
+
+  // Append Simulated AI Typing Indicator
+  const typingRow = document.createElement("div");
+  typingRow.className = "ai-bubble-row bot";
+  typingRow.id = "ai-typing-indicator";
+  typingRow.innerHTML = `
+    <div class="ai-mini-avatar"><i class="fa-solid fa-robot"></i></div>
+    <div class="ai-bubble"><p><i class="fa-solid fa-spinner fa-spin"></i> Analyzing clinical symptoms & matching specialists...</p></div>
+  `;
+  messagesBox.appendChild(typingRow);
+  messagesBox.scrollTop = messagesBox.scrollHeight;
+
+  setTimeout(() => {
+    typingRow.remove();
+    processAiResponse(query, messagesBox);
+  }, 750);
+}
+
+function processAiResponse(query, messagesBox) {
+  const clean = query.toLowerCase();
+  let matchedDoc = doctors[0]; // Marcus (General)
+  let triageLevel = "MILD (Standard Telehealth)";
+  let triageClass = "mild";
+  let diagnosisNote = "Symptoms suggest acute upper respiratory tract viral infection or seasonal flu.";
+
+  if (clean.includes("skin") || clean.includes("rash") || clean.includes("acne") || clean.includes("itch") || clean.includes("bump")) {
+    matchedDoc = doctors[1]; // Emily (Derm)
+    triageLevel = "MILD (Topical Assessment Needed)";
+    triageClass = "mild";
+    diagnosisNote = "Symptoms are consistent with acute contact dermatitis or localized eczema.";
+  } else if (clean.includes("child") || clean.includes("baby") || clean.includes("kid") || clean.includes("infant") || clean.includes("toddler") || clean.includes("3-year")) {
+    matchedDoc = doctors[2]; // Rajesh (Peds)
+    triageLevel = "MODERATE (Pediatric Care)";
+    triageClass = "mod";
+    diagnosisNote = "Pediatric fever requires weight-based antipyretic dosing and hydration assessment.";
+  } else if (clean.includes("heart") || clean.includes("palpitation") || clean.includes("bp") || clean.includes("chest") || clean.includes("pressure")) {
+    matchedDoc = doctors[3]; // Bennett (Cardio)
+    triageLevel = "MODERATE (Cardiovascular Check)";
+    triageClass = "mod";
+    diagnosisNote = "Cardiac symptoms warrant clinical telemetry review and ECG assessment.";
+  }
+
+  const botRow = document.createElement("div");
+  botRow.className = "ai-bubble-row bot";
+  botRow.innerHTML = `
+    <div class="ai-mini-avatar"><i class="fa-solid fa-robot"></i></div>
+    <div class="ai-bubble">
+      <p>I've reviewed your symptoms:</p>
+      <div class="ai-triage-card">
+        <span class="triage-level-pill ${triageClass}">Triage: ${triageLevel}</span>
+        <p style="font-size: 11px; color: #94a3b8; margin: 4px 0;"><strong>Assessment:</strong> ${diagnosisNote}</p>
+        <div class="triage-match-box">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <img src="${matchedDoc.image}" alt="${matchedDoc.name}" class="triage-doc-img">
+            <div>
+              <strong style="font-size: 11px; color: white; display: block;">${matchedDoc.name}</strong>
+              <small style="font-size: 10px; color: #38bdf8;">${matchedDoc.specialty} • ${matchedDoc.fee}</small>
+            </div>
+          </div>
+          <button class="btn-sm btn-success" onclick="closeModal('ai-triage-modal'); openBookingModal(${matchedDoc.id})">
+            <i class="fa-solid fa-video"></i> Book Now
+          </button>
+        </div>
+      </div>
+      <small style="display: block; font-size: 9px; color: var(--text-muted); margin-top: 6px;">⚠️ AI guidance is for clinical triage & informational purposes only.</small>
+    </div>
+  `;
+
+  messagesBox.appendChild(botRow);
+  messagesBox.scrollTop = messagesBox.scrollHeight;
+  playChime("success");
+}
+
+
 
 

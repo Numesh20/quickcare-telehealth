@@ -1,5 +1,5 @@
 /* ==========================================================================
-   QuickCare Telehealth App & IT PM Suite Logic (Upgraded)
+   QuickCare Telehealth App & IT PM Suite Logic (Upgraded with Step 1)
    ========================================================================== */
 
 // 1. Doctor Database
@@ -42,6 +42,24 @@ const doctors = [
   }
 ];
 
+// Doctor Verified Reviews Data
+const doctorReviews = {
+  1: [
+    { name: "Jessica T.", stars: 5, date: "2 days ago", comment: "Dr. Vance was extremely thorough and diagnosed my throat infection quickly. The prescription arrived instantly on my phone." },
+    { name: "David K.", stars: 5, date: "1 week ago", comment: "Saved me a 4-hour trip to urgent care! Video quality was crystal clear and no lag." },
+    { name: "Amanda L.", stars: 5, date: "2 weeks ago", comment: "Great bedside manner. Very polite, helpful, and knowledgeable." }
+  ],
+  2: [
+    { name: "Robert M.", stars: 5, date: "3 days ago", comment: "Dr. Zhang identified my skin allergy trigger immediately. Prescribed a topical lotion that worked in 24 hours!" }
+  ],
+  3: [
+    { name: "Priya S.", stars: 5, date: "Yesterday", comment: "Wonderful with my 4-year old son. Calmed our fever worries and gave clear dosing advice." }
+  ],
+  4: [
+    { name: "Thomas B.", stars: 5, date: "5 days ago", comment: "Dr. Bennett reviewed my ECG results and explained the heart rate readings very clearly." }
+  ]
+};
+
 // 2. Initial Kanban Agile Stories
 const initialKanbanCards = [
   { id: "US-601", title: "Automated SMS/Push Consultation Reminders (15m before)", epic: "Notifications", pts: 2, status: "backlog", assignee: "MD" },
@@ -55,6 +73,7 @@ const initialKanbanCards = [
 
 let kanbanCards = [...initialKanbanCards];
 let selectedDoctor = doctors[0];
+let selectedReviewStars = 5;
 let callTimerInterval = null;
 let callSeconds = 0;
 let isMicMuted = false;
@@ -170,7 +189,7 @@ function switchPmTab(tabId) {
 }
 
 // ==========================================================================
-// Patient View Logic
+// Patient View Logic (Search, Filters, Booking & Reviews)
 // ==========================================================================
 
 function filterSpecialty(specialty) {
@@ -193,7 +212,9 @@ function renderDoctors(filter) {
         <div class="doc-meta">
           <h5>${doc.name}</h5>
           <span class="doc-specialty">${doc.specialty} • ${doc.experience}</span>
-          <div class="doc-rating">⭐ ${doc.rating}</div>
+          <div class="doc-rating" onclick="openReviewsModal(${doc.id})" style="cursor: pointer;" title="View Verified Reviews">
+            ⭐ ${doc.rating} <span style="font-size: 10px; color: #38bdf8; text-decoration: underline;">(Reviews)</span>
+          </div>
         </div>
       </div>
       <div class="doc-card-bottom">
@@ -202,6 +223,109 @@ function renderDoctors(filter) {
       </div>
     </div>
   `).join("");
+}
+
+// Real-Time Search Function
+function searchDoctors(query) {
+  const clean = query.toLowerCase().trim();
+  const clearBtn = document.getElementById("search-clear-btn");
+  if (clearBtn) clearBtn.classList.toggle("hidden", clean.length === 0);
+
+  const container = document.getElementById("doctor-list");
+  const filtered = doctors.filter(d => 
+    d.name.toLowerCase().includes(clean) ||
+    d.specialty.toLowerCase().includes(clean) ||
+    (d.specialty === "General Medicine" && (clean.includes("fever") || clean.includes("flu") || clean.includes("cough") || clean.includes("cold"))) ||
+    (d.specialty === "Dermatology" && (clean.includes("skin") || clean.includes("rash") || clean.includes("acne") || clean.includes("itch"))) ||
+    (d.specialty === "Cardiology" && (clean.includes("heart") || clean.includes("bp") || clean.includes("chest") || clean.includes("cardio"))) ||
+    (d.specialty === "Pediatrics" && (clean.includes("child") || clean.includes("baby") || clean.includes("kid") || clean.includes("infant")))
+  );
+
+  document.getElementById("doc-count").innerText = `${filtered.length} Doctors Found`;
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">No doctors found matching "<strong>${query}</strong>". Try searching "General" or "Skin".</div>`;
+    return;
+  }
+
+  container.innerHTML = filtered.map(doc => `
+    <div class="doc-card">
+      <div class="doc-card-top">
+        <img src="${doc.image}" alt="${doc.name}" class="doc-card-img">
+        <div class="doc-meta">
+          <h5>${doc.name}</h5>
+          <span class="doc-specialty">${doc.specialty} • ${doc.experience}</span>
+          <div class="doc-rating" onclick="openReviewsModal(${doc.id})" style="cursor: pointer;">
+            ⭐ ${doc.rating} <span style="font-size: 10px; color: #38bdf8; text-decoration: underline;">(Reviews)</span>
+          </div>
+        </div>
+      </div>
+      <div class="doc-card-bottom">
+        <span class="doc-fee">${doc.fee} / 15-min call</span>
+        <button class="btn-book-sm" onclick="openBookingModal(${doc.id})">Book Consult</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+function clearDoctorSearch() {
+  document.getElementById("patient-search-bar").value = "";
+  searchDoctors("");
+}
+
+// Doctor Reviews Modal Logic
+function openReviewsModal(doctorId) {
+  selectedDoctor = doctors.find(d => d.id === doctorId) || doctors[0];
+  document.getElementById("rev-doc-img").src = selectedDoctor.image;
+  document.getElementById("rev-doc-name").innerText = selectedDoctor.name;
+  document.getElementById("rev-doc-rating").innerText = `⭐ ${selectedDoctor.rating}`;
+
+  const listContainer = document.getElementById("doctor-reviews-list");
+  const reviews = doctorReviews[doctorId] || doctorReviews[1];
+
+  listContainer.innerHTML = reviews.map(r => `
+    <div class="review-item">
+      <div class="review-user-row">
+        <strong>${r.name}</strong>
+        <span>${"★".repeat(r.stars)}</span>
+      </div>
+      <div class="review-text">${r.comment}</div>
+      <small style="font-size: 10px; color: var(--text-muted);">${r.date} • Verified Consultation</small>
+    </div>
+  `).join("");
+
+  document.getElementById("reviews-modal").classList.remove("hidden");
+  playChime("click");
+}
+
+function setReviewRating(stars) {
+  selectedReviewStars = stars;
+  const starEls = document.querySelectorAll("#star-rating-selector .star");
+  starEls.forEach((s, idx) => {
+    s.classList.toggle("active", idx < stars);
+  });
+  playChime("click");
+}
+
+function submitPatientReview() {
+  const comment = document.getElementById("review-comment-input").value.trim();
+  if (!comment) {
+    showToast("Please enter a short comment", "info");
+    return;
+  }
+
+  if (!doctorReviews[selectedDoctor.id]) doctorReviews[selectedDoctor.id] = [];
+  doctorReviews[selectedDoctor.id].unshift({
+    name: "Sarah Jenkins (You)",
+    stars: selectedReviewStars,
+    date: "Just now",
+    comment: comment
+  });
+
+  document.getElementById("review-comment-input").value = "";
+  closeModal("reviews-modal");
+  playChime("success");
+  showToast("Thank you! Your verified rating was submitted.", "success");
 }
 
 function openBookingModal(doctorId) {
@@ -253,6 +377,20 @@ function processPaymentAndLaunch() {
       launchVideoCall(selectedDoctor.name, selectedDoctor.specialty);
     }, 800);
   }, 1200);
+}
+
+// Payment Invoice Modal Logic
+function openInvoiceModal() {
+  document.getElementById("inv-tx-id").innerText = `tx_live_${Math.floor(1000000 + Math.random() * 9000000)}`;
+  document.getElementById("inv-date").innerText = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + " • " + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  document.getElementById("inv-service-name").innerText = `${selectedDoctor.specialty} Video Call (${selectedDoctor.name})`;
+  document.getElementById("inv-base-price").innerText = selectedDoctor.fee;
+  
+  const baseNum = parseFloat(selectedDoctor.fee.replace("$", ""));
+  document.getElementById("inv-total-price").innerText = `$${(baseNum + 3.00).toFixed(2)}`;
+
+  document.getElementById("invoice-modal").classList.remove("hidden");
+  playChime("click");
 }
 
 // ==========================================================================

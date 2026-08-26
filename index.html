@@ -90,6 +90,13 @@
               </div>
             </div>
 
+            <!-- Real-Time Doctor & Symptom Search -->
+            <div class="search-input-box">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="patient-search-bar" placeholder="Search doctor, specialty, or condition..." oninput="searchDoctors(this.value)">
+              <button class="search-clear-btn hidden" id="search-clear-btn" onclick="clearDoctorSearch()">&times;</button>
+            </div>
+
             <!-- Health Status Card -->
             <div class="urgent-consult-card">
               <div class="consult-content">
@@ -918,6 +925,117 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL 4: DOCTOR REVIEWS & PATIENT RATING       -->
+  <!-- ============================================== -->
+  <div id="reviews-modal" class="modal-overlay hidden">
+    <div class="modal-card reviews-modal-card">
+      <button class="modal-close" onclick="closeModal('reviews-modal')">&times;</button>
+      
+      <div class="modal-header">
+        <div class="doctor-badge-sm">
+          <img id="rev-doc-img" src="" alt="Doctor">
+          <div>
+            <h4 id="rev-doc-name">Doctor Name</h4>
+            <span id="rev-doc-rating">⭐ 4.9 (320 Patient Reviews)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <div class="reviews-list" id="doctor-reviews-list">
+          <!-- Dynamic reviews list -->
+        </div>
+
+        <!-- Leave a Review Form -->
+        <div class="write-review-box">
+          <label class="modal-label">Rate Your Experience</label>
+          <div class="star-rating-selector" id="star-rating-selector">
+            <span class="star" onclick="setReviewRating(1)">★</span>
+            <span class="star" onclick="setReviewRating(2)">★</span>
+            <span class="star" onclick="setReviewRating(3)">★</span>
+            <span class="star" onclick="setReviewRating(4)">★</span>
+            <span class="star active" onclick="setReviewRating(5)">★</span>
+          </div>
+          <textarea id="review-comment-input" rows="2" placeholder="Write your feedback..." class="review-textarea"></textarea>
+          <button class="btn-sm btn-primary full-width" onclick="submitPatientReview()">
+            <i class="fa-solid fa-star"></i> Submit Verified Review
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL 5: PAYMENT RECEIPT & TAX INVOICE         -->
+  <!-- ============================================== -->
+  <div id="invoice-modal" class="modal-overlay hidden">
+    <div class="modal-card invoice-modal-card">
+      <button class="modal-close" onclick="closeModal('invoice-modal')">&times;</button>
+      
+      <div class="invoice-pad">
+        <div class="invoice-header">
+          <div class="invoice-brand">
+            <i class="fa-solid fa-heart-pulse"></i>
+            <div>
+              <h4>QUICKCARE TELEHEALTH INC.</h4>
+              <small>Tax Invoice & Payment Receipt</small>
+            </div>
+          </div>
+          <div class="invoice-status-badge">PAID</div>
+        </div>
+
+        <div class="invoice-meta-grid">
+          <div>
+            <span class="inv-lbl">Transaction ID</span>
+            <strong id="inv-tx-id">tx_live_9948201</strong>
+          </div>
+          <div>
+            <span class="inv-lbl">Date & Time</span>
+            <span id="inv-date">Aug 27, 2026 • 10:30 AM</span>
+          </div>
+          <div>
+            <span class="inv-lbl">Billed To</span>
+            <span>Sarah Jenkins (Patient)</span>
+          </div>
+          <div>
+            <span class="inv-lbl">Payment Method</span>
+            <span><i class="fa-brands fa-cc-visa"></i> Visa •••• 4242</span>
+          </div>
+        </div>
+
+        <div class="invoice-table">
+          <div class="inv-row header">
+            <span>Description</span>
+            <span>Qty</span>
+            <span>Amount</span>
+          </div>
+          <div class="inv-row">
+            <span id="inv-service-name">Telehealth Consultation (15 Mins)</span>
+            <span>1</span>
+            <span id="inv-base-price">$45.00</span>
+          </div>
+          <div class="inv-row">
+            <span>HIPAA Secure Platform Fee</span>
+            <span>1</span>
+            <span>$3.00</span>
+          </div>
+          <div class="inv-divider"></div>
+          <div class="inv-row total">
+            <span>Total Paid (USD)</span>
+            <span></span>
+            <strong id="inv-total-price">$48.00</strong>
+          </div>
+        </div>
+
+        <div class="invoice-footer">
+          <button class="btn-sm btn-outline" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Invoice</button>
+          <button class="btn-sm btn-primary" onclick="closeModal('invoice-modal')"><i class="fa-solid fa-check"></i> Done</button>
+        </div>
+      </div>
     </div>
   </div>
 

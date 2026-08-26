@@ -2077,3 +2077,253 @@ body {
 .control-btn.end-call-btn:hover {
   background: #e11d48;
 }
+
+/* ==========================================================================
+   Search Bar & Doctor Filtering
+   ========================================================================== */
+
+.search-input-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-color);
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  transition: border-color 0.15s ease;
+}
+
+.search-input-box:focus-within {
+  border-color: var(--accent-cyan);
+}
+
+.search-input-box i {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.search-input-box input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 12px;
+  outline: none;
+}
+
+.search-clear-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.search-clear-btn.hidden {
+  display: none;
+}
+
+/* ==========================================================================
+   Reviews Modal & Star Ratings
+   ========================================================================== */
+
+.reviews-modal-card {
+  max-width: 500px;
+}
+
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 240px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+  padding-right: 4px;
+}
+
+.review-item {
+  background: var(--bg-main);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.review-user-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.review-user-row strong {
+  color: var(--text-primary);
+}
+
+.review-user-row span {
+  color: var(--accent-amber);
+}
+
+.review-text {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.write-review-box {
+  background: var(--bg-surface-elevated);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.star-rating-selector {
+  display: flex;
+  gap: 6px;
+  font-size: 20px;
+  color: #475569;
+  cursor: pointer;
+}
+
+.star-rating-selector .star {
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.star-rating-selector .star.active {
+  color: var(--accent-amber);
+  transform: scale(1.15);
+}
+
+.review-textarea {
+  background: var(--bg-main);
+  border: 1px solid var(--border-color);
+  color: white;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  outline: none;
+  resize: none;
+}
+
+/* ==========================================================================
+   Payment Invoice Pad
+   ========================================================================== */
+
+.invoice-modal-card {
+  max-width: 480px;
+  padding: 28px;
+}
+
+.invoice-pad {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.invoice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #334155;
+  padding-bottom: 14px;
+}
+
+.invoice-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.invoice-brand i {
+  font-size: 24px;
+  color: var(--accent-cyan);
+}
+
+.invoice-brand h4 {
+  font-size: 14px;
+  color: white;
+}
+
+.invoice-brand small {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.invoice-status-badge {
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--accent-emerald);
+  border: 1px solid var(--accent-emerald);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.invoice-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  background: var(--bg-surface-elevated);
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+}
+
+.inv-lbl {
+  display: block;
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.invoice-table {
+  background: var(--bg-main);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.inv-row {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr;
+  justify-content: space-between;
+}
+
+.inv-row.header {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 700;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 6px;
+}
+
+.inv-row.total {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.inv-row.total strong {
+  color: var(--accent-emerald);
+}
+
+.inv-divider {
+  height: 1px;
+  background: var(--border-color);
+}
+
+.invoice-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+}

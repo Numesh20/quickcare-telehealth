@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuickCare Telehealth — App & IT PM Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-icon">
+          <i class="fa-solid fa-heart-pulse"></i>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">QuickCare</span>
+          <span class="brand-tag">Telehealth MVP</span>
+        </div>
+      </div>
+
+      <!-- Mode Switcher Tabs -->
+      <nav class="nav-tabs">
+        <button class="nav-tab active" id="tab-patient" onclick="switchView('patient-view')">
+          <i class="fa-solid fa-mobile-screen-button"></i> Patient App
+        </button>
+        <button class="nav-tab" id="tab-doctor" onclick="switchView('doctor-view')">
+          <i class="fa-solid fa-user-doctor"></i> Doctor Portal
+        </button>
+        <button class="nav-tab highlight" id="tab-pm" onclick="switchView('pm-view')">
+          <i class="fa-solid fa-chart-pie"></i> IT PM Control Center
+        </button>
+      </nav>
+
+      <div class="header-actions">
+        <div class="live-status-pill">
+          <span class="pulse-dot"></span>
+          <span>Sprint 4: Active</span>
+        </div>
+        <a href="https://github.com/Numesh20/quickcare-telehealth" target="_blank" class="github-btn" title="View Source on GitHub">
+          <i class="fa-brands fa-github"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Application Body -->
+  <main class="app-main">
+
+    <!-- ============================================== -->
+    <!-- VIEW 1: PATIENT APP EXPERIENCE                 -->
+    <!-- ============================================== -->
+    <section id="patient-view" class="view-panel active">
+      <div class="phone-frame-container">
+        <div class="phone-mockup">
+          <div class="phone-speaker"></div>
+          <div class="phone-screen">
+            
+            <!-- Patient Screen Header -->
+            <div class="patient-header">
+              <div class="user-greeting">
+                <span class="greeting-sub">Welcome back 👋</span>
+                <h3 class="greeting-name">Sarah Jenkins</h3>
+              </div>
+              <div class="patient-avatar">
+                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80" alt="Patient">
+              </div>
+            </div>
+
+            <!-- Health Status Card -->
+            <div class="urgent-consult-card">
+              <div class="consult-content">
+                <span class="urgent-badge"><i class="fa-solid fa-bolt"></i> Instant Connect</span>
+                <h4>Need a Doctor Right Now?</h4>
+                <p>Average wait time: <strong>3 mins</strong></p>
+                <button class="btn-instant-call" onclick="openInstantBookingModal()">
+                  <i class="fa-solid fa-video"></i> Start Fast Consult ($45)
+                </button>
+              </div>
+              <div class="consult-illustration">
+                <i class="fa-solid fa-stethoscope"></i>
+              </div>
+            </div>
+
+            <!-- Specialty Filters -->
+            <div class="section-title-row">
+              <h4>Medical Specialties</h4>
+              <span class="see-all">5 Available</span>
+            </div>
+
+            <div class="specialty-chips" id="specialty-chips">
+              <button class="chip active" onclick="filterSpecialty('All')">All</button>
+              <button class="chip" onclick="filterSpecialty('General Medicine')">🩺 General</button>
+              <button class="chip" onclick="filterSpecialty('Dermatology')">✨ Dermatology</button>
+              <button class="chip" onclick="filterSpecialty('Pediatrics')">👶 Pediatrics</button>
+              <button class="chip" onclick="filterSpecialty('Cardiology')">❤️ Cardiology</button>
+            </div>
+
+            <!-- Available Doctors List -->
+            <div class="section-title-row">
+              <h4>Available Specialists</h4>
+              <span class="doctor-count" id="doc-count">4 Available Today</span>
+            </div>
+
+            <div class="doctor-list" id="doctor-list">
+              <!-- Dynamically Populated by JavaScript -->
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- VIEW 2: DOCTOR PORTAL (Prescription & Calls)   -->
+    <!-- ============================================== -->
+    <section id="doctor-view" class="view-panel">
+      <div class="doctor-portal-layout">
+        
+        <div class="doctor-sidebar">
+          <div class="doctor-profile-card">
+            <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150&auto=format&fit=crop&q=80" alt="Dr. Marcus" class="doc-img-lg">
+            <h3>Dr. Marcus Vance, MD</h3>
+            <span class="doc-badge">Chief Medical Officer & Specialist</span>
+            <div class="doc-stats-grid">
+              <div class="stat-box">
+                <span class="stat-num">4.9 ⭐</span>
+                <span class="stat-lbl">Rating</span>
+              </div>
+              <div class="stat-box">
+                <span class="stat-num">1,240+</span>
+                <span class="stat-lbl">Consults</span>
+              </div>
+              <div class="stat-box">
+                <span class="stat-num">$45</span>
+                <span class="stat-lbl">Fee</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="doctor-queue-card">
+            <h4><i class="fa-solid fa-clock"></i> Today's Queue (3 Patients)</h4>
+            <div class="patient-queue-list">
+              <div class="queue-item active-queue">
+                <div class="queue-info">
+                  <strong>Sarah Jenkins (You)</strong>
+                  <span>Flu & Fever • 10:30 AM</span>
+                </div>
+                <button class="btn-sm btn-success" onclick="launchVideoCall('Dr. Marcus Vance', 'General Medicine')">
+                  <i class="fa-solid fa-video"></i> Connect
+                </button>
+              </div>
+              <div class="queue-item">
+                <div class="queue-info">
+                  <strong>Michael Chang</strong>
+                  <span>Skin Rash Check • 11:00 AM</span>
+                </div>
+                <span class="status-waiting">Waiting</span>
+              </div>
+              <div class="queue-item">
+                <div class="queue-info">
+                  <strong>Elena Rostova</strong>
+                  <span>Prescription Refill • 11:30 AM</span>
+                </div>
+                <span class="status-waiting">Confirmed</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="doctor-workspace">
+          <div class="workspace-header">
+            <h3><i class="fa-solid fa-file-prescription"></i> Digital Rx Prescription Studio</h3>
+            <p>Generate HIPAA-compliant digital prescriptions for patient download</p>
+          </div>
+
+          <form id="rx-form" class="rx-form" onsubmit="generatePrescription(event)">
+            <div class="form-row-2">
+              <div class="form-group">
+                <label>Patient Name</label>
+                <input type="text" id="rx-patient-name" value="Sarah Jenkins" required>
+              </div>
+              <div class="form-group">
+                <label>Date of Consultation</label>
+                <input type="date" id="rx-date" value="2026-08-27" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Diagnosis / Clinical Notes</label>
+              <input type="text" id="rx-diagnosis" value="Acute Upper Respiratory Tract Infection (Viral Rhinitis)" required>
+            </div>
+
+            <div class="medications-block">
+              <label>Prescribed Medications</label>
+              <div class="form-row-3">
+                <input type="text" id="rx-med1" placeholder="Medication (e.g. Amoxicillin 500mg)" value="Amoxicillin 500mg Capsules" required>
+                <input type="text" id="rx-dose1" placeholder="Dosage (e.g. 1 capsule every 8 hrs)" value="1 Capsule 3x Daily (with food)" required>
+                <input type="text" id="rx-dur1" placeholder="Duration (e.g. 7 Days)" value="5 Days" required>
+              </div>
+              <div class="form-row-3">
+                <input type="text" id="rx-med2" placeholder="Medication 2" value="Paracetamol 650mg Tablet">
+                <input type="text" id="rx-dose2" placeholder="Dosage" value="1 Tablet as needed for fever">
+                <input type="text" id="rx-dur2" placeholder="Duration" value="As needed">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Doctor Advice / Instructions</label>
+              <textarea id="rx-advice" rows="3">Drink plenty of fluids, rest for 48 hours, and monitor body temperature. Contact clinic if fever persists beyond 3 days.</textarea>
+            </div>
+
+            <div class="form-footer">
+              <div class="doctor-signature-preview">
+                <span>Signed Digitally:</span>
+                <strong>Dr. Marcus Vance, MD (Lic #MED-884210)</strong>
+              </div>
+              <button type="submit" class="btn-primary">
+                <i class="fa-solid fa-file-pdf"></i> Generate & Issue Prescription
+              </button>
+            </div>
+          </form>
+
+          <!-- Generated Rx Output Card -->
+          <div id="rx-preview-card" class="rx-preview-card hidden">
+            <div class="rx-card-header">
+              <div class="rx-logo"><i class="fa-solid fa-heart-pulse"></i> QuickCare Rx</div>
+              <div class="rx-id">Rx-ID: #QC-2026-8891</div>
+            </div>
+            <div class="rx-details" id="rx-details-output"></div>
+            <div class="rx-actions">
+              <button class="btn-sm btn-outline" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Rx</button>
+              <button class="btn-sm btn-success" onclick="alert('Prescription successfully saved and sent to patient phone via Push Notification!')"><i class="fa-solid fa-check"></i> Send to Patient App</button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- VIEW 3: IT PM CONTROL CENTER                   -->
+    <!-- ============================================== -->
+    <section id="pm-view" class="view-panel">
+      <div class="pm-dashboard">
+        
+        <!-- PM Dashboard Top Summary Cards -->
+        <div class="pm-stats-banner">
+          <div class="pm-kpi-card">
+            <div class="kpi-icon blue"><i class="fa-solid fa-calendar-check"></i></div>
+            <div class="kpi-data">
+              <span class="kpi-label">Project Timeline</span>
+              <h3>15 Weeks <span class="kpi-tag success">On Schedule</span></h3>
+              <small>Sprints 1–4 Completed</small>
+            </div>
+          </div>
+
+          <div class="pm-kpi-card">
+            <div class="kpi-icon green"><i class="fa-solid fa-dollar-sign"></i></div>
+            <div class="kpi-data">
+              <span class="kpi-label">Budget Variance</span>
+              <h3>$116,400 <span class="kpi-tag success">+$3.6k Saved</span></h3>
+              <small>Approved: $120,000</small>
+            </div>
+          </div>
+
+          <div class="pm-kpi-card">
+            <div class="kpi-icon purple"><i class="fa-solid fa-gauge-high"></i></div>
+            <div class="kpi-data">
+              <span class="kpi-label">Average Velocity</span>
+              <h3>30.5 Pts <span class="kpi-tag info">Predictable</span></h3>
+              <small>122 Total Points Delivered</small>
+            </div>
+          </div>
+
+          <div class="pm-kpi-card">
+            <div class="kpi-icon orange"><i class="fa-solid fa-shield-halved"></i></div>
+            <div class="kpi-data">
+              <span class="kpi-label">Open Critical Risks</span>
+              <h3>0 Active <span class="kpi-tag success">100% Mitigated</span></h3>
+              <small>5 Logged in RAID Register</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- PM Section Tabs -->
+        <div class="pm-subtabs">
+          <button class="pm-subtab active" onclick="switchPmTab('kanban-tab')"><i class="fa-solid fa-table-columns"></i> Live Agile Kanban Board</button>
+          <button class="pm-subtab" onclick="switchPmTab('velocity-tab')"><i class="fa-solid fa-chart-line"></i> Velocity & Burndown</button>
+          <button class="pm-subtab" onclick="switchPmTab('raid-tab')"><i class="fa-solid fa-triangle-exclamation"></i> RAID Risk Heatmap</button>
+          <button class="pm-subtab" onclick="switchPmTab('raci-tab')"><i class="fa-solid fa-users-gear"></i> RACI Matrix</button>
+        </div>
+
+        <!-- SUBTAB 1: KANBAN BOARD -->
+        <div id="kanban-tab" class="pm-tab-content active">
+          <div class="kanban-header-row">
+            <h4>Interactive Scrum Story Board (Click any card to move status)</h4>
+            <button class="btn-sm btn-outline" onclick="resetKanban()"><i class="fa-solid fa-rotate-left"></i> Reset Board</button>
+          </div>
+
+          <div class="kanban-board-grid">
+            
+            <div class="kanban-column" id="col-backlog">
+              <div class="column-header">
+                <span class="col-title">📋 Product Backlog</span>
+                <span class="col-count" id="count-backlog">1</span>
+              </div>
+              <div class="column-cards" id="cards-backlog"></div>
+            </div>
+
+            <div class="kanban-column" id="col-progress">
+              <div class="column-header">
+                <span class="col-title">⚡ In Development</span>
+                <span class="col-count" id="count-progress">1</span>
+              </div>
+              <div class="column-cards" id="cards-progress"></div>
+            </div>
+
+            <div class="kanban-column" id="col-qa">
+              <div class="column-header">
+                <span class="col-title">🧪 QA & Security Test</span>
+                <span class="col-count" id="count-qa">1</span>
+              </div>
+              <div class="column-cards" id="cards-qa"></div>
+            </div>
+
+            <div class="kanban-column" id="col-done">
+              <div class="column-header">
+                <span class="col-title">✅ Done & Deployed (MVP)</span>
+                <span class="col-count" id="count-done">4</span>
+              </div>
+              <div class="column-cards" id="cards-done"></div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- SUBTAB 2: VELOCITY & BURNDOWN -->
+        <div id="velocity-tab" class="pm-tab-content">
+          <div class="charts-grid-2">
+            <div class="chart-card">
+              <h4>🏃 Sprint Velocity (Planned vs Completed Story Points)</h4>
+              <div class="velocity-bars-container">
+                <div class="v-bar-group">
+                  <div class="v-bars">
+                    <div class="v-bar planned" style="height: 140px;" title="Planned: 28 pts"><span>28</span></div>
+                    <div class="v-bar actual" style="height: 140px;" title="Delivered: 28 pts"><span>28</span></div>
+                  </div>
+                  <span class="v-label">Sprint 1 (Auth)</span>
+                </div>
+
+                <div class="v-bar-group">
+                  <div class="v-bars">
+                    <div class="v-bar planned" style="height: 160px;" title="Planned: 32 pts"><span>32</span></div>
+                    <div class="v-bar actual" style="height: 150px;" title="Delivered: 30 pts"><span>30</span></div>
+                  </div>
+                  <span class="v-label">Sprint 2 (Booking)</span>
+                </div>
+
+                <div class="v-bar-group">
+                  <div class="v-bars">
+                    <div class="v-bar planned" style="height: 165px;" title="Planned: 33 pts"><span>33</span></div>
+                    <div class="v-bar actual" style="height: 165px;" title="Delivered: 33 pts"><span>33</span></div>
+                  </div>
+                  <span class="v-label">Sprint 3 (Video/Pay)</span>
+                </div>
+
+                <div class="v-bar-group">
+                  <div class="v-bars">
+                    <div class="v-bar planned" style="height: 145px;" title="Planned: 29 pts"><span>29</span></div>
+                    <div class="v-bar actual" style="height: 145px;" title="Delivered: 29 pts"><span>29</span></div>
+                  </div>
+                  <span class="v-label">Sprint 4 (Prescriptions)</span>
+                </div>
+              </div>
+              <div class="chart-legend">
+                <span class="leg-item"><span class="leg-box planned"></span> Committed Points</span>
+                <span class="leg-item"><span class="leg-box actual"></span> Delivered Points</span>
+              </div>
+            </div>
+
+            <div class="chart-card">
+              <h4>📉 Sprint 4 Burndown Chart (10-Day Cadence)</h4>
+              <div class="burndown-visual">
+                <svg viewBox="0 0 400 200" class="burndown-svg">
+                  <!-- Grid lines -->
+                  <line x1="40" y1="20" x2="380" y2="20" stroke="#2a3342" stroke-dasharray="3"/>
+                  <line x1="40" y1="65" x2="380" y2="65" stroke="#2a3342" stroke-dasharray="3"/>
+                  <line x1="40" y1="110" x2="380" y2="110" stroke="#2a3342" stroke-dasharray="3"/>
+                  <line x1="40" y1="155" x2="380" y2="155" stroke="#2a3342" stroke-dasharray="3"/>
+                  
+                  <!-- Ideal Line (Grey Dash) -->
+                  <polyline points="40,20 380,180" fill="none" stroke="#64748b" stroke-width="2" stroke-dasharray="4"/>
+                  
+                  <!-- Actual Burn Line (Cyan Solid) -->
+                  <polyline points="40,20 80,35 120,55 160,85 200,90 240,120 280,140 320,165 360,178 380,180" fill="none" stroke="#00f2fe" stroke-width="3"/>
+                  
+                  <!-- Data Dots -->
+                  <circle cx="40" cy="20" r="4" fill="#00f2fe"/>
+                  <circle cx="120" cy="55" r="4" fill="#00f2fe"/>
+                  <circle cx="200" cy="90" r="4" fill="#00f2fe"/>
+                  <circle cx="280" cy="140" r="4" fill="#00f2fe"/>
+                  <circle cx="380" cy="180" r="4" fill="#00f2fe"/>
+                </svg>
+                <div class="burndown-labels">
+                  <span>Day 1 (29 pts)</span>
+                  <span>Day 3</span>
+                  <span>Day 5</span>
+                  <span>Day 8</span>
+                  <span>Day 10 (0 pts)</span>
+                </div>
+              </div>
+              <p class="chart-caption">🟢 Sprint 4 closed with 100% velocity completion rate and 0 spillover.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUBTAB 3: RAID LOG -->
+        <div id="raid-tab" class="pm-tab-content">
+          <div class="raid-table-container">
+            <table class="pm-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Category</th>
+                  <th>Risk Description</th>
+                  <th>Probability</th>
+                  <th>Impact</th>
+                  <th>Score (P×I)</th>
+                  <th>Mitigation Strategy</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>RSK-01</strong></td>
+                  <td><span class="badge tech">Technical</span></td>
+                  <td>Twilio video call drops on slow 3G mobile data</td>
+                  <td>4</td>
+                  <td>4</td>
+                  <td><span class="risk-pill high">16 (High)</span></td>
+                  <td>Auto bitrate downscaling + 120s reconnection logic</td>
+                  <td><span class="badge-status resolved">Mitigated</span></td>
+                </tr>
+                <tr>
+                  <td><strong>RSK-02</strong></td>
+                  <td><span class="badge compliance">Compliance</span></td>
+                  <td>HIPAA privacy penalty during video transmission</td>
+                  <td>2</td>
+                  <td>5</td>
+                  <td><span class="risk-pill med">10 (Med)</span></td>
+                  <td>End-to-end AES-256 encryption & external auditor audit</td>
+                  <td><span class="badge-status resolved">Closed</span></td>
+                </tr>
+                <tr>
+                  <td><strong>RSK-03</strong></td>
+                  <td><span class="badge scope">Scope</span></td>
+                  <td>Sponsor asking for automated insurance billing mid-sprint</td>
+                  <td>4</td>
+                  <td>4</td>
+                  <td><span class="risk-pill high">16 (High)</span></td>
+                  <td>Defended scope boundary; prioritized for Version 2.0</td>
+                  <td><span class="badge-status resolved">Resolved</span></td>
+                </tr>
+                <tr>
+                  <td><strong>RSK-04</strong></td>
+                  <td><span class="badge vendor">Vendor</span></td>
+                  <td>Stripe sandbox test key approval delay</td>
+                  <td>3</td>
+                  <td>3</td>
+                  <td><span class="risk-pill low">9 (Low)</span></td>
+                  <td>PM escalated to security team; unblocked dev in 30 mins</td>
+                  <td><span class="badge-status resolved">Resolved</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- SUBTAB 4: RACI MATRIX -->
+        <div id="raci-tab" class="pm-tab-content">
+          <div class="raci-table-container">
+            <table class="pm-table">
+              <thead>
+                <tr>
+                  <th>Project Deliverable</th>
+                  <th>Project Sponsor</th>
+                  <th>Product Owner</th>
+                  <th>IT PM (You)</th>
+                  <th>Lead Architect</th>
+                  <th>Mobile Devs</th>
+                  <th>QA Lead</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Project Charter & Budget</strong></td>
+                  <td><span class="raci-tag a">A</span></td>
+                  <td><span class="raci-tag c">C</span></td>
+                  <td><span class="raci-tag r">R</span></td>
+                  <td><span class="raci-tag c">C</span></td>
+                  <td><span class="raci-tag i">I</span></td>
+                  <td><span class="raci-tag i">I</span></td>
+                </tr>
+                <tr>
+                  <td><strong>User Stories & Backlog</strong></td>
+                  <td><span class="raci-tag i">I</span></td>
+                  <td><span class="raci-tag ar">A/R</span></td>
+                  <td><span class="raci-tag c">C</span></td>
+                  <td><span class="raci-tag c">C</span></td>
+                  <td><span class="raci-tag i">I</span></td>
+                  <td><span class="raci-tag i">I</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Sprint Execution & Standups</strong></td>
+                  <td><span class="raci-tag i">I</span></td>
+                  <td><span class="raci-tag c">C</span></td>
+                  <td><span class="raci-tag a">A</span></td>
+                  <td><span class="raci-tag r">R</span></td>
+                  <td><span class="raci-tag r">R</span></td>
+                  <td><span class="raci-tag r">R</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Video Call & Payment Build</strong></td>
+                  <td><span class="raci-tag i">I</span></td>
+                  <td><span class="raci-tag i">I</span></td>
+                  <td><span class="raci-tag c">C</span></td>
+                  <td><span class="raci-tag a">A</span></td>
+                  <td><span class="raci-tag r">R</span></td>
+                  <td><span class="raci-tag i">I</span></td>
+                </tr>
+                <tr>
+                  <td><strong>QA Testing & Security Audit</strong></td>
+                  <td><span class="raci-tag i">I</span></td>
+                  <td><span class="raci-tag c">C</span></td>
+                  <td><span class="raci-tag c">C</span></td>
+                  <td><span class="raci-tag c">C</span></td>
+                  <td><span class="raci-tag c">C</span></td>
+                  <td><span class="raci-tag ar">A/R</span></td>
+                </tr>
+                <tr>
+                  <td><strong>App Store Release & Launch</strong></td>
+                  <td><span class="raci-tag i">I</span></td>
+                  <td><span class="raci-tag a">A</span></td>
+                  <td><span class="raci-tag r">R</span></td>
+                  <td><span class="raci-tag r">R</span></td>
+                  <td><span class="raci-tag r">R</span></td>
+                  <td><span class="raci-tag c">C</span></td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="raci-legend">
+              <span><strong>R</strong> = Responsible (Doer)</span>
+              <span><strong>A</strong> = Accountable (Approver)</span>
+              <span><strong>C</strong> = Consulted (Expert)</span>
+              <span><strong>I</strong> = Informed (Notified)</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================== -->
+  <!-- MODAL 1: BOOKING & PAYMENT MODAL               -->
+  <!-- ============================================== -->
+  <div id="booking-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeModal('booking-modal')">&times;</button>
+      
+      <div class="modal-header">
+        <div class="doctor-badge-sm">
+          <img id="modal-doc-img" src="" alt="Doctor">
+          <div>
+            <h4 id="modal-doc-name">Doctor Name</h4>
+            <span id="modal-doc-spec">Specialty</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <label class="modal-label">Select Available Time Slot Today</label>
+        <div class="slot-grid" id="modal-slot-grid">
+          <button class="time-slot active" onclick="selectSlot(this)">10:30 AM (In 15m)</button>
+          <button class="time-slot" onclick="selectSlot(this)">11:15 AM</button>
+          <button class="time-slot" onclick="selectSlot(this)">02:00 PM</button>
+          <button class="time-slot" onclick="selectSlot(this)">04:30 PM</button>
+        </div>
+
+        <div class="fee-breakdown-card">
+          <div class="fee-row">
+            <span>Video Consultation (15 Mins)</span>
+            <strong id="modal-base-fee">$45.00</strong>
+          </div>
+          <div class="fee-row">
+            <span>HIPAA Secure Platform Fee</span>
+            <span>$3.00</span>
+          </div>
+          <div class="fee-divider"></div>
+          <div class="fee-row total">
+            <span>Total Payable</span>
+            <strong id="modal-total-fee">$48.00</strong>
+          </div>
+        </div>
+
+        <!-- Simulated Stripe Card Entry -->
+        <div class="stripe-mock-box">
+          <div class="stripe-header">
+            <i class="fa-brands fa-stripe"></i>
+            <span>Encrypted 256-Bit Payment</span>
+          </div>
+          <div class="stripe-input-row">
+            <i class="fa-regular fa-credit-card"></i>
+            <input type="text" value="4242 •••• •••• 4242 (Test Card)" readonly>
+            <span>08/28</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-primary full-width" id="btn-pay-confirm" onclick="processPaymentAndLaunch()">
+          <i class="fa-solid fa-lock"></i> Pay $48.00 & Confirm Booking
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL 2: LIVE TELEHEALTH VIDEO CALL ROOM       -->
+  <!-- ============================================== -->
+  <div id="video-modal" class="modal-overlay hidden">
+    <div class="video-room-container">
+      
+      <div class="video-main-screen">
+        <!-- Doctor Video Stream -->
+        <div class="doctor-video-feed">
+          <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=800&auto=format&fit=crop&q=80" alt="Doctor Stream" id="video-doc-stream" class="video-stream-img">
+          <div class="video-overlay-badge doc-badge">
+            <span class="pulse-dot green"></span>
+            <span id="call-doc-name">Dr. Marcus Vance (Live)</span>
+          </div>
+          <div class="call-timer-badge">
+            <i class="fa-solid fa-clock"></i> <span id="call-timer">00:00</span>
+          </div>
+        </div>
+
+        <!-- Patient Picture-in-Picture (PiP) -->
+        <div class="pip-video-feed">
+          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80" alt="Patient Stream" id="video-patient-stream">
+          <div class="pip-label">You (Sarah)</div>
+        </div>
+      </div>
+
+      <!-- Video Call Controls Bar -->
+      <div class="video-controls-bar">
+        <button class="control-btn" id="btn-toggle-mic" onclick="toggleMic()" title="Toggle Mic">
+          <i class="fa-solid fa-microphone"></i>
+        </button>
+        <button class="control-btn" id="btn-toggle-cam" onclick="toggleCam()" title="Toggle Camera">
+          <i class="fa-solid fa-video"></i>
+        </button>
+        <button class="control-btn" onclick="openChatDrawer()" title="Chat with Doctor">
+          <i class="fa-solid fa-message"></i>
+        </button>
+        <button class="control-btn end-call-btn" onclick="endCallAndShowRx()" title="End Consultation">
+          <i class="fa-solid fa-phone-slash"></i>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

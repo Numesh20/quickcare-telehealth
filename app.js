@@ -501,12 +501,74 @@ function endCallAndShowRx() {
 }
 
 // ==========================================================================
-// Doctor Portal & Prescription Generator
+// Doctor Portal & Clinical Safety Logic
 // ==========================================================================
+
+function switchDocSubTab(tab) {
+  document.querySelectorAll(".doc-tab-btn").forEach(b => b.classList.remove("active"));
+  if (tab === "rx") {
+    document.getElementById("doc-tab-rx").classList.add("active");
+    document.getElementById("doc-subtab-rx-panel").classList.remove("hidden");
+    document.getElementById("doc-subtab-calendar-panel").classList.add("hidden");
+  } else {
+    document.getElementById("doc-tab-calendar").classList.add("active");
+    document.getElementById("doc-subtab-rx-panel").classList.add("hidden");
+    document.getElementById("doc-subtab-calendar-panel").classList.remove("hidden");
+  }
+  playChime("click");
+}
+
+function checkAllergySafety(medName) {
+  const clean = medName.toLowerCase().trim();
+  const dangerousMeds = ["amoxicillin", "penicillin", "ampicillin", "augmentin", "amoxil"];
+  const isDangerous = dangerousMeds.some(m => clean.includes(m));
+
+  const warnBox = document.getElementById("contraindication-box");
+  if (isDangerous) {
+    warnBox.classList.remove("hidden");
+  } else {
+    warnBox.classList.add("hidden");
+  }
+}
+
+function autoFixAllergySafeMed() {
+  document.getElementById("rx-med1").value = "Azithromycin 500mg (Macrolide - Allergy Safe)";
+  document.getElementById("rx-dose1").value = "1 Tablet Daily for 3 Days";
+  document.getElementById("contraindication-box").classList.add("hidden");
+  playChime("success");
+  showToast("Switched to Safe Non-Penicillin Antibiotic (Azithromycin)", "success");
+}
+
+function toggleCalendarSlot(slotEl) {
+  if (slotEl.classList.contains("free")) {
+    slotEl.classList.remove("free");
+    slotEl.classList.add("booked");
+    slotEl.innerText = slotEl.innerText.replace("• Open", "• Reserved (Dr. Marcus)");
+    playChime("click");
+    showToast("Calendar Slot Locked for Telehealth", "info");
+  } else if (slotEl.classList.contains("booked")) {
+    slotEl.classList.remove("booked");
+    slotEl.classList.add("free");
+    slotEl.innerText = slotEl.innerText.replace("• Reserved (Dr. Marcus)", "• Open");
+    playChime("click");
+    showToast("Calendar Slot Opened to Public", "info");
+  }
+}
 
 function selectQueuePatient(name, notes) {
   document.getElementById("rx-patient-name").value = name;
   document.getElementById("rx-diagnosis").value = notes;
+  
+  if (name.includes("Sarah")) {
+    document.getElementById("allergy-banner").classList.remove("hidden");
+    document.getElementById("rx-med1").value = "Amoxicillin 500mg Capsules";
+    checkAllergySafety("Amoxicillin");
+  } else {
+    document.getElementById("allergy-banner").classList.add("hidden");
+    document.getElementById("contraindication-box").classList.add("hidden");
+    document.getElementById("rx-med1").value = "Hydrocortisone 1% Topical Cream";
+    document.getElementById("rx-dose1").value = "Apply thin layer 2x daily";
+  }
   showToast(`Loaded Patient Profile: ${name}`, "info");
 }
 

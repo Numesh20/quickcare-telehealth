@@ -229,73 +229,195 @@
         </div>
 
         <div class="doctor-workspace">
-          <div class="workspace-header">
-            <h3><i class="fa-solid fa-file-prescription"></i> Digital Rx Prescription Studio</h3>
-            <p>Generate HIPAA-compliant official digital prescriptions with verified signature</p>
+          
+          <!-- Doctor Workspace Navigation Tabs -->
+          <div class="doc-workspace-nav">
+            <button class="doc-tab-btn active" id="doc-tab-rx" onclick="switchDocSubTab('rx')">
+              <i class="fa-solid fa-file-prescription"></i> Digital Rx Studio
+            </button>
+            <button class="doc-tab-btn" id="doc-tab-calendar" onclick="switchDocSubTab('calendar')">
+              <i class="fa-solid fa-calendar-days"></i> Weekly Schedule (Mon–Fri)
+            </button>
           </div>
 
-          <!-- Clinical Vitals Row -->
-          <div class="vitals-strip">
-            <div class="vital-item">
-              <span class="v-label">Blood Pressure:</span>
-              <input type="text" id="vit-bp" value="120/80 mmHg" class="vital-input">
-            </div>
-            <div class="vital-item">
-              <span class="v-label">Heart Rate:</span>
-              <input type="text" id="vit-hr" value="76 bpm" class="vital-input">
-            </div>
-            <div class="vital-item">
-              <span class="v-label">Temperature:</span>
-              <input type="text" id="vit-temp" value="98.6 °F" class="vital-input">
-            </div>
-          </div>
-
-          <form id="rx-form" class="rx-form" onsubmit="generatePrescription(event)">
-            <div class="form-row-2">
-              <div class="form-group">
-                <label>Patient Name</label>
-                <input type="text" id="rx-patient-name" value="Sarah Jenkins" required>
-              </div>
-              <div class="form-group">
-                <label>Date of Consultation</label>
-                <input type="date" id="rx-date" value="2026-08-27" required>
-              </div>
+          <!-- SUBTAB A: RX PRESCRIPTION STUDIO -->
+          <div id="doc-subtab-rx-panel">
+            <div class="workspace-header">
+              <h3><i class="fa-solid fa-file-prescription"></i> Digital Rx Prescription Studio</h3>
+              <p>Generate HIPAA-compliant official digital prescriptions with verified signature</p>
             </div>
 
-            <div class="form-group">
-              <label>Diagnosis / Clinical Assessment</label>
-              <input type="text" id="rx-diagnosis" value="Acute Upper Respiratory Tract Infection (Viral Rhinitis)" required>
+            <!-- Patient Allergy Warning Banner -->
+            <div class="allergy-alert-banner" id="allergy-banner">
+              <div class="allergy-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+              <div class="allergy-text">
+                <strong>PATIENT ALLERGY ALERT: Severe Penicillin & Beta-Lactam Allergy</strong>
+                <small>Cross-reactivity warning active. System will validate prescribed antibiotics.</small>
+              </div>
+              <span class="allergy-badge">HIGH ALERT</span>
             </div>
 
-            <div class="medications-block">
-              <label>Prescribed Medications & Dosages</label>
-              <div class="form-row-3">
-                <input type="text" id="rx-med1" placeholder="Medication" value="Amoxicillin 500mg Capsules" required>
-                <input type="text" id="rx-dose1" placeholder="Dosage" value="1 Capsule 3x Daily (with food)" required>
-                <input type="text" id="rx-dur1" placeholder="Duration" value="5 Days" required>
+            <!-- Live Contraindication Warning Box -->
+            <div class="contraindication-warning hidden" id="contraindication-box">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              <div class="contra-info">
+                <strong>CONTRAINDICATION DETECTED: Amoxicillin</strong>
+                <p>Amoxicillin is a penicillin derivative. Risk of allergic reaction with patient Sarah Jenkins.</p>
               </div>
-              <div class="form-row-3">
-                <input type="text" id="rx-med2" placeholder="Medication 2" value="Paracetamol 650mg Tablet">
-                <input type="text" id="rx-dose2" placeholder="Dosage" value="1 Tablet as needed for fever">
-                <input type="text" id="rx-dur2" placeholder="Duration" value="As needed">
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label>Doctor Advice / Recovery Instructions</label>
-              <textarea id="rx-advice" rows="3">Drink plenty of fluids, rest for 48 hours, and monitor body temperature. Contact clinic if fever persists beyond 3 days.</textarea>
-            </div>
-
-            <div class="form-footer">
-              <div class="doctor-signature-preview">
-                <span>Signed Digitally:</span>
-                <strong>Dr. Marcus Vance, MD (Lic #MED-884210)</strong>
-              </div>
-              <button type="submit" class="btn-primary">
-                <i class="fa-solid fa-file-pdf"></i> Generate & Issue Prescription
+              <button type="button" class="btn-sm btn-success" onclick="autoFixAllergySafeMed()">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Switch to Azithromycin (Safe)
               </button>
             </div>
-          </form>
+
+            <!-- Clinical Vitals Row -->
+            <div class="vitals-strip">
+              <div class="vital-item">
+                <span class="v-label">Blood Pressure:</span>
+                <input type="text" id="vit-bp" value="120/80 mmHg" class="vital-input">
+              </div>
+              <div class="vital-item">
+                <span class="v-label">Heart Rate:</span>
+                <input type="text" id="vit-hr" value="76 bpm" class="vital-input">
+              </div>
+              <div class="vital-item">
+                <span class="v-label">Temperature:</span>
+                <input type="text" id="vit-temp" value="98.6 °F" class="vital-input">
+              </div>
+            </div>
+
+            <form id="rx-form" class="rx-form" onsubmit="generatePrescription(event)">
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label>Patient Name</label>
+                  <input type="text" id="rx-patient-name" value="Sarah Jenkins" required>
+                </div>
+                <div class="form-group">
+                  <label>Date of Consultation</label>
+                  <input type="date" id="rx-date" value="2026-08-27" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Diagnosis / Clinical Assessment</label>
+                <input type="text" id="rx-diagnosis" value="Acute Upper Respiratory Tract Infection (Viral Rhinitis)" required>
+              </div>
+
+              <div class="medications-block">
+                <label>Prescribed Medications & Dosages</label>
+                <div class="form-row-3">
+                  <input type="text" id="rx-med1" placeholder="Medication" value="Amoxicillin 500mg Capsules" oninput="checkAllergySafety(this.value)" required>
+                  <input type="text" id="rx-dose1" placeholder="Dosage" value="1 Capsule 3x Daily (with food)" required>
+                  <input type="text" id="rx-dur1" placeholder="Duration" value="5 Days" required>
+                </div>
+                <div class="form-row-3">
+                  <input type="text" id="rx-med2" placeholder="Medication 2" value="Paracetamol 650mg Tablet">
+                  <input type="text" id="rx-dose2" placeholder="Dosage" value="1 Tablet as needed for fever">
+                  <input type="text" id="rx-dur2" placeholder="Duration" value="As needed">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Doctor Advice / Recovery Instructions</label>
+                <textarea id="rx-advice" rows="3">Drink plenty of fluids, rest for 48 hours, and monitor body temperature. Contact clinic if fever persists beyond 3 days.</textarea>
+              </div>
+
+              <div class="form-footer">
+                <div class="doctor-signature-preview">
+                  <span>Signed Digitally:</span>
+                  <strong>Dr. Marcus Vance, MD (Lic #MED-884210)</strong>
+                </div>
+                <button type="submit" class="btn-primary">
+                  <i class="fa-solid fa-file-pdf"></i> Generate & Issue Prescription
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- SUBTAB B: DOCTOR WEEKLY CALENDAR SCHEDULE -->
+          <div id="doc-subtab-calendar-panel" class="hidden">
+            <div class="workspace-header">
+              <h3><i class="fa-solid fa-calendar-week"></i> Dr. Marcus Vance — Weekly Schedule</h3>
+              <p>Manage tele-consultation capacity, booked patients, and clinic office hours</p>
+            </div>
+
+            <div class="doc-calendar-grid">
+              <!-- Monday -->
+              <div class="calendar-day-col">
+                <div class="day-head">
+                  <strong>Mon</strong>
+                  <span>Aug 24</span>
+                </div>
+                <div class="day-slots">
+                  <div class="slot-item booked">09:00 AM • John D.</div>
+                  <div class="slot-item booked">10:30 AM • Lisa P.</div>
+                  <div class="slot-item free" onclick="toggleCalendarSlot(this)">02:00 PM • Open</div>
+                  <div class="slot-item free" onclick="toggleCalendarSlot(this)">04:00 PM • Open</div>
+                </div>
+              </div>
+
+              <!-- Tuesday -->
+              <div class="calendar-day-col">
+                <div class="day-head">
+                  <strong>Tue</strong>
+                  <span>Aug 25</span>
+                </div>
+                <div class="day-slots">
+                  <div class="slot-item booked">09:30 AM • Kevin S.</div>
+                  <div class="slot-item booked">11:00 AM • Maria H.</div>
+                  <div class="slot-item booked">03:30 PM • Sam R.</div>
+                  <div class="slot-item free" onclick="toggleCalendarSlot(this)">04:30 PM • Open</div>
+                </div>
+              </div>
+
+              <!-- Wednesday -->
+              <div class="calendar-day-col">
+                <div class="day-head">
+                  <strong>Wed</strong>
+                  <span>Aug 26</span>
+                </div>
+                <div class="day-slots">
+                  <div class="slot-item booked">10:00 AM • Rachel F.</div>
+                  <div class="slot-item booked">01:30 PM • Alex G.</div>
+                  <div class="slot-item free" onclick="toggleCalendarSlot(this)">03:00 PM • Open</div>
+                  <div class="slot-item free" onclick="toggleCalendarSlot(this)">04:30 PM • Open</div>
+                </div>
+              </div>
+
+              <!-- Thursday (Today) -->
+              <div class="calendar-day-col today-col">
+                <div class="day-head today">
+                  <strong>Thu (Today)</strong>
+                  <span>Aug 27</span>
+                </div>
+                <div class="day-slots">
+                  <div class="slot-item live">10:30 AM • Sarah (Active)</div>
+                  <div class="slot-item booked">11:00 AM • Michael C.</div>
+                  <div class="slot-item booked">11:30 AM • Elena R.</div>
+                  <div class="slot-item free" onclick="toggleCalendarSlot(this)">03:00 PM • Open</div>
+                </div>
+              </div>
+
+              <!-- Friday -->
+              <div class="calendar-day-col">
+                <div class="day-head">
+                  <strong>Fri</strong>
+                  <span>Aug 28</span>
+                </div>
+                <div class="day-slots">
+                  <div class="slot-item booked">09:00 AM • Zoe T.</div>
+                  <div class="slot-item free" onclick="toggleCalendarSlot(this)">11:00 AM • Open</div>
+                  <div class="slot-item free" onclick="toggleCalendarSlot(this)">02:00 PM • Open</div>
+                  <div class="slot-item free" onclick="toggleCalendarSlot(this)">04:00 PM • Open</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="calendar-legend-bar">
+              <span><span class="dot-legend live"></span> Telehealth Active</span>
+              <span><span class="dot-legend booked"></span> Patient Booked</span>
+              <span><span class="dot-legend free"></span> Available Slot (Click to Toggle)</span>
+            </div>
+          </div>
 
           <!-- Generated Rx Output Hospital Pad -->
           <div id="rx-preview-card" class="rx-preview-card hidden">

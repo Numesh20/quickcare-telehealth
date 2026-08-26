@@ -2327,3 +2327,252 @@ body {
   align-items: center;
   padding-top: 10px;
 }
+
+/* ==========================================================================
+   Doctor Portal Workspace Nav & Allergy Alerts
+   ========================================================================== */
+
+.doc-workspace-nav {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 12px;
+  margin-bottom: 18px;
+}
+
+.doc-tab-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.doc-tab-btn:hover {
+  background: var(--bg-surface-elevated);
+  color: white;
+}
+
+.doc-tab-btn.active {
+  background: var(--bg-surface-elevated);
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+
+.allergy-alert-banner {
+  background: rgba(244, 63, 94, 0.12);
+  border: 1px solid rgba(244, 63, 94, 0.4);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.allergy-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(244, 63, 94, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-rose);
+  font-size: 16px;
+}
+
+.allergy-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.allergy-text strong {
+  font-size: 12px;
+  color: #fb7185;
+}
+
+.allergy-text small {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.allergy-badge {
+  background: var(--accent-rose);
+  color: white;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.contraindication-warning {
+  background: #450a0a;
+  border: 2px solid #ef4444;
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+  animation: pulseWarn 1.5s infinite;
+}
+
+@keyframes pulseWarn {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.contraindication-warning.hidden {
+  display: none;
+}
+
+.contraindication-warning i {
+  font-size: 24px;
+  color: #ef4444;
+}
+
+.contra-info {
+  flex: 1;
+}
+
+.contra-info strong {
+  font-size: 13px;
+  color: white;
+  display: block;
+}
+
+.contra-info p {
+  font-size: 11px;
+  color: #fca5a5;
+  margin-top: 2px;
+}
+
+/* ==========================================================================
+   Doctor Weekly Calendar Grid
+   ========================================================================== */
+
+.doc-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 900px) {
+  .doc-calendar-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.calendar-day-col {
+  background: var(--bg-main);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.calendar-day-col.today-col {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.2);
+}
+
+.day-head {
+  background: var(--bg-surface-elevated);
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+}
+
+.day-head.today {
+  background: rgba(6, 182, 212, 0.15);
+  color: var(--accent-cyan);
+}
+
+.day-head strong {
+  font-size: 12px;
+}
+
+.day-head span {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.day-slots {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.slot-item {
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.slot-item.booked {
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  color: #a5b4fc;
+}
+
+.slot-item.live {
+  background: rgba(16, 185, 129, 0.2);
+  border: 1px solid var(--accent-emerald);
+  color: #6ee7b7;
+  animation: pulse 1.8s infinite;
+}
+
+.slot-item.free {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed var(--border-color);
+  color: var(--text-muted);
+}
+
+.slot-item.free:hover {
+  background: rgba(6, 182, 212, 0.1);
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+
+.calendar-legend-bar {
+  display: flex;
+  gap: 16px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  justify-content: center;
+  padding: 10px;
+  background: var(--bg-surface-elevated);
+  border-radius: var(--radius-sm);
+}
+
+.dot-legend {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 4px;
+}
+
+.dot-legend.live { background: var(--accent-emerald); }
+.dot-legend.booked { background: var(--accent-indigo); }
+.dot-legend.free { background: var(--text-muted); }
+

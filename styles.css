@@ -2993,4 +2993,64 @@ body {
   font-weight: 800;
 }
 
+/* ==========================================================================
+   Light / Dark Mode Theme Variables
+   ========================================================================== */
+
+.theme-toggle-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-color);
+  color: var(--accent-amber);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.theme-toggle-btn:hover {
+  background: #334155;
+  transform: rotate(15deg);
+}
+
+body.light-theme {
+  --bg-main: #f1f5f9;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #f8fafc;
+  --bg-card: #ffffff;
+  --border-color: rgba(0, 0, 0, 0.08);
+  --border-hover: rgba(0, 0, 0, 0.16);
+
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+}
+
+body.light-theme .phone-screen {
+  background: #f8fafc;
+}
+
+body.light-theme .doc-card,
+body.light-theme .history-card,
+body.light-theme .search-input-box,
+body.light-theme .kanban-card,
+body.light-theme .retro-card {
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+body.light-theme .p-card {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+body.light-theme .p-card.active-card {
+  background: linear-gradient(135deg, #0284c7, #06b6d4);
+  color: white;
+}
+
+
 

@@ -810,3 +810,61 @@ function resetRetroBoard() {
   showToast("Retrospective Notes Synced with Jira", "info");
 }
 
+// ==========================================================================
+// Light / Dark Theme Switcher Logic
+// ==========================================================================
+
+let isLightTheme = false;
+
+function toggleTheme() {
+  isLightTheme = !isLightTheme;
+  document.body.classList.toggle("light-theme", isLightTheme);
+  const btn = document.getElementById("theme-toggle-btn");
+  btn.innerHTML = isLightTheme ? `<i class="fa-solid fa-sun"></i>` : `<i class="fa-solid fa-moon"></i>`;
+  playChime("click");
+  showToast(isLightTheme ? "Light Theme Activated" : "Dark Cyber Theme Activated", "info");
+}
+
+// ==========================================================================
+// One-Click CSV Exporter for Agile Backlog & RAID Register
+// ==========================================================================
+
+function exportProjectDataCSV() {
+  let csv = "QUICKCARE TELEHEALTH MVP — PROJECT BACKLOG & RAID REGISTER\n\n";
+  
+  // Section 1: Product Backlog
+  csv += "--- AGILE PRODUCT BACKLOG ---\n";
+  csv += "Story ID,Epic,Story Title,Story Points,Status,Assignee\n";
+  kanbanCards.forEach(c => {
+    csv += `"${c.id}","${c.epic}","${c.title.replace(/"/g, '""')}",${c.pts},"${c.status.toUpperCase()}","${c.assignee}"\n`;
+  });
+
+  csv += "\n--- RAID RISK REGISTER ---\n";
+  csv += "Risk ID,Category,Risk Description,Probability,Impact,Score,Mitigation Strategy,Status\n";
+  csv += '"RSK-01","Technical","WebRTC Video Lag on 3G",3,4,12,"Adaptive bitrate & Twilio fallback","RESOLVED"\n';
+  csv += '"RSK-02","Compliance","HIPAA Privacy Breach",2,5,10,"End-to-end AES-256 encryption & penetration audit","RESOLVED"\n';
+  csv += '"RSK-03","Scope","Automated Insurance Scope Creep",4,4,16,"Defended MVP boundary; shifted to Version 2.0","RESOLVED"\n';
+  csv += '"RSK-04","Vendor","Stripe Test API Sandbox Delay",3,3,9,"PM escalated to security team; cleared in 30m","RESOLVED"\n';
+
+  csv += "\n--- FINANCIAL BUDGET SUMMARY ---\n";
+  csv += "Category,Approved Baseline,Actual Invoiced,Cost Variance\n";
+  csv += '"Engineering & UX Labor","$90,000","$88,200","+$1,800 (Favorable)"\n';
+  csv += '"AWS Cloud & APIs","$8,000","$7,400","+$600 (Favorable)"\n';
+  csv += '"HIPAA Security Audit","$12,000","$12,000","$0 (On Budget)"\n';
+  csv += '"Contingency Reserve","$10,000","$8,800","+$1,200 (Saved)"\n';
+  csv += '"TOTAL PROJECT","$120,000","$116,400","+$3,600 (3% Under Budget)"\n';
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", `QuickCare_IT_PM_Project_Deliverables_${new Date().toISOString().slice(0,10)}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  playChime("success");
+  showToast("Exported QuickCare_IT_PM_Project_Deliverables.csv!", "success");
+}
+
+

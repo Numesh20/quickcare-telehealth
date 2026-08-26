@@ -39,6 +39,9 @@
       </nav>
 
       <div class="header-actions">
+        <button class="theme-toggle-btn" id="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Light/Dark Theme">
+          <i class="fa-solid fa-moon"></i>
+        </button>
         <button class="audio-toggle-btn" id="audio-toggle-btn" onclick="toggleAudioFx()" title="Toggle Sound FX">
           <i class="fa-solid fa-volume-high"></i>
         </button>
@@ -525,8 +528,9 @@
               <small style="color: var(--text-secondary);">Click any story card to advance its sprint state, or create a new user story.</small>
             </div>
             <div style="display: flex; gap: 8px;">
+              <button class="btn-sm btn-outline" onclick="exportProjectDataCSV()"><i class="fa-solid fa-file-csv"></i> Export Backlog CSV</button>
               <button class="btn-sm btn-primary" onclick="openNewStoryModal()"><i class="fa-solid fa-plus"></i> Add User Story</button>
-              <button class="btn-sm btn-outline" onclick="resetKanban()"><i class="fa-solid fa-rotate-left"></i> Reset Board</button>
+              <button class="btn-sm btn-outline" onclick="resetKanban()"><i class="fa-solid fa-rotate-left"></i> Reset</button>
             </div>
           </div>
 

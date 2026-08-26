@@ -507,11 +507,14 @@
 
         <!-- PM Section Tabs -->
         <div class="pm-subtabs">
-          <button class="pm-subtab active" onclick="switchPmTab('kanban-tab')"><i class="fa-solid fa-table-columns"></i> Live Agile Kanban Board</button>
+          <button class="pm-subtab active" onclick="switchPmTab('kanban-tab')"><i class="fa-solid fa-table-columns"></i> Live Agile Kanban</button>
+          <button class="pm-subtab" onclick="switchPmTab('poker-tab')"><i class="fa-solid fa-clone"></i> Planning Poker</button>
+          <button class="pm-subtab" onclick="switchPmTab('retro-tab')"><i class="fa-solid fa-comments"></i> Retrospective</button>
+          <button class="pm-subtab" onclick="switchPmTab('budget-tab')"><i class="fa-solid fa-wallet"></i> Budget & Burn</button>
           <button class="pm-subtab" onclick="switchPmTab('velocity-tab')"><i class="fa-solid fa-chart-line"></i> Velocity & Burndown</button>
-          <button class="pm-subtab" onclick="switchPmTab('raid-tab')"><i class="fa-solid fa-triangle-exclamation"></i> RAID Risk Heatmap</button>
+          <button class="pm-subtab" onclick="switchPmTab('raid-tab')"><i class="fa-solid fa-triangle-exclamation"></i> RAID Log</button>
           <button class="pm-subtab" onclick="switchPmTab('raci-tab')"><i class="fa-solid fa-users-gear"></i> RACI Matrix</button>
-          <button class="pm-subtab special" onclick="switchPmTab('exec-tab')"><i class="fa-solid fa-briefcase"></i> Executive Report</button>
+          <button class="pm-subtab special" onclick="switchPmTab('exec-tab')"><i class="fa-solid fa-briefcase"></i> Exec Report</button>
         </div>
 
         <!-- SUBTAB 1: KANBAN BOARD -->
@@ -842,8 +845,236 @@
                 <li>Delivered 100% of defined MVP in-scope features across 4 two-week Sprints.</li>
                 <li>Completed rigorous HIPAA Security & Penetration audit with zero critical vulnerabilities.</li>
                 <li>Successfully published on Apple App Store & Google Play Store with an initial 4.7-star rating.</li>
-                <li>Managed project budget effectively, yielding a 3% ($3,600) favorable cost variance.</li>
-              </ul>
+        <!-- SUBTAB 6: AGILE PLANNING POKER ESTIMATION -->
+        <div id="poker-tab" class="pm-tab-content">
+          <div class="poker-game-card">
+            <div class="poker-header">
+              <div>
+                <h4><i class="fa-solid fa-clone"></i> Agile Sprint Planning Poker (Fibonacci Estimation)</h4>
+                <small style="color: var(--text-secondary);">Select a card to vote on Story Point complexity with your Scrum team.</small>
+              </div>
+              <span class="poker-status-tag" id="poker-consensus-status">Awaiting Your Vote</span>
+            </div>
+
+            <!-- Current Story Being Estimated -->
+            <div class="poker-story-box">
+              <div class="poker-story-meta">
+                <span class="poker-badge">Active Story</span>
+                <strong id="poker-active-id">US-301</strong>
+                <span class="poker-epic">Epic: Telehealth Video Room</span>
+              </div>
+              <h3 id="poker-active-title">"As an approved patient, I want to join an encrypted 1-on-1 video call with my doctor at appointment time."</h3>
+              <p>Acceptance: WebRTC video stream, camera/mic toggle, reconnection on 3G network drop, HIPAA 256-bit encryption.</p>
+            </div>
+
+            <!-- Fibonacci Cards Deck -->
+            <div class="poker-cards-deck">
+              <div class="p-card" onclick="castPokerVote(1)">1</div>
+              <div class="p-card" onclick="castPokerVote(2)">2</div>
+              <div class="p-card" onclick="castPokerVote(3)">3</div>
+              <div class="p-card" onclick="castPokerVote(5)">5</div>
+              <div class="p-card active-card" onclick="castPokerVote(8)">8</div>
+              <div class="p-card" onclick="castPokerVote(13)">13</div>
+              <div class="p-card" onclick="castPokerVote('☕')">☕</div>
+            </div>
+
+            <!-- Team Votes Breakdown -->
+            <div class="poker-team-votes" id="poker-team-votes">
+              <div class="team-vote-box">
+                <span class="vote-role">Lead Architect (LA)</span>
+                <strong class="vote-num" id="vote-la">8 pts</strong>
+              </div>
+              <div class="team-vote-box">
+                <span class="vote-role">Mobile Dev (iOS)</span>
+                <strong class="vote-num" id="vote-ios">8 pts</strong>
+              </div>
+              <div class="team-vote-box">
+                <span class="vote-role">QA Lead (QA)</span>
+                <strong class="vote-num" id="vote-qa">8 pts</strong>
+              </div>
+              <div class="team-vote-box user-vote-box">
+                <span class="vote-role">Your Vote (IT PM)</span>
+                <strong class="vote-num user-vote" id="vote-user">8 pts</strong>
+              </div>
+            </div>
+
+            <div class="poker-consensus-banner">
+              <i class="fa-solid fa-circle-check text-success"></i>
+              <span><strong>Team Consensus Reached:</strong> Story assigned <strong>8 Story Points</strong> & committed to Sprint 3!</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUBTAB 7: SPRINT RETROSPECTIVE STICKY BOARD -->
+        <div id="retro-tab" class="pm-tab-content">
+          <div class="retro-header-row">
+            <div>
+              <h4><i class="fa-solid fa-comments"></i> Sprint 4 Retrospective Board</h4>
+              <small style="color: var(--text-secondary);">Continuous improvement board: Add sticky notes & vote with your team.</small>
+            </div>
+            <button class="btn-sm btn-outline" onclick="resetRetroBoard()"><i class="fa-solid fa-rotate-left"></i> Reset Notes</button>
+          </div>
+
+          <div class="retro-board-grid">
+            <!-- Col 1: What Went Well -->
+            <div class="retro-col well-col">
+              <div class="retro-col-head">
+                <span>💚 What Went Well (Praise)</span>
+                <span class="retro-count" id="count-retro-well">2</span>
+              </div>
+              <div class="retro-cards" id="cards-retro-well">
+                <div class="retro-card">
+                  <p>Strict MVP scoping prevented 6-week delay requested by marketing.</p>
+                  <div class="retro-card-footer">
+                    <span class="retro-author">IT PM (You)</span>
+                    <button class="btn-upvote" onclick="upvoteRetro(this)">👍 <span>5</span></button>
+                  </div>
+                </div>
+                <div class="retro-card">
+                  <p>Daily 15-minute standup discipline helped resolve 12 technical blockers.</p>
+                  <div class="retro-card-footer">
+                    <span class="retro-author">Lead Architect</span>
+                    <button class="btn-upvote" onclick="upvoteRetro(this)">👍 <span>4</span></button>
+                  </div>
+                </div>
+              </div>
+              <div class="add-retro-input-row">
+                <input type="text" id="input-retro-well" placeholder="+ Add a note..." onkeydown="if(event.key==='Enter') addRetroNote('well')">
+                <button class="btn-sm btn-primary" onclick="addRetroNote('well')">+</button>
+              </div>
+            </div>
+
+            <!-- Col 2: What Slowed Us Down -->
+            <div class="retro-col slow-col">
+              <div class="retro-col-head">
+                <span>🛑 What Slowed Us Down (Blockers)</span>
+                <span class="retro-count" id="count-retro-slow">2</span>
+              </div>
+              <div class="retro-cards" id="cards-retro-slow">
+                <div class="retro-card">
+                  <p>Stripe sandbox production credentials took 48h for external security approval.</p>
+                  <div class="retro-card-footer">
+                    <span class="retro-author">Mobile Dev</span>
+                    <button class="btn-upvote" onclick="upvoteRetro(this)">👍 <span>6</span></button>
+                  </div>
+                </div>
+                <div class="retro-card">
+                  <p>Doctor appointment slot race condition caused booking bug in Sprint 2.</p>
+                  <div class="retro-card-footer">
+                    <span class="retro-author">QA Lead</span>
+                    <button class="btn-upvote" onclick="upvoteRetro(this)">👍 <span>3</span></button>
+                  </div>
+                </div>
+              </div>
+              <div class="add-retro-input-row">
+                <input type="text" id="input-retro-slow" placeholder="+ Add a note..." onkeydown="if(event.key==='Enter') addRetroNote('slow')">
+                <button class="btn-sm btn-primary" onclick="addRetroNote('slow')">+</button>
+              </div>
+            </div>
+
+            <!-- Col 3: Action Items -->
+            <div class="retro-col action-col">
+              <div class="retro-col-head">
+                <span>🚀 Action Items for Next Project</span>
+                <span class="retro-count" id="count-retro-action">2</span>
+              </div>
+              <div class="retro-cards" id="cards-retro-action">
+                <div class="retro-card">
+                  <p>Provision all 3rd-party sandbox API keys in Sprint 0 before development begins.</p>
+                  <div class="retro-card-footer">
+                    <span class="retro-author">IT PM (You)</span>
+                    <button class="btn-upvote" onclick="upvoteRetro(this)">👍 <span>8</span></button>
+                  </div>
+                </div>
+                <div class="retro-card">
+                  <p>Involve backend engineers earlier during acceptance criteria drafting for real-time APIs.</p>
+                  <div class="retro-card-footer">
+                    <span class="retro-author">Product Owner</span>
+                    <button class="btn-upvote" onclick="upvoteRetro(this)">👍 <span>5</span></button>
+                  </div>
+                </div>
+              </div>
+              <div class="add-retro-input-row">
+                <input type="text" id="input-retro-action" placeholder="+ Add a note..." onkeydown="if(event.key==='Enter') addRetroNote('action')">
+                <button class="btn-sm btn-primary" onclick="addRetroNote('action')">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUBTAB 8: LIVE BUDGET & RESOURCE BURN TRACKER -->
+        <div id="budget-tab" class="pm-tab-content">
+          <div class="budget-tracker-card">
+            <div class="budget-header-row">
+              <div>
+                <h4><i class="fa-solid fa-wallet"></i> Budget & Financial Burn Reconciliation</h4>
+                <small style="color: var(--text-secondary);">Tracking CapEx/OpEx allocation against approved $120,000 baseline budget.</small>
+              </div>
+              <div class="budget-variance-badge">
+                <span>Favorable Variance:</span>
+                <strong>+$3,600 (3% Saved)</strong>
+              </div>
+            </div>
+
+            <div class="budget-progress-bars">
+              <!-- Item 1: Engineering -->
+              <div class="b-prog-item">
+                <div class="b-prog-labels">
+                  <span>👨‍💻 Engineering & UX Design (6 Team Members)</span>
+                  <strong>$88,200 / $90,000 (98.0%)</strong>
+                </div>
+                <div class="b-prog-track">
+                  <div class="b-prog-fill green" style="width: 98%;"></div>
+                </div>
+              </div>
+
+              <!-- Item 2: Cloud -->
+              <div class="b-prog-item">
+                <div class="b-prog-labels">
+                  <span>☁️ AWS Cloud Hosting & Twilio/Stripe API Usage</span>
+                  <strong>$7,400 / $8,000 (92.5%)</strong>
+                </div>
+                <div class="b-prog-track">
+                  <div class="b-prog-fill cyan" style="width: 92.5%;"></div>
+                </div>
+              </div>
+
+              <!-- Item 3: Security -->
+              <div class="b-prog-item">
+                <div class="b-prog-labels">
+                  <span>🔒 HIPAA Security & Penetration Testing Audit</span>
+                  <strong>$12,000 / $12,000 (100%)</strong>
+                </div>
+                <div class="b-prog-track">
+                  <div class="b-prog-fill purple" style="width: 100%;"></div>
+                </div>
+              </div>
+
+              <!-- Item 4: Contingency Reserve -->
+              <div class="b-prog-item">
+                <div class="b-prog-labels">
+                  <span>🛡️ Contingency Risk Reserve (10% Managed Buffer)</span>
+                  <strong>$8,800 / $10,000 (88.0% - $1,200 Retained)</strong>
+                </div>
+                <div class="b-prog-track">
+                  <div class="b-prog-fill amber" style="width: 88%;"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="budget-totals-row">
+              <div class="tot-box">
+                <span class="tot-lbl">Approved Budget</span>
+                <h3>$120,000</h3>
+              </div>
+              <div class="tot-box">
+                <span class="tot-lbl">Actual Invoiced Spend</span>
+                <h3 class="text-success">$116,400</h3>
+              </div>
+              <div class="tot-box">
+                <span class="tot-lbl">Final Cost Variance</span>
+                <h3 class="text-success">+$3,600 (Under Budget)</h3>
+              </div>
             </div>
           </div>
         </div>

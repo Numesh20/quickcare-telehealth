@@ -2576,3 +2576,421 @@ body {
 .dot-legend.booked { background: var(--accent-indigo); }
 .dot-legend.free { background: var(--text-muted); }
 
+/* ==========================================================================
+   Agile Planning Poker Game
+   ========================================================================== */
+
+.poker-game-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.poker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 14px;
+}
+
+.poker-header h4 {
+  font-size: 16px;
+}
+
+.poker-status-tag {
+  background: rgba(6, 182, 212, 0.15);
+  color: var(--accent-cyan);
+  border: 1px solid var(--accent-cyan);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.poker-story-box {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.poker-story-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.poker-badge {
+  background: var(--primary);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.poker-story-box h3 {
+  font-size: 14px;
+  color: white;
+  line-height: 1.4;
+}
+
+.poker-story-box p {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.poker-cards-deck {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 10px 0;
+}
+
+.p-card {
+  width: 60px;
+  height: 90px;
+  background: #0f172a;
+  border: 2px solid #334155;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-primary);
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.p-card:hover {
+  transform: translateY(-8px) scale(1.05);
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+  box-shadow: 0 10px 20px rgba(6, 182, 212, 0.3);
+}
+
+.p-card.active-card {
+  background: linear-gradient(135deg, #0284c7, #06b6d4);
+  border-color: #38bdf8;
+  color: white;
+  transform: translateY(-10px) scale(1.08);
+  box-shadow: 0 10px 25px rgba(2, 132, 199, 0.5);
+}
+
+.poker-team-votes {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .poker-team-votes {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.team-vote-box {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-color);
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.team-vote-box.user-vote-box {
+  border-color: var(--accent-cyan);
+  background: rgba(6, 182, 212, 0.08);
+}
+
+.vote-role {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.vote-num {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.vote-num.user-vote {
+  color: var(--accent-cyan);
+}
+
+.poker-consensus-banner {
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #a7f3d0;
+}
+
+/* ==========================================================================
+   Sprint Retrospective Board
+   ========================================================================== */
+
+.retro-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.retro-board-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .retro-board-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.retro-col {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.retro-col.well-col { border-top: 3px solid var(--accent-emerald); }
+.retro-col.slow-col { border-top: 3px solid var(--accent-rose); }
+.retro-col.action-col { border-top: 3px solid var(--accent-indigo); }
+
+.retro-col-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 700;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.retro-count {
+  background: var(--bg-surface-elevated);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+}
+
+.retro-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 200px;
+}
+
+.retro-card {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform 0.15s ease;
+}
+
+.retro-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-hover);
+}
+
+.retro-card p {
+  font-size: 12px;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.retro-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.retro-author {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.btn-upvote {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-upvote:hover {
+  background: rgba(6, 182, 212, 0.2);
+  border-color: var(--accent-cyan);
+}
+
+.add-retro-input-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.add-retro-input-row input {
+  flex: 1;
+  background: #0f172a;
+  border: 1px solid var(--border-color);
+  color: white;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  outline: none;
+}
+
+/* ==========================================================================
+   Budget & Resource Burn Tracker
+   ========================================================================== */
+
+.budget-tracker-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.budget-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 14px;
+}
+
+.budget-variance-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+}
+
+.budget-variance-badge span {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.budget-variance-badge strong {
+  font-size: 14px;
+  color: var(--accent-emerald);
+}
+
+.budget-progress-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.b-prog-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.b-prog-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-primary);
+}
+
+.b-prog-labels span {
+  color: var(--text-secondary);
+}
+
+.b-prog-track {
+  height: 10px;
+  background: #0f172a;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.b-prog-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.b-prog-fill.green { background: linear-gradient(90deg, #059669, #10b981); }
+.b-prog-fill.cyan { background: linear-gradient(90deg, #0284c7, #06b6d4); }
+.b-prog-fill.purple { background: linear-gradient(90deg, #4f46e5, #818cf8); }
+.b-prog-fill.amber { background: linear-gradient(90deg, #d97706, #f59e0b); }
+
+.budget-totals-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-color);
+}
+
+@media (max-width: 640px) {
+  .budget-totals-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tot-box {
+  background: var(--bg-surface-elevated);
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tot-lbl {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.tot-box h3 {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+

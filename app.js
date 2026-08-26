@@ -732,3 +732,81 @@ function updateRiskScore() {
     badge.innerText = "LOW RISK";
   }
 }
+
+// ==========================================================================
+// Agile Planning Poker Estimation Logic
+// ==========================================================================
+
+function castPokerVote(pts) {
+  document.querySelectorAll(".poker-cards-deck .p-card").forEach(c => {
+    c.classList.toggle("active-card", c.innerText === String(pts));
+  });
+
+  document.getElementById("vote-user").innerText = pts === "☕" ? "☕ Break" : `${pts} pts`;
+
+  // Simulated Team Consensus Behavior
+  if (pts === 8) {
+    document.getElementById("vote-la").innerText = "8 pts";
+    document.getElementById("vote-ios").innerText = "8 pts";
+    document.getElementById("vote-qa").innerText = "8 pts";
+    document.getElementById("poker-consensus-status").innerText = "Consensus: 8 Points";
+    document.getElementById("poker-consensus-status").style.borderColor = "#10b981";
+    document.getElementById("poker-consensus-status").style.color = "#10b981";
+  } else if (pts === "☕") {
+    document.getElementById("vote-la").innerText = "5 pts";
+    document.getElementById("vote-ios").innerText = "8 pts";
+    document.getElementById("vote-qa").innerText = "☕";
+    document.getElementById("poker-consensus-status").innerText = "Coffee Break Called";
+  } else {
+    document.getElementById("vote-la").innerText = `${pts} pts`;
+    document.getElementById("vote-ios").innerText = pts > 5 ? `${pts - 2} pts` : `${pts} pts`;
+    document.getElementById("vote-qa").innerText = `${pts} pts`;
+    document.getElementById("poker-consensus-status").innerText = `Estimating: ${pts} Points`;
+  }
+
+  playChime("click");
+  showToast(`Voted ${pts} Story Points on US-301 Video Call!`, "success");
+}
+
+// ==========================================================================
+// Sprint Retrospective Board Logic
+// ==========================================================================
+
+function addRetroNote(colType) {
+  const input = document.getElementById(`input-retro-${colType}`);
+  const text = input.value.trim();
+  if (!text) return;
+
+  const container = document.getElementById(`cards-retro-${colType}`);
+  const card = document.createElement("div");
+  card.className = "retro-card";
+  card.innerHTML = `
+    <p>${text}</p>
+    <div class="retro-card-footer">
+      <span class="retro-author">You (IT PM)</span>
+      <button class="btn-upvote" onclick="upvoteRetro(this)">👍 <span>1</span></button>
+    </div>
+  `;
+
+  container.prepend(card);
+  input.value = "";
+
+  const countBadge = document.getElementById(`count-retro-${colType}`);
+  countBadge.innerText = parseInt(countBadge.innerText) + 1;
+
+  playChime("success");
+  showToast("Added Retrospective Sticky Note", "success");
+}
+
+function upvoteRetro(btn) {
+  const span = btn.querySelector("span");
+  span.innerText = parseInt(span.innerText) + 1;
+  btn.style.borderColor = "#06b6d4";
+  btn.style.color = "#06b6d4";
+  playChime("click");
+}
+
+function resetRetroBoard() {
+  showToast("Retrospective Notes Synced with Jira", "info");
+}
+

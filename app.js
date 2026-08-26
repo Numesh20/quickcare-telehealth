@@ -867,4 +867,110 @@ function exportProjectDataCSV() {
   showToast("Exported QuickCare_IT_PM_Project_Deliverables.csv!", "success");
 }
 
+// ==========================================================================
+// Agile Sprint Capacity & Burndown Simulation Engine
+// ==========================================================================
+
+const sprintBaselines = {
+  1: { name: "Sprint 1 (Auth & User Onboarding)", pts: 28, startY: 20 },
+  2: { name: "Sprint 2 (Doctor Discovery & Booking)", pts: 30, startY: 20 },
+  3: { name: "Sprint 3 (WebRTC Video Room & Stripe)", pts: 33, startY: 20 },
+  4: { name: "Sprint 4: Active (Digital Rx & Release)", pts: 29, startY: 20 }
+};
+
+let activeSimSprint = 4;
+
+function selectSprintView(sprintNum) {
+  activeSimSprint = sprintNum;
+  document.querySelectorAll(".s-chip").forEach((c, idx) => {
+    c.classList.toggle("active", idx + 1 === sprintNum);
+  });
+
+  document.getElementById("burndown-chart-title").innerText = `📉 ${sprintBaselines[sprintNum].name} Burndown`;
+  playChime("click");
+  updateBurndownSim();
+  showToast(`Loaded ${sprintBaselines[sprintNum].name}`, "info");
+}
+
+function updateBurndownSim() {
+  const devs = parseInt(document.getElementById("sim-range-devs").value);
+  const scope = parseInt(document.getElementById("sim-range-scope").value);
+  const sick = parseInt(document.getElementById("sim-range-sick").value);
+
+  document.getElementById("sim-val-devs").innerText = `${devs} Devs`;
+  document.getElementById("sim-val-scope").innerText = scope > 0 ? `+${scope} pts (Creep)` : scope < 0 ? `${scope} pts (Descoped)` : `0 pts`;
+  document.getElementById("sim-val-sick").innerText = `${sick} Days`;
+
+  const basePts = sprintBaselines[activeSimSprint].pts;
+  const totalPts = basePts + scope;
+
+  // Calculate daily burn velocity: Base is ~3.0 pts/day with 6 devs
+  const effectiveDevCapacity = (devs / 6) * (1 - (sick * 0.08));
+  const dailyBurn = (basePts / 10) * effectiveDevCapacity;
+  const totalBurnedIn10Days = dailyBurn * 10;
+  const spillover = Math.max(0, Math.round(totalPts - totalBurnedIn10Days));
+  const completionDay = Math.min(12, (totalPts / dailyBurn)).toFixed(1);
+
+  // Generate SVG polyline points (X: 40 to 400, Y: 20 to 190)
+  const xStart = 40, xEnd = 400;
+  const yStart = 20, yEnd = 190;
+  const yRange = yEnd - yStart;
+
+  const points = [];
+  let remaining = totalPts;
+
+  for (let day = 0; day <= 10; day++) {
+    const x = xStart + (day / 10) * (xEnd - xStart);
+    const dayBurnAmount = (day === 0) ? 0 : dailyBurn * (0.85 + Math.sin(day) * 0.2);
+    remaining = Math.max(0, remaining - dayBurnAmount);
+    
+    // Convert remaining points to Y-coordinate
+    const yFraction = 1 - (remaining / totalPts);
+    const y = yStart + (yFraction * yRange);
+    points.push(`${Math.round(x)},${Math.round(y)}`);
+  }
+
+  const polyline = document.getElementById("burndown-polyline");
+  if (polyline) polyline.setAttribute("points", points.join(" "));
+
+  // Update Dynamic Forecast Alert Banner
+  const banner = document.getElementById("sim-forecast-box");
+  const titleEl = document.getElementById("sim-forecast-title");
+  const descEl = document.getElementById("sim-forecast-desc");
+  const tagEl = document.getElementById("sim-forecast-tag");
+  const iconEl = document.getElementById("sim-forecast-icon");
+
+  banner.className = "sim-forecast-banner";
+
+  if (spillover === 0 && completionDay <= 10) {
+    banner.classList.add("success");
+    iconEl.className = "fa-solid fa-circle-check";
+    titleEl.innerText = "SPRINT ON TRACK: 100% Delivery Projected";
+    descEl.innerText = `At simulated velocity of ${(dailyBurn).toFixed(1)} pts/day, all ${totalPts} points complete on Day ${completionDay} with zero spillover!`;
+    tagEl.innerText = "0 Pt Spillover (Healthy)";
+  } else if (spillover <= 4) {
+    banner.classList.add("warning");
+    iconEl.className = "fa-solid fa-triangle-exclamation";
+    titleEl.innerText = `MODERATE RISK: ~${spillover} Story Points At Risk`;
+    descEl.innerText = `Velocity dropped due to team capacity constraints. Projected completion: Day ${completionDay}. Recommend fast-tracking QA.`;
+    tagEl.innerText = `+${spillover} Pts Spillover (Warning)`;
+  } else {
+    banner.classList.add("danger");
+    iconEl.className = "fa-solid fa-circle-xmark";
+    titleEl.innerText = `CRITICAL SPILLOVER: +${spillover} Points Delayed!`;
+    descEl.innerText = `Team capacity cannot sustain scope (${totalPts} pts). PM Action: Immediately descope non-essential stories or request developer augmentation!`;
+    tagEl.innerText = `+${spillover} Pts Spillover (Critical)`;
+  }
+}
+
+function resetBurndownSim() {
+  document.getElementById("sim-range-devs").value = 6;
+  document.getElementById("sim-range-scope").value = 0;
+  document.getElementById("sim-range-sick").value = 0;
+  updateBurndownSim();
+  playChime("click");
+  showToast("Reset to Standard 6-Dev Baseline Velocity", "info");
+}
+
+
 

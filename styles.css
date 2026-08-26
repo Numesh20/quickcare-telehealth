@@ -3052,5 +3052,248 @@ body.light-theme .p-card.active-card {
   color: white;
 }
 
+/* ==========================================================================
+   Agile Sprint Simulation Studio & Interactive Burndown
+   ========================================================================== */
+
+.sprint-selector-strip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.strip-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sprint-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.s-chip {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.s-chip:hover {
+  border-color: var(--accent-cyan);
+  color: white;
+}
+
+.s-chip.active {
+  background: rgba(6, 182, 212, 0.15);
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+
+.sim-control-panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sim-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 12px;
+}
+
+.sim-sliders-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 900px) {
+  .sim-sliders-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sim-control-item {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-color);
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sim-ctrl-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.sim-ctrl-label strong {
+  color: var(--accent-cyan);
+  font-weight: 800;
+}
+
+.sim-control-item input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent-cyan);
+  cursor: pointer;
+}
+
+.sim-scale-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  color: var(--text-muted);
+}
+
+.sim-forecast-banner {
+  padding: 14px 18px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: all 0.3s ease;
+}
+
+.sim-forecast-banner.success {
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #a7f3d0;
+}
+
+.sim-forecast-banner.warning {
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #fde68a;
+}
+
+.sim-forecast-banner.danger {
+  background: rgba(244, 63, 94, 0.15);
+  border: 1px solid rgba(244, 63, 94, 0.4);
+  color: #fecdd3;
+}
+
+.sim-forecast-banner i {
+  font-size: 24px;
+}
+
+.sim-forecast-banner.success i { color: var(--accent-emerald); }
+.sim-forecast-banner.warning i { color: var(--accent-amber); }
+.sim-forecast-banner.danger i { color: var(--accent-rose); }
+
+.forecast-content {
+  flex: 1;
+}
+
+.forecast-content strong {
+  font-size: 13px;
+  display: block;
+}
+
+.forecast-content p {
+  font-size: 11px;
+  margin-top: 2px;
+  opacity: 0.9;
+}
+
+.forecast-pts-tag {
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.chart-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.chart-legend-compact {
+  display: flex;
+  gap: 10px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.dot-legend-dash {
+  display: inline-block;
+  width: 14px;
+  height: 2px;
+  background: #64748b;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+.dot-legend-solid {
+  display: inline-block;
+  width: 14px;
+  height: 3px;
+  background: #00f2fe;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+.active-sprint-bar .v-bars {
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.4);
+  border-radius: 4px;
+}
+
+.velocity-metrics-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  background: var(--bg-surface-elevated);
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  margin-top: 14px;
+}
+
+.v-met {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.v-met span {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.v-met strong {
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+
 
 

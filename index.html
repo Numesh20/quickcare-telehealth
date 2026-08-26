@@ -571,82 +571,165 @@
           </div>
         </div>
 
-        <!-- SUBTAB 2: VELOCITY & BURNDOWN -->
+        <!-- SUBTAB 2: VELOCITY & BURNDOWN (INTERACTIVE SIMULATOR) -->
         <div id="velocity-tab" class="pm-tab-content">
-          <div class="charts-grid-2">
-            <div class="chart-card">
-              <h4>🏃 Sprint Velocity (Planned vs Completed Story Points)</h4>
-              <div class="velocity-bars-container">
-                <div class="v-bar-group">
-                  <div class="v-bars">
-                    <div class="v-bar planned" style="height: 140px;" title="Planned: 28 pts"><span>28</span></div>
-                    <div class="v-bar actual" style="height: 140px;" title="Delivered: 28 pts"><span>28</span></div>
-                  </div>
-                  <span class="v-label">Sprint 1 (Auth)</span>
-                </div>
+          
+          <!-- Sprint Selection Bar -->
+          <div class="sprint-selector-strip">
+            <span class="strip-label"><i class="fa-solid fa-list-check"></i> Select Sprint:</span>
+            <div class="sprint-chips">
+              <button class="s-chip" onclick="selectSprintView(1)">Sprint 1 (28 pts)</button>
+              <button class="s-chip" onclick="selectSprintView(2)">Sprint 2 (30 pts)</button>
+              <button class="s-chip" onclick="selectSprintView(3)">Sprint 3 (33 pts)</button>
+              <button class="s-chip active" onclick="selectSprintView(4)">Sprint 4: Active (29 pts)</button>
+            </div>
+          </div>
 
-                <div class="v-bar-group">
-                  <div class="v-bars">
-                    <div class="v-bar planned" style="height: 160px;" title="Planned: 32 pts"><span>32</span></div>
-                    <div class="v-bar actual" style="height: 150px;" title="Delivered: 30 pts"><span>30</span></div>
-                  </div>
-                  <span class="v-label">Sprint 2 (Booking)</span>
-                </div>
-
-                <div class="v-bar-group">
-                  <div class="v-bars">
-                    <div class="v-bar planned" style="height: 165px;" title="Planned: 33 pts"><span>33</span></div>
-                    <div class="v-bar actual" style="height: 165px;" title="Delivered: 33 pts"><span>33</span></div>
-                  </div>
-                  <span class="v-label">Sprint 3 (Video/Pay)</span>
-                </div>
-
-                <div class="v-bar-group">
-                  <div class="v-bars">
-                    <div class="v-bar planned" style="height: 145px;" title="Planned: 29 pts"><span>29</span></div>
-                    <div class="v-bar actual" style="height: 145px;" title="Delivered: 29 pts"><span>29</span></div>
-                  </div>
-                  <span class="v-label">Sprint 4 (Prescriptions)</span>
-                </div>
+          <!-- Interactive Simulator Controls Widget -->
+          <div class="sim-control-panel">
+            <div class="sim-header">
+              <div>
+                <h4><i class="fa-solid fa-sliders"></i> Agile Sprint Capacity & Burndown Simulation Studio</h4>
+                <small style="color: var(--text-secondary);">Adjust team size, developer sick days, or injected scope to simulate real-time burndown outcomes.</small>
               </div>
-              <div class="chart-legend">
-                <span class="leg-item"><span class="leg-box planned"></span> Committed Points</span>
-                <span class="leg-item"><span class="leg-box actual"></span> Delivered Points</span>
+              <button class="btn-sm btn-outline" onclick="resetBurndownSim()"><i class="fa-solid fa-rotate-left"></i> Reset Baseline</button>
+            </div>
+
+            <div class="sim-sliders-grid">
+              <!-- Control 1: Team Size -->
+              <div class="sim-control-item">
+                <div class="sim-ctrl-label">
+                  <span>👨‍💻 Active Developers:</span>
+                  <strong id="sim-val-devs">6 Devs</strong>
+                </div>
+                <input type="range" id="sim-range-devs" min="3" max="8" value="6" oninput="updateBurndownSim()">
+                <div class="sim-scale-labels"><span>3 (Understaffed)</span><span>6 (Baseline)</span><span>8 (Augmented)</span></div>
+              </div>
+
+              <!-- Control 2: Injected Scope Creep -->
+              <div class="sim-control-item">
+                <div class="sim-ctrl-label">
+                  <span>⚡ Scope Adjustments:</span>
+                  <strong id="sim-val-scope">0 pts</strong>
+                </div>
+                <input type="range" id="sim-range-scope" min="-8" max="12" step="2" value="0" oninput="updateBurndownSim()">
+                <div class="sim-scale-labels"><span>-8 pts (Descope)</span><span>0 (Committed)</span><span>+12 pts (Scope Creep)</span></div>
+              </div>
+
+              <!-- Control 3: Unplanned Sick Days / Impediments -->
+              <div class="sim-control-item">
+                <div class="sim-ctrl-label">
+                  <span>🩹 Team Sick Days / Downtime:</span>
+                  <strong id="sim-val-sick">0 Days</strong>
+                </div>
+                <input type="range" id="sim-range-sick" min="0" max="4" value="0" oninput="updateBurndownSim()">
+                <div class="sim-scale-labels"><span>0 Days</span><span>2 Days</span><span>4 Days</span></div>
               </div>
             </div>
 
+            <!-- Dynamic Forecast Alert Banner -->
+            <div class="sim-forecast-banner success" id="sim-forecast-box">
+              <i class="fa-solid fa-circle-check" id="sim-forecast-icon"></i>
+              <div class="forecast-content">
+                <strong id="sim-forecast-title">SPRINT ON TRACK: 100% Delivery Projected</strong>
+                <p id="sim-forecast-desc">At current velocity of 3.2 pts/day, all 29 points will complete by Day 9.5 with 0 spillover.</p>
+              </div>
+              <span class="forecast-pts-tag" id="sim-forecast-tag">0 Pt Spillover</span>
+            </div>
+          </div>
+
+          <div class="charts-grid-2">
+            <!-- Dynamic Burndown Chart -->
             <div class="chart-card">
-              <h4>📉 Sprint 4 Burndown Chart (10-Day Cadence)</h4>
-              <div class="burndown-visual">
-                <svg viewBox="0 0 400 200" class="burndown-svg">
-                  <!-- Grid lines -->
-                  <line x1="40" y1="20" x2="380" y2="20" stroke="#2a3342" stroke-dasharray="3"/>
-                  <line x1="40" y1="65" x2="380" y2="65" stroke="#2a3342" stroke-dasharray="3"/>
-                  <line x1="40" y1="110" x2="380" y2="110" stroke="#2a3342" stroke-dasharray="3"/>
-                  <line x1="40" y1="155" x2="380" y2="155" stroke="#2a3342" stroke-dasharray="3"/>
-                  
-                  <!-- Ideal Line (Grey Dash) -->
-                  <polyline points="40,20 380,180" fill="none" stroke="#64748b" stroke-width="2" stroke-dasharray="4"/>
-                  
-                  <!-- Actual Burn Line (Cyan Solid) -->
-                  <polyline points="40,20 80,35 120,55 160,85 200,90 240,120 280,140 320,165 360,178 380,180" fill="none" stroke="#00f2fe" stroke-width="3"/>
-                  
-                  <!-- Data Dots -->
-                  <circle cx="40" cy="20" r="4" fill="#00f2fe"/>
-                  <circle cx="120" cy="55" r="4" fill="#00f2fe"/>
-                  <circle cx="200" cy="90" r="4" fill="#00f2fe"/>
-                  <circle cx="280" cy="140" r="4" fill="#00f2fe"/>
-                  <circle cx="380" cy="180" r="4" fill="#00f2fe"/>
-                </svg>
-                <div class="burndown-labels">
-                  <span>Day 1 (29 pts)</span>
-                  <span>Day 3</span>
-                  <span>Day 5</span>
-                  <span>Day 8</span>
-                  <span>Day 10 (0 pts)</span>
+              <div class="chart-header-row">
+                <h4 id="burndown-chart-title">📉 Sprint 4 Burndown (10-Day Cadence)</h4>
+                <div class="chart-legend-compact">
+                  <span><span class="dot-legend-dash"></span> Ideal</span>
+                  <span><span class="dot-legend-solid"></span> Simulated</span>
                 </div>
               </div>
-              <p class="chart-caption">🟢 Sprint 4 closed with 100% velocity completion rate and 0 spillover.</p>
+              
+              <div class="burndown-visual">
+                <svg viewBox="0 0 420 220" class="burndown-svg" id="dynamic-burndown-svg">
+                  <!-- Grid lines -->
+                  <line x1="40" y1="20" x2="400" y2="20" stroke="rgba(255,255,255,0.08)" stroke-dasharray="3"/>
+                  <line x1="40" y1="65" x2="400" y2="65" stroke="rgba(255,255,255,0.08)" stroke-dasharray="3"/>
+                  <line x1="40" y1="110" x2="400" y2="110" stroke="rgba(255,255,255,0.08)" stroke-dasharray="3"/>
+                  <line x1="40" y1="155" x2="400" y2="155" stroke="rgba(255,255,255,0.08)" stroke-dasharray="3"/>
+                  <line x1="40" y1="190" x2="400" y2="190" stroke="rgba(255,255,255,0.15)"/>
+                  
+                  <!-- Ideal Baseline Line (Grey Dash) -->
+                  <line x1="40" y1="20" x2="400" y2="190" stroke="#64748b" stroke-width="2" stroke-dasharray="4"/>
+                  
+                  <!-- Dynamic Actual / Simulated Polyline -->
+                  <polyline id="burndown-polyline" points="40,20 80,35 120,55 160,85 200,90 240,120 280,140 320,165 360,178 400,190" fill="none" stroke="#00f2fe" stroke-width="3.5" stroke-linecap="round"/>
+                  
+                  <!-- Dynamic Data Dots -->
+                  <g id="burndown-dots-group">
+                    <circle cx="40" cy="20" r="4.5" fill="#00f2fe"/>
+                    <circle cx="120" cy="55" r="4.5" fill="#00f2fe"/>
+                    <circle cx="200" cy="90" r="4.5" fill="#00f2fe"/>
+                    <circle cx="280" cy="140" r="4.5" fill="#00f2fe"/>
+                    <circle cx="400" cy="190" r="4.5" fill="#00f2fe"/>
+                  </g>
+                </svg>
+                <div class="burndown-labels">
+                  <span>Day 1 (Start)</span>
+                  <span>Day 3</span>
+                  <span>Day 5 (Mid)</span>
+                  <span>Day 8</span>
+                  <span>Day 10 (Sprint Close)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Historical Velocity Comparison -->
+            <div class="chart-card">
+              <h4>🏃 Historical Velocity & Team Stability (Sprints 1–4)</h4>
+              <div class="velocity-bars-container">
+                <div class="v-bar-group" onclick="selectSprintView(1)" style="cursor: pointer;">
+                  <div class="v-bars">
+                    <div class="v-bar planned" style="height: 130px;" title="Planned: 28 pts"><span>28</span></div>
+                    <div class="v-bar actual" style="height: 130px;" title="Delivered: 28 pts"><span>28</span></div>
+                  </div>
+                  <span class="v-label">Sprint 1</span>
+                </div>
+
+                <div class="v-bar-group" onclick="selectSprintView(2)" style="cursor: pointer;">
+                  <div class="v-bars">
+                    <div class="v-bar planned" style="height: 150px;" title="Planned: 32 pts"><span>32</span></div>
+                    <div class="v-bar actual" style="height: 140px;" title="Delivered: 30 pts"><span>30</span></div>
+                  </div>
+                  <span class="v-label">Sprint 2</span>
+                </div>
+
+                <div class="v-bar-group" onclick="selectSprintView(3)" style="cursor: pointer;">
+                  <div class="v-bars">
+                    <div class="v-bar planned" style="height: 155px;" title="Planned: 33 pts"><span>33</span></div>
+                    <div class="v-bar actual" style="height: 155px;" title="Delivered: 33 pts"><span>33</span></div>
+                  </div>
+                  <span class="v-label">Sprint 3</span>
+                </div>
+
+                <div class="v-bar-group active-sprint-bar" onclick="selectSprintView(4)" style="cursor: pointer;">
+                  <div class="v-bars">
+                    <div class="v-bar planned" style="height: 135px;" title="Planned: 29 pts"><span>29</span></div>
+                    <div class="v-bar actual" style="height: 135px;" title="Delivered: 29 pts"><span>29</span></div>
+                  </div>
+                  <span class="v-label">Sprint 4 ★</span>
+                </div>
+              </div>
+
+              <div class="chart-legend">
+                <span class="leg-item"><span class="leg-box planned"></span> Committed</span>
+                <span class="leg-item"><span class="leg-box actual"></span> Delivered</span>
+              </div>
+
+              <div class="velocity-metrics-strip">
+                <div class="v-met"><span>Average Velocity:</span><strong>30.5 pts</strong></div>
+                <div class="v-met"><span>Commitment Ratio:</span><strong class="text-success">98.4%</strong></div>
+                <div class="v-met"><span>Total Delivered:</span><strong>122 pts</strong></div>
+              </div>
             </div>
           </div>
         </div>

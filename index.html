@@ -110,6 +110,19 @@
               <span class="ai-new-pill">AI BOT</span>
             </div>
 
+            <!-- Express Pharmacy Delivery Card -->
+            <div class="pharmacy-express-card" onclick="openPharmacyDeliveryModal('Amoxicillin 500mg Capsules', 'Dr. Marcus Vance, MD', '$14.50')">
+              <div class="pharm-icon-box"><i class="fa-solid fa-truck-medical"></i></div>
+              <div class="pharm-meta-text">
+                <div class="pharm-title-row">
+                  <strong>Express Pharmacy Delivery</strong>
+                  <span class="pharm-status-tag" id="pharm-home-tag">30-Min Delivery</span>
+                </div>
+                <span>Order prescribed medications delivered straight to your door</span>
+              </div>
+              <i class="fa-solid fa-chevron-right chevron-icon"></i>
+            </div>
+
             <!-- Health Status Card -->
             <div class="urgent-consult-card">
               <div class="consult-content">
@@ -173,9 +186,14 @@
                 <div class="history-rx">
                   <span>💊 Amoxicillin 500mg (5 Days)</span>
                 </div>
-                <button class="btn-sm btn-outline full-width" onclick="viewHistoricalRx()">
-                  <i class="fa-solid fa-download"></i> View & Download Rx PDF
-                </button>
+                <div style="display: flex; gap: 8px; margin-top: 8px;">
+                  <button class="btn-sm btn-outline" style="flex: 1;" onclick="viewHistoricalRx()">
+                    <i class="fa-solid fa-file-pdf"></i> View Rx
+                  </button>
+                  <button class="btn-sm btn-success" style="flex: 1;" onclick="openPharmacyDeliveryModal('Amoxicillin 500mg (5 Days)', 'Dr. Marcus Vance, MD', '$14.50')">
+                    <i class="fa-solid fa-truck-fast"></i> Order Meds ($14.50)
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -1530,6 +1548,126 @@
         <input type="text" id="ai-chat-input" placeholder="Type your symptoms (e.g. sharp headache, nausea)..." autocomplete="off">
         <button type="submit" class="btn-ai-send" title="Send to AI"><i class="fa-solid fa-paper-plane"></i></button>
       </form>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL 7: PHARMACY HOME DELIVERY & LIVE TRACKER -->
+  <!-- ============================================== -->
+  <div id="pharmacy-modal" class="modal-overlay hidden">
+    <div class="modal-card pharmacy-modal-card">
+      <button class="modal-close" onclick="closeModal('pharmacy-modal')">&times;</button>
+      
+      <div class="pharm-modal-header">
+        <div class="pharm-brand-row">
+          <div class="pharm-logo-circle"><i class="fa-solid fa-prescription-bottle-medical"></i></div>
+          <div>
+            <h4>QuickCare Express Pharmacy</h4>
+            <span>Order #QC-DEL-9842 • HIPAA Certified Sealed Dispatch</span>
+          </div>
+        </div>
+        <span class="delivery-live-badge"><span class="pulse-dot green"></span> Live Tracking</span>
+      </div>
+
+      <!-- Medication Order Detail Strip -->
+      <div class="del-med-strip">
+        <div class="del-med-info">
+          <span class="del-lbl">Prescribed Pharmacotherapy</span>
+          <strong id="del-med-title">Amoxicillin 500mg (15 Capsules)</strong>
+          <small id="del-doc-info">Prescribed by Dr. Marcus Vance, MD • Licensed Telehealth</small>
+        </div>
+        <div class="del-price-box">
+          <span class="del-lbl">Total with Express Courier</span>
+          <strong id="del-total-cost">$14.50</strong>
+        </div>
+      </div>
+
+      <!-- 4-Stage Stepper Progress Tracker -->
+      <div class="del-stepper-container">
+        <div class="del-stepper-bar">
+          <div class="del-stepper-fill" id="del-progress-fill" style="width: 66%;"></div>
+        </div>
+        
+        <div class="del-steps-row">
+          <div class="del-step done" id="step-node-1">
+            <div class="step-circle"><i class="fa-solid fa-check"></i></div>
+            <span>1. Verified</span>
+          </div>
+          <div class="del-step done" id="step-node-2">
+            <div class="step-circle"><i class="fa-solid fa-box-archive"></i></div>
+            <span>2. Dispensed</span>
+          </div>
+          <div class="del-step active" id="step-node-3">
+            <div class="step-circle"><i class="fa-solid fa-motorcycle"></i></div>
+            <span>3. On The Way</span>
+          </div>
+          <div class="del-step" id="step-node-4">
+            <div class="step-circle"><i class="fa-solid fa-house-chimney-medical"></i></div>
+            <span>4. Delivered</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live GPS Map Simulation Canvas/SVG -->
+      <div class="del-map-wrapper">
+        <div class="del-map-bg">
+          <svg viewBox="0 0 400 160" class="del-map-svg">
+            <!-- Road Paths -->
+            <path d="M 30,130 Q 120,130 140,80 T 260,80 T 360,30" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="12" stroke-linecap="round"/>
+            <path d="M 30,130 Q 120,130 140,80 T 260,80 T 360,30" fill="none" stroke="rgba(6, 182, 212, 0.4)" stroke-width="4" stroke-dasharray="6"/>
+            
+            <!-- Origin Pharmacy Pin -->
+            <circle cx="30" cy="130" r="10" fill="#6366f1"/>
+            <text x="30" y="154" fill="#a5b4fc" font-size="10" text-anchor="middle" font-weight="700">🏥 Pharmacy</text>
+
+            <!-- Destination Patient Pin -->
+            <circle cx="360" cy="30" r="10" fill="#10b981"/>
+            <text x="360" y="20" fill="#6ee7b7" font-size="10" text-anchor="middle" font-weight="700">🏠 Sarah's Home</text>
+
+            <!-- Animated Courier Vehicle Marker -->
+            <g id="del-courier-marker" transform="translate(250, 72)">
+              <circle cx="0" cy="0" r="14" fill="#00f2fe" opacity="0.3" class="pulse-ring"/>
+              <circle cx="0" cy="0" r="8" fill="#00f2fe"/>
+              <circle cx="0" cy="0" r="4" fill="#ffffff"/>
+            </g>
+          </svg>
+        </div>
+
+        <div class="del-eta-floating-card">
+          <div class="eta-time-box">
+            <span class="eta-lbl">ESTIMATED DELIVERY</span>
+            <h3 id="del-eta-timer">18 Mins <small style="font-size: 11px; font-weight: normal; color: #a5f3fc;">(7:45 PM)</small></h3>
+          </div>
+          <div class="del-otp-box">
+            <span class="eta-lbl">HANDOVER OTP</span>
+            <strong class="otp-code">4 8 2 1</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Courier Driver Profile & Contact Bar -->
+      <div class="del-driver-card">
+        <div class="driver-profile-row">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" alt="Courier Driver" class="driver-img">
+          <div class="driver-meta">
+            <strong>Carlos Mendez</strong>
+            <span>Verified Courier • ⭐ 4.9 (1,420 Deliveries)</span>
+            <small style="color: var(--text-muted);">Vehicle: Honda CB500 • Insulated Cold-Chain Bag</small>
+          </div>
+        </div>
+        <div class="driver-actions">
+          <button class="btn-driver-call" onclick="simulateDriverCall()"><i class="fa-solid fa-phone"></i> Call</button>
+          <button class="btn-driver-chat" onclick="simulateDriverMessage()"><i class="fa-solid fa-comment-dots"></i> Chat</button>
+        </div>
+      </div>
+
+      <!-- Simulation Action Buttons -->
+      <div class="del-sim-controls">
+        <button class="btn-sm btn-primary full-width" id="btn-advance-del" onclick="advanceDeliveryStage()">
+          <i class="fa-solid fa-forward-step"></i> Fast-Forward Delivery Stage ➔
+        </button>
+      </div>
+
     </div>
   </div>
 

@@ -1074,6 +1074,120 @@ function processAiResponse(query, messagesBox) {
   playChime("success");
 }
 
+// ==========================================================================
+// Pharmacy Home Delivery & Live GPS Tracker Simulation
+// ==========================================================================
+
+let currentDeliveryStage = 3; // Initial state: On the Way
+
+const deliveryStages = [
+  {
+    step: 1,
+    fillWidth: "0%",
+    statusTitle: "Prescription Verified",
+    eta: "35 Mins (8:05 PM)",
+    markerPos: "translate(30, 130)",
+    btnText: "Fast-Forward ➔ Dispense Medicine"
+  },
+  {
+    step: 2,
+    fillWidth: "33%",
+    statusTitle: "Medication Dispensed & Sealed",
+    eta: "28 Mins (7:55 PM)",
+    markerPos: "translate(120, 105)",
+    btnText: "Fast-Forward ➔ Hand to Courier"
+  },
+  {
+    step: 3,
+    fillWidth: "66%",
+    statusTitle: "Courier On The Way (Live Map)",
+    eta: "14 Mins (7:42 PM)",
+    markerPos: "translate(250, 72)",
+    btnText: "Fast-Forward ➔ Arrived at Doorstep"
+  },
+  {
+    step: 4,
+    fillWidth: "100%",
+    statusTitle: "Delivered to Doorstep!",
+    eta: "Delivered (Just Now)",
+    markerPos: "translate(360, 30)",
+    btnText: "Order Again / Reset Demo"
+  }
+];
+
+function openPharmacyDeliveryModal(medTitle, docInfo, totalFee) {
+  if (medTitle) document.getElementById("del-med-title").innerText = medTitle;
+  if (docInfo) document.getElementById("del-doc-info").innerText = `Prescribed by ${docInfo}`;
+  if (totalFee) document.getElementById("del-total-cost").innerText = totalFee;
+
+  applyDeliveryStage(currentDeliveryStage);
+  document.getElementById("pharmacy-modal").classList.remove("hidden");
+  playChime("click");
+  showToast("Express Pharmacy Order Live Tracker Connected", "info");
+}
+
+function advanceDeliveryStage() {
+  currentDeliveryStage = (currentDeliveryStage >= 4) ? 1 : currentDeliveryStage + 1;
+  applyDeliveryStage(currentDeliveryStage);
+  playChime("success");
+
+  if (currentDeliveryStage === 4) {
+    showToast("Package Delivered! Handover OTP #4821 Verified.", "success");
+    document.getElementById("pharm-home-tag").innerText = "Delivered (Safe Handover)";
+    document.getElementById("pharm-home-tag").style.background = "rgba(16, 185, 129, 0.3)";
+  } else {
+    showToast(`Delivery Advanced: ${deliveryStages[currentDeliveryStage - 1].statusTitle}`, "info");
+    document.getElementById("pharm-home-tag").innerText = "Courier On The Way";
+  }
+}
+
+function applyDeliveryStage(stageNum) {
+  const stageData = deliveryStages[stageNum - 1];
+
+  // Update progress bar fill
+  document.getElementById("del-progress-fill").style.width = stageData.fillWidth;
+  document.getElementById("del-eta-timer").innerHTML = `${stageData.eta}`;
+  document.getElementById("btn-advance-del").innerHTML = `<i class="fa-solid fa-forward-step"></i> ${stageData.btnText}`;
+
+  // Update step nodes
+  for (let i = 1; i <= 4; i++) {
+    const node = document.getElementById(`step-node-${i}`);
+    node.className = "del-step";
+    if (i < stageNum) {
+      node.classList.add("done");
+      node.querySelector(".step-circle").innerHTML = `<i class="fa-solid fa-check"></i>`;
+    } else if (i === stageNum) {
+      node.classList.add("active");
+      if (i === 1) node.querySelector(".step-circle").innerHTML = `<i class="fa-solid fa-file-circle-check"></i>`;
+      if (i === 2) node.querySelector(".step-circle").innerHTML = `<i class="fa-solid fa-box-archive"></i>`;
+      if (i === 3) node.querySelector(".step-circle").innerHTML = `<i class="fa-solid fa-motorcycle"></i>`;
+      if (i === 4) node.querySelector(".step-circle").innerHTML = `<i class="fa-solid fa-house-chimney-medical"></i>`;
+    } else {
+      if (i === 1) node.querySelector(".step-circle").innerHTML = `<i class="fa-solid fa-file-circle-check"></i>`;
+      if (i === 2) node.querySelector(".step-circle").innerHTML = `<i class="fa-solid fa-box-archive"></i>`;
+      if (i === 3) node.querySelector(".step-circle").innerHTML = `<i class="fa-solid fa-motorcycle"></i>`;
+      if (i === 4) node.querySelector(".step-circle").innerHTML = `<i class="fa-solid fa-house-chimney-medical"></i>`;
+    }
+  }
+
+  // Move GPS courier pin on SVG map
+  const marker = document.getElementById("del-courier-marker");
+  if (marker) {
+    marker.setAttribute("transform", stageData.markerPos);
+  }
+}
+
+function simulateDriverCall() {
+  playChime("call");
+  showToast("📞 Calling Driver Carlos Mendez (+1-555-0192)...", "info");
+}
+
+function simulateDriverMessage() {
+  playChime("click");
+  showToast("💬 Carlos Mendez: 'Hi Sarah, I am 3 minutes away from your front porch!'", "success");
+}
+
+
 
 
 

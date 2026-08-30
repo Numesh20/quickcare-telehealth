@@ -3578,6 +3578,392 @@ body.light-theme .p-card.active-card {
   transform: scale(1.08);
 }
 
+/* ==========================================================================
+   Pharmacy Express Delivery & Live Map Tracker
+   ========================================================================== */
+
+.pharmacy-express-card {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(6, 182, 212, 0.12));
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pharmacy-express-card:hover {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(6, 182, 212, 0.22));
+  border-color: var(--accent-emerald);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.pharm-icon-box {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #059669, #10b981);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 15px;
+}
+
+.pharm-meta-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.pharm-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pharm-title-row strong {
+  font-size: 12px;
+  color: white;
+}
+
+.pharm-status-tag {
+  background: rgba(16, 185, 129, 0.2);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  padding: 2px 6px;
+  border-radius: var(--radius-full);
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.pharm-meta-text span {
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+.chevron-icon {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Pharmacy Modal */
+.pharmacy-modal-card {
+  max-width: 460px;
+  width: 95%;
+  background: var(--bg-surface);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pharm-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 12px;
+}
+
+.pharm-brand-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pharm-logo-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--accent-emerald);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.pharm-brand-row h4 {
+  font-size: 13px;
+  color: white;
+}
+
+.pharm-brand-row span {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.delivery-live-badge {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid var(--accent-emerald);
+  color: #a7f3d0;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.del-med-strip {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-color);
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.del-med-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.del-lbl {
+  font-size: 9px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.del-med-info strong {
+  font-size: 12px;
+  color: var(--accent-cyan);
+}
+
+.del-med-info small {
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+
+.del-price-box {
+  text-align: right;
+}
+
+.del-price-box strong {
+  font-size: 16px;
+  color: var(--accent-emerald);
+  display: block;
+}
+
+/* Stepper */
+.del-stepper-container {
+  position: relative;
+  padding: 8px 0 16px 0;
+}
+
+.del-stepper-bar {
+  position: absolute;
+  top: 22px;
+  left: 20px;
+  right: 20px;
+  height: 3px;
+  background: var(--bg-surface-elevated);
+  z-index: 1;
+}
+
+.del-stepper-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981, #06b6d4);
+  transition: width 0.4s ease;
+}
+
+.del-steps-row {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  z-index: 2;
+}
+
+.del-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.del-step .step-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--bg-surface-elevated);
+  border: 2px solid var(--border-color);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  transition: all 0.3s ease;
+}
+
+.del-step span {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.del-step.done .step-circle {
+  background: var(--accent-emerald);
+  border-color: var(--accent-emerald);
+  color: white;
+}
+
+.del-step.done span {
+  color: var(--text-primary);
+}
+
+.del-step.active .step-circle {
+  background: var(--accent-cyan);
+  border-color: #38bdf8;
+  color: white;
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.6);
+  animation: pulse 1.5s infinite;
+}
+
+.del-step.active span {
+  color: var(--accent-cyan);
+  font-weight: 800;
+}
+
+/* Map Simulation */
+.del-map-wrapper {
+  background: #090e17;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  position: relative;
+}
+
+.del-map-svg {
+  width: 100%;
+  height: 140px;
+  display: block;
+}
+
+.pulse-ring {
+  animation: pulseRing 1.8s infinite;
+}
+
+@keyframes pulseRing {
+  0% { transform: scale(0.6); opacity: 0.8; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+.del-eta-floating-card {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px 12px;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.eta-time-box h3 {
+  font-size: 14px;
+  color: var(--accent-cyan);
+}
+
+.eta-lbl {
+  font-size: 9px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  display: block;
+}
+
+.otp-code {
+  font-size: 13px;
+  color: var(--accent-emerald);
+  letter-spacing: 2px;
+  font-weight: 800;
+}
+
+/* Driver Card */
+.del-driver-card {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-color);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.driver-profile-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.driver-img {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--accent-cyan);
+}
+
+.driver-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.driver-meta strong {
+  font-size: 12px;
+  color: white;
+}
+
+.driver-meta span {
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+
+.driver-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-driver-call,
+.btn-driver-chat {
+  background: var(--bg-main);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s ease;
+}
+
+.btn-driver-call:hover {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: var(--accent-emerald);
+  color: var(--accent-emerald);
+}
+
+.btn-driver-chat:hover {
+  background: rgba(6, 182, 212, 0.2);
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+
+
 
 
 

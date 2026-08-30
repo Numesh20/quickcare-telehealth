@@ -1385,6 +1385,229 @@ function fallbackDictationSimulation(targetId, btnEl, spanEl) {
   }, 1600);
 }
 
+// ==========================================================================
+// Agile 15-Minute Daily Scrum Standup Runner & Blocker Logger
+// ==========================================================================
+
+const scrumTeamMembers = [
+  {
+    name: "David Kim",
+    role: "Lead Architect & Backend Lead",
+    avatar: "👨‍💻",
+    yest: "Completed US-301 WebRTC bitrate adaptive throttling for low-bandwidth 3G connections.",
+    today: "Implementing Stripe webhook tokenization & HIPAA audit log verification.",
+    blocker: "External security team delay on Stripe sandbox API keys.",
+    done: false
+  },
+  {
+    name: "Maya Lin",
+    role: "Mobile App Lead (iOS / Flutter)",
+    avatar: "📱",
+    yest: "Refined doctor specialty filter carousel and camera PiP toggle.",
+    today: "Connecting Web Audio API synthesizer chimes to push notification events.",
+    blocker: "None. All API endpoints ready.",
+    done: false
+  },
+  {
+    name: "Alex Rivera",
+    role: "QA Lead & Security Analyst",
+    avatar: "🧪",
+    yest: "Executed 45 automated regression tests on digital prescription generation.",
+    today: "Conducting penetration test on WebRTC signaling tokens and token expiry.",
+    blocker: "Need 2 additional test accounts with active Stripe test cards.",
+    done: false
+  },
+  {
+    name: "Chloe Dubois",
+    role: "Senior UI/UX Designer",
+    avatar: "🎨",
+    yest: "Finished Figma mockups for Dark/Light mode color palette and hospital prescription pad.",
+    today: "Validating typography contrast ratios for WCAG 2.1 AA accessibility compliance.",
+    blocker: "None.",
+    done: false
+  },
+  {
+    name: "Dr. Marcus Vance",
+    role: "Product Owner & Chief Medical Advisor",
+    avatar: "🩺",
+    yest: "Reviewed clinical accuracy of contraindication warnings for Penicillin cross-reactivity.",
+    today: "Sign-off on Sprint 4 acceptance criteria for digital Rx signature verification.",
+    blocker: "Awaiting state medical board telehealth compliance confirmation.",
+    done: false
+  },
+  {
+    name: "Numesh",
+    role: "IT Project Manager & Scrum Master (You)",
+    avatar: "👑",
+    yest: "Facilitated Sprint Planning Poker session and updated RAID Risk Register.",
+    today: "Unblocking external security review with Stripe team and preparing Exec Status report.",
+    blocker: "None. Team velocity tracking at 30.5 story points.",
+    done: false
+  }
+];
+
+let currentSpeakerIndex = 0;
+let standupTimerInterval = null;
+let isStandupRunning = false;
+let speakerSecondsLeft = 120; // 2 minutes
+let totalSecondsLeft = 900;   // 15 minutes
+
+function renderStandupMembers() {
+  const container = document.getElementById("scrum-members-strip");
+  if (!container) return;
+
+  container.innerHTML = scrumTeamMembers.map((m, idx) => `
+    <div class="member-chip ${idx === currentSpeakerIndex ? 'active' : ''} ${m.done ? 'done' : ''}" onclick="selectStandupSpeaker(${idx})">
+      <span>${m.avatar}</span>
+      <strong>${m.name}</strong>
+      ${m.done ? '<i class="fa-solid fa-check" style="color: var(--accent-emerald);"></i>' : ''}
+    </div>
+  `).join("");
+}
+
+function selectStandupSpeaker(idx) {
+  currentSpeakerIndex = idx;
+  speakerSecondsLeft = 120;
+  updateTimerDisplays();
+  loadSpeakerQuestions(idx);
+  renderStandupMembers();
+  playChime("click");
+}
+
+function loadSpeakerQuestions(idx) {
+  const member = scrumTeamMembers[idx];
+  document.getElementById("spk-name").innerText = member.name;
+  document.getElementById("spk-role").innerText = member.role;
+  document.getElementById("spk-avatar-icon").innerText = member.avatar;
+  document.getElementById("q-yesterday").value = member.yest;
+  document.getElementById("q-today").value = member.today;
+  document.getElementById("q-blocker").value = member.blocker;
+}
+
+function updateTimerDisplays() {
+  const sMin = String(Math.floor(speakerSecondsLeft / 60)).padStart(2, '0');
+  const sSec = String(speakerSecondsLeft % 60).padStart(2, '0');
+  document.getElementById("clock-speaker").innerText = `${sMin}:${sSec}`;
+
+  const tMin = String(Math.floor(totalSecondsLeft / 60)).padStart(2, '0');
+  const tSec = String(totalSecondsLeft % 60).padStart(2, '0');
+  document.getElementById("clock-total").innerText = `${tMin}:${tSec}`;
+}
+
+function toggleStandupTimer() {
+  const btn = document.getElementById("btn-standup-start");
+  const tag = document.getElementById("standup-status-tag");
+
+  if (!isStandupRunning) {
+    isStandupRunning = true;
+    btn.innerHTML = `<i class="fa-solid fa-pause"></i> Pause Standup`;
+    btn.className = "btn-sm btn-outline";
+    tag.innerText = "Meeting In Progress ⏱️";
+    tag.style.color = "#00f2fe";
+    playChime("call");
+
+    standupTimerInterval = setInterval(() => {
+      if (speakerSecondsLeft > 0) speakerSecondsLeft--;
+      if (totalSecondsLeft > 0) totalSecondsLeft--;
+
+      updateTimerDisplays();
+
+      if (speakerSecondsLeft === 0) {
+        playChime("click");
+        showToast(`Speaker time up for ${scrumTeamMembers[currentSpeakerIndex].name}!`, "info");
+      }
+      if (totalSecondsLeft === 0) {
+        clearInterval(standupTimerInterval);
+        isStandupRunning = false;
+        showToast("Daily Scrum 15-Minute Timebox Completed!", "success");
+      }
+    }, 1000);
+  } else {
+    isStandupRunning = false;
+    clearInterval(standupTimerInterval);
+    btn.innerHTML = `<i class="fa-solid fa-play"></i> Resume Standup`;
+    btn.className = "btn-sm btn-success";
+    tag.innerText = "Paused ⏸️";
+    tag.style.color = "#fde68a";
+    playChime("click");
+  }
+}
+
+function nextStandupSpeaker() {
+  scrumTeamMembers[currentSpeakerIndex].done = true;
+  saveSpeakerLog();
+
+  currentSpeakerIndex = (currentSpeakerIndex + 1) % scrumTeamMembers.length;
+  speakerSecondsLeft = 120;
+  updateTimerDisplays();
+  loadSpeakerQuestions(currentSpeakerIndex);
+  renderStandupMembers();
+
+  playChime("success");
+  showToast(`Floor handed to ${scrumTeamMembers[currentSpeakerIndex].name} (${scrumTeamMembers[currentSpeakerIndex].role})`, "info");
+}
+
+function saveSpeakerLog() {
+  const member = scrumTeamMembers[currentSpeakerIndex];
+  member.yest = document.getElementById("q-yesterday").value;
+  member.today = document.getElementById("q-today").value;
+  member.blocker = document.getElementById("q-blocker").value;
+  showToast(`Saved Standup Notes for ${member.name}`, "info");
+}
+
+function escalateCurrentBlocker() {
+  const blockerText = document.getElementById("q-blocker").value.trim();
+  const currentMember = scrumTeamMembers[currentSpeakerIndex];
+
+  if (!blockerText || blockerText.toLowerCase().includes("none")) {
+    showToast("No active blocker entered to escalate", "info");
+    return;
+  }
+
+  // Add to standup action log
+  const logContainer = document.getElementById("standup-action-items");
+  const newRow = document.createElement("div");
+  newRow.className = "standup-item-row blocker";
+  newRow.innerHTML = `
+    <span class="item-tag blocker">ESCALATED</span>
+    <span class="item-text"><strong>${currentMember.name}:</strong> ${blockerText}</span>
+    <span class="item-owner">Owner: IT PM (Numesh)</span>
+  `;
+  logContainer.prepend(newRow);
+
+  playChime("success");
+  showToast(`🚨 Escalated to RAID Register: "${blockerText}" assigned to IT PM!`, "success");
+}
+
+function resetStandupMeeting() {
+  clearInterval(standupTimerInterval);
+  isStandupRunning = false;
+  speakerSecondsLeft = 120;
+  totalSecondsLeft = 900;
+  currentSpeakerIndex = 0;
+  scrumTeamMembers.forEach(m => m.done = false);
+
+  updateTimerDisplays();
+  loadSpeakerQuestions(0);
+  renderStandupMembers();
+
+  const btn = document.getElementById("btn-standup-start");
+  btn.innerHTML = `<i class="fa-solid fa-play"></i> Start Standup`;
+  btn.className = "btn-sm btn-success";
+  document.getElementById("standup-status-tag").innerText = "Ready to Start";
+  document.getElementById("standup-status-tag").style.color = "";
+
+  playChime("click");
+  showToast("Standup Meeting Reset to Baseline 15:00", "info");
+}
+
+// Call render on load
+document.addEventListener("DOMContentLoaded", () => {
+  renderStandupMembers();
+  loadSpeakerQuestions(0);
+});
+
+
 
 
 

@@ -4064,6 +4064,314 @@ body.light-theme .p-card.active-card {
   100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
 }
 
+/* ==========================================================================
+   Agile Daily Scrum Standup Runner & Blocker Logger
+   ========================================================================== */
+
+.standup-runner-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.standup-master-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.standup-timers-group {
+  display: flex;
+  gap: 12px;
+}
+
+.timer-display-box {
+  background: #090e17;
+  border: 1px solid var(--border-color);
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+
+.timer-display-box.total-box {
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+.t-label {
+  font-size: 9px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-weight: 700;
+  display: block;
+}
+
+.t-clock {
+  font-size: 20px;
+  font-weight: 800;
+  font-family: monospace;
+}
+
+.t-clock.speaker { color: var(--accent-cyan); }
+.t-clock.total { color: #a5b4fc; }
+
+.standup-ctrl-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.standup-meeting-status {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 700;
+  margin-left: auto;
+}
+
+/* Scrum Members Strip */
+.scrum-members-strip {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.member-chip {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.member-chip:hover {
+  background: #1e293b;
+  border-color: var(--accent-cyan);
+  color: white;
+}
+
+.member-chip.active {
+  background: rgba(6, 182, 212, 0.15);
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.3);
+}
+
+.member-chip.done {
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #a7f3d0;
+}
+
+/* Questions Card */
+.speaker-questions-card {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.speaker-profile-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 12px;
+}
+
+.spk-avatar-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--bg-main);
+  border: 2px solid var(--accent-cyan);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.spk-info {
+  flex: 1;
+}
+
+.spk-info h3 {
+  font-size: 15px;
+  color: white;
+}
+
+.spk-info span {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.speaking-badge {
+  background: rgba(6, 182, 212, 0.2);
+  border: 1px solid var(--accent-cyan);
+  color: var(--accent-cyan);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 10px;
+  font-weight: 800;
+  animation: pulse 1.5s infinite;
+}
+
+.scrum-3q-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.scrum-q-box label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.scrum-q-box textarea,
+.scrum-q-box input {
+  width: 100%;
+  background: var(--bg-main);
+  border: 1px solid var(--border-color);
+  color: white;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  outline: none;
+}
+
+.blocker-q-box {
+  background: rgba(244, 63, 94, 0.08);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  padding: 12px;
+  border-radius: var(--radius-sm);
+}
+
+.btn-escalate-raid {
+  background: var(--accent-rose);
+  border: none;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s ease;
+}
+
+.btn-escalate-raid:hover {
+  background: #e11d48;
+  transform: scale(1.05);
+}
+
+.spk-action-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 8px;
+}
+
+/* Standup Summary Log */
+.standup-summary-log {
+  background: var(--bg-main);
+  border: 1px solid var(--border-color);
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.standup-summary-log h5 {
+  font-size: 12px;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.standup-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.standup-item-row {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-color);
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+}
+
+.standup-item-row.blocker {
+  border-left: 3px solid var(--accent-rose);
+}
+
+.standup-item-row.action {
+  border-left: 3px solid var(--accent-cyan);
+}
+
+.item-tag {
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.item-tag.blocker {
+  background: rgba(244, 63, 94, 0.2);
+  color: #fb7185;
+}
+
+.item-tag.action {
+  background: rgba(6, 182, 212, 0.2);
+  color: #67e8f9;
+}
+
+.item-text {
+  flex: 1;
+  color: var(--text-primary);
+}
+
+.item-owner {
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+
 
 
 

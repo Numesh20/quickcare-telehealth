@@ -561,6 +561,7 @@
         <!-- PM Section Tabs -->
         <div class="pm-subtabs">
           <button class="pm-subtab active" onclick="switchPmTab('kanban-tab')"><i class="fa-solid fa-table-columns"></i> Live Agile Kanban</button>
+          <button class="pm-subtab" onclick="switchPmTab('standup-tab')"><i class="fa-solid fa-stopwatch-20"></i> Standup Runner</button>
           <button class="pm-subtab" onclick="switchPmTab('poker-tab')"><i class="fa-solid fa-clone"></i> Planning Poker</button>
           <button class="pm-subtab" onclick="switchPmTab('retro-tab')"><i class="fa-solid fa-comments"></i> Retrospective</button>
           <button class="pm-subtab" onclick="switchPmTab('budget-tab')"><i class="fa-solid fa-wallet"></i> Budget & Burn</button>
@@ -1213,6 +1214,110 @@
                 <h3 class="text-success">+$3,600 (Under Budget)</h3>
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- SUBTAB 9: AGILE 15-MINUTE DAILY STANDUP RUNNER -->
+        <div id="standup-tab" class="pm-tab-content">
+          <div class="standup-runner-card">
+            
+            <!-- Master Standup Header & Global Timers -->
+            <div class="standup-master-header">
+              <div class="standup-meta-col">
+                <h4><i class="fa-solid fa-stopwatch-20"></i> Agile Daily Scrum Runner (15-Min Timebox)</h4>
+                <small style="color: var(--text-secondary);">Facilitated by Scrum Master • 2 minutes per speaker round-robin cadence</small>
+              </div>
+              
+              <div class="standup-timers-group">
+                <div class="timer-display-box">
+                  <span class="t-label">SPEAKER TIMER</span>
+                  <strong class="t-clock speaker" id="clock-speaker">02:00</strong>
+                </div>
+                <div class="timer-display-box total-box">
+                  <span class="t-label">TOTAL MEETING</span>
+                  <strong class="t-clock total" id="clock-total">15:00</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- Standup Controller Buttons -->
+            <div class="standup-ctrl-bar">
+              <button class="btn-sm btn-success" id="btn-standup-start" onclick="toggleStandupTimer()">
+                <i class="fa-solid fa-play"></i> Start Standup
+              </button>
+              <button class="btn-sm btn-primary" onclick="nextStandupSpeaker()">
+                <i class="fa-solid fa-forward-step"></i> Next Speaker ➔
+              </button>
+              <button class="btn-sm btn-outline" onclick="resetStandupMeeting()">
+                <i class="fa-solid fa-rotate-left"></i> Reset
+              </button>
+              <span class="standup-meeting-status" id="standup-status-tag">Ready to Start</span>
+            </div>
+
+            <!-- 6-Member Scrum Team Carousel / Speaker Selection -->
+            <div class="scrum-members-strip" id="scrum-members-strip">
+              <!-- Dynamically populated / highlighted by JavaScript -->
+            </div>
+
+            <!-- Active Speaker 3-Questions Scrum Form -->
+            <div class="speaker-questions-card">
+              <div class="speaker-profile-header">
+                <div class="spk-avatar-circle" id="spk-avatar-icon">👨‍💻</div>
+                <div class="spk-info">
+                  <h3 id="spk-name">David Kim</h3>
+                  <span id="spk-role">Lead Architect & Backend Lead • Core WebRTC</span>
+                </div>
+                <span class="speaking-badge" id="spk-badge">🎙️ Current Speaker</span>
+              </div>
+
+              <div class="scrum-3q-grid">
+                <!-- Q1: Yesterday -->
+                <div class="scrum-q-box">
+                  <label><i class="fa-solid fa-clock-rotate-left"></i> 1. What did you complete yesterday?</label>
+                  <textarea id="q-yesterday" rows="2">Completed US-301 WebRTC bitrate adaptive throttling for low-bandwidth 3G connections.</textarea>
+                </div>
+
+                <!-- Q2: Today -->
+                <div class="scrum-q-box">
+                  <label><i class="fa-solid fa-bullseye"></i> 2. What will you commit to today?</label>
+                  <textarea id="q-today" rows="2">Implementing Stripe webhook tokenization & HIPAA audit log verification.</textarea>
+                </div>
+
+                <!-- Q3: Blockers / Impediments -->
+                <div class="scrum-q-box blocker-q-box">
+                  <div class="label-with-action">
+                    <label><i class="fa-solid fa-triangle-exclamation"></i> 3. Any blockers or impediments?</label>
+                    <button type="button" class="btn-escalate-raid" onclick="escalateCurrentBlocker()">
+                      <i class="fa-solid fa-shield-halved"></i> Escalate to RAID Log
+                    </button>
+                  </div>
+                  <input type="text" id="q-blocker" value="External security team delay on Stripe sandbox API keys">
+                </div>
+              </div>
+
+              <div class="spk-action-row">
+                <button class="btn-sm btn-outline" onclick="saveSpeakerLog()"><i class="fa-solid fa-floppy-disk"></i> Log Speaker Updates</button>
+                <button class="btn-sm btn-primary" onclick="nextStandupSpeaker()"><i class="fa-solid fa-check"></i> Complete & Next Speaker ➔</button>
+              </div>
+            </div>
+
+            <!-- Meeting Standup Summary Notes Log -->
+            <div class="standup-summary-log">
+              <h5><i class="fa-solid fa-clipboard-list"></i> Today's Standup Impediments & Action Items</h5>
+              <div class="standup-items-list" id="standup-action-items">
+                <div class="standup-item-row blocker">
+                  <span class="item-tag blocker">BLOCKER</span>
+                  <span class="item-text"><strong>David Kim:</strong> Stripe sandbox production API keys awaiting external security review.</span>
+                  <span class="item-owner">Owner: IT PM (Numesh)</span>
+                </div>
+                <div class="standup-item-row action">
+                  <span class="item-tag action">COMMITMENT</span>
+                  <span class="item-text"><strong>Maya Lin:</strong> Deliver iOS push notification audio chime tests by 3:00 PM.</span>
+                  <span class="item-owner">Owner: Maya Lin</span>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
 

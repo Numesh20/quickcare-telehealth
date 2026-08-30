@@ -1187,6 +1187,205 @@ function simulateDriverMessage() {
   showToast("💬 Carlos Mendez: 'Hi Sarah, I am 3 minutes away from your front porch!'", "success");
 }
 
+// ==========================================================================
+// 1-Click Clinical Presets & Voice Dictation Logic
+// ==========================================================================
+
+const clinicalPresets = {
+  flu: {
+    name: "Sarah Jenkins",
+    diag: "Acute Viral Rhinitis & Upper Respiratory Infection (URI)",
+    bp: "120/80 mmHg",
+    hr: "76 bpm",
+    temp: "99.4 °F",
+    med1: "Azithromycin 500mg Tablets (Allergy Safe)",
+    dose1: "1 Tablet Daily with meals",
+    dur1: "3 Days",
+    med2: "Paracetamol 650mg Tablet",
+    dose2: "1 Tablet as needed for fever/headache",
+    dur2: "5 Days",
+    advice: "Maintain strict bed rest for 48 hours, hydrate with electrolyte fluids, and monitor body temperature. Contact clinic if breathing difficulty arises."
+  },
+  eczema: {
+    name: "Michael Chang",
+    diag: "Subacute Atopic Dermatitis & Localized Contact Eczema",
+    bp: "118/75 mmHg",
+    hr: "72 bpm",
+    temp: "98.6 °F",
+    med1: "Hydrocortisone 1% Topical Ointment",
+    dose1: "Apply thin layer to affected skin 2x daily",
+    dur1: "7 Days",
+    med2: "Cetirizine 10mg Antihistamine",
+    dose2: "1 Tablet at bedtime for pruritus",
+    dur2: "10 Days",
+    advice: "Avoid synthetic soaps and hot water showers. Keep skin moisturized with fragrance-free ceramide lotion within 3 minutes after bathing."
+  },
+  pediatric: {
+    name: "Liam Patel (3 Yrs)",
+    diag: "Pediatric Acute Otitis Media & Viral Pyrexia",
+    bp: "95/60 mmHg",
+    hr: "104 bpm",
+    temp: "101.2 °F",
+    med1: "Amoxicillin 125mg/5ml Oral Suspension",
+    dose1: "5ml by mouth 3x daily",
+    dur1: "7 Days",
+    med2: "Ibuprofen Pediatric 100mg/5ml Suspension",
+    dose2: "3.5ml every 6-8 hours as needed",
+    dur2: "3 Days",
+    advice: "Administer antibiotic with child meals. Ensure adequate fluid intake with oral rehydration. Schedule pediatric review if fever persists past 48h."
+  },
+  cardio: {
+    name: "Elena Rostova",
+    diag: "Essential Hypertension Stage 1 (Maintenance Pharmacotherapy)",
+    bp: "136/84 mmHg",
+    hr: "68 bpm",
+    temp: "98.4 °F",
+    med1: "Amlodipine 5mg Daily Tablets",
+    dose1: "1 Tablet once daily in morning",
+    dur1: "30 Days (Refill)",
+    med2: "Telmisartan 40mg Oral Tablets",
+    dose2: "1 Tablet once daily with water",
+    dur2: "30 Days (Refill)",
+    advice: "Maintain low-sodium dietary habits (< 2g/day), engage in 30 mins moderate walking, and record morning blood pressure readings in digital health log."
+  }
+};
+
+function applyRxPreset(key) {
+  if (key === "clear") {
+    document.getElementById("rx-patient-name").value = "";
+    document.getElementById("rx-diagnosis").value = "";
+    document.getElementById("vit-bp").value = "120/80 mmHg";
+    document.getElementById("vit-hr").value = "72 bpm";
+    document.getElementById("vit-temp").value = "98.6 °F";
+    document.getElementById("rx-med1").value = "";
+    document.getElementById("rx-dose1").value = "";
+    document.getElementById("rx-dur1").value = "";
+    document.getElementById("rx-med2").value = "";
+    document.getElementById("rx-dose2").value = "";
+    document.getElementById("rx-dur2").value = "";
+    document.getElementById("rx-advice").value = "";
+    document.getElementById("contraindication-box").classList.add("hidden");
+    playChime("click");
+    showToast("Prescription Form Cleared", "info");
+    return;
+  }
+
+  const p = clinicalPresets[key];
+  if (!p) return;
+
+  document.getElementById("rx-patient-name").value = p.name;
+  document.getElementById("rx-diagnosis").value = p.diag;
+  document.getElementById("vit-bp").value = p.bp;
+  document.getElementById("vit-hr").value = p.hr;
+  document.getElementById("vit-temp").value = p.temp;
+  document.getElementById("rx-med1").value = p.med1;
+  document.getElementById("rx-dose1").value = p.dose1;
+  document.getElementById("rx-dur1").value = p.dur1;
+  document.getElementById("rx-med2").value = p.med2;
+  document.getElementById("rx-dose2").value = p.dose2;
+  document.getElementById("rx-dur2").value = p.dur2;
+  document.getElementById("rx-advice").value = p.advice;
+
+  // Run allergy safety check on prescribed med
+  checkAllergySafety(p.med1);
+
+  playChime("success");
+  showToast(`Applied Clinical Preset: ${p.diag.split("&")[0]}`, "success");
+}
+
+// Live Speech Recognition / Voice Dictation Studio
+let activeSpeechRecognition = null;
+let isDictating = false;
+
+function toggleVoiceDictation(targetId, btnEl) {
+  const targetEl = document.getElementById(targetId);
+  const spanEl = btnEl.querySelector("span");
+
+  // Check if browser supports Web Speech API
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (isDictating) {
+    // Stop recording
+    if (activeSpeechRecognition) {
+      activeSpeechRecognition.stop();
+    }
+    isDictating = false;
+    btnEl.classList.remove("recording");
+    spanEl.innerText = targetId.includes("diag") ? "Dictate Notes" : "Dictate Voice Notes";
+    playChime("click");
+    showToast("Voice Dictation Stopped", "info");
+    return;
+  }
+
+  if (SpeechRecognition) {
+    try {
+      activeSpeechRecognition = new SpeechRecognition();
+      activeSpeechRecognition.continuous = true;
+      activeSpeechRecognition.interimResults = true;
+      activeSpeechRecognition.lang = 'en-US';
+
+      activeSpeechRecognition.onstart = () => {
+        isDictating = true;
+        btnEl.classList.add("recording");
+        spanEl.innerText = "🔴 Listening... (Speak)";
+        playChime("call");
+        showToast("🎙️ Listening... Speak clinical notes clearly into microphone", "info");
+      };
+
+      activeSpeechRecognition.onresult = (event) => {
+        let transcript = "";
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          transcript += event.results[i][0].transcript;
+        }
+        if (transcript.trim()) {
+          targetEl.value = transcript;
+        }
+      };
+
+      activeSpeechRecognition.onerror = (event) => {
+        console.log("Speech recognition error:", event.error);
+        fallbackDictationSimulation(targetId, btnEl, spanEl);
+      };
+
+      activeSpeechRecognition.onend = () => {
+        isDictating = false;
+        btnEl.classList.remove("recording");
+        spanEl.innerText = targetId.includes("diag") ? "Dictate Notes" : "Dictate Voice Notes";
+      };
+
+      activeSpeechRecognition.start();
+    } catch (err) {
+      fallbackDictationSimulation(targetId, btnEl, spanEl);
+    }
+  } else {
+    // Fallback simulation for unsupported environments
+    fallbackDictationSimulation(targetId, btnEl, spanEl);
+  }
+}
+
+function fallbackDictationSimulation(targetId, btnEl, spanEl) {
+  isDictating = true;
+  btnEl.classList.add("recording");
+  spanEl.innerText = "🔴 Transcribing Voice...";
+  playChime("call");
+  showToast("🎙️ Simulated Speech-to-Text: Dictating clinical findings...", "info");
+
+  setTimeout(() => {
+    const targetEl = document.getElementById(targetId);
+    if (targetId.includes("diag")) {
+      targetEl.value = "Bilateral tonsillar erythema, exudate noted, acute pharyngitis secondary to viral infection.";
+    } else {
+      targetEl.value = "Patient advised to complete full 3-day course, gargle warm salt water 3 times daily, and maintain isolation for 24 hours.";
+    }
+    isDictating = false;
+    btnEl.classList.remove("recording");
+    spanEl.innerText = targetId.includes("diag") ? "Dictate Notes" : "Dictate Voice Notes";
+    playChime("success");
+    showToast("Transcribed Clinical Voice Note Successfully!", "success");
+  }, 1600);
+}
+
+
 
 
 

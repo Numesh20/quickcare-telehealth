@@ -300,6 +300,18 @@
               </button>
             </div>
 
+            <!-- 1-Click Clinical Presets Bar -->
+            <div class="rx-presets-strip">
+              <span class="preset-title"><i class="fa-solid fa-wand-magic-sparkles"></i> 1-Click Clinical Presets:</span>
+              <div class="preset-chips">
+                <button type="button" class="preset-chip" onclick="applyRxPreset('flu')">🩺 Viral Flu & URI</button>
+                <button type="button" class="preset-chip" onclick="applyRxPreset('eczema')">✨ Atopic Eczema</button>
+                <button type="button" class="preset-chip" onclick="applyRxPreset('pediatric')">👶 Pediatric Fever</button>
+                <button type="button" class="preset-chip" onclick="applyRxPreset('cardio')">💓 Hypertension Refill</button>
+                <button type="button" class="preset-chip clear" onclick="applyRxPreset('clear')">🧹 Clear Form</button>
+              </div>
+            </div>
+
             <!-- Clinical Vitals Row -->
             <div class="vitals-strip">
               <div class="vital-item">
@@ -329,7 +341,12 @@
               </div>
 
               <div class="form-group">
-                <label>Diagnosis / Clinical Assessment</label>
+                <div class="label-with-action">
+                  <label>Diagnosis / Clinical Assessment</label>
+                  <button type="button" class="btn-voice-dictate" id="btn-dictate-diag" onclick="toggleVoiceDictation('rx-diagnosis', this)">
+                    <i class="fa-solid fa-microphone"></i> <span>Dictate Notes</span>
+                  </button>
+                </div>
                 <input type="text" id="rx-diagnosis" value="Acute Upper Respiratory Tract Infection (Viral Rhinitis)" required>
               </div>
 
@@ -348,7 +365,12 @@
               </div>
 
               <div class="form-group">
-                <label>Doctor Advice / Recovery Instructions</label>
+                <div class="label-with-action">
+                  <label>Doctor Advice / Recovery Instructions</label>
+                  <button type="button" class="btn-voice-dictate" id="btn-dictate-adv" onclick="toggleVoiceDictation('rx-advice', this)">
+                    <i class="fa-solid fa-microphone"></i> <span>Dictate Voice Notes</span>
+                  </button>
+                </div>
                 <textarea id="rx-advice" rows="3">Drink plenty of fluids, rest for 48 hours, and monitor body temperature. Contact clinic if fever persists beyond 3 days.</textarea>
               </div>
 

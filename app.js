@@ -10,31 +10,31 @@
 // ==========================================================================
 
 const DOCTORS = [
-  { id: 1, name: 'Dr. Sarah Chen', specialty: 'Cardiology', rating: 4.9, reviews: 1284, fee: 55, wait: '< 5 min', img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=DrSarah', keywords: ['chest', 'heart', 'cardio', 'palpitation', 'blood pressure'] },
-  { id: 2, name: 'Dr. James Okafor', specialty: 'General', rating: 4.7, reviews: 892, fee: 45, wait: '< 10 min', img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=DrJames', keywords: ['fever', 'cold', 'cough', 'flu', 'general', 'headache'] },
-  { id: 3, name: 'Dr. Priya Sharma', specialty: 'Dermatology', rating: 4.8, reviews: 567, fee: 60, wait: '< 8 min', img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=DrPriya', keywords: ['skin', 'rash', 'acne', 'eczema', 'derma'] },
-  { id: 4, name: 'Dr. Marcus Lee', specialty: 'Pediatrics', rating: 4.6, reviews: 734, fee: 50, wait: '< 12 min', img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=DrMarcus', keywords: ['child', 'pediatric', 'baby', 'kid', 'infant'] },
-  { id: 5, name: 'Dr. Aisha Patel', specialty: 'Mental Health', rating: 4.9, reviews: 418, fee: 70, wait: '< 15 min', img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=DrAisha', keywords: ['anxiety', 'depression', 'stress', 'mental', 'therapy', 'sleep', 'insomnia'] },
-  { id: 6, name: 'Dr. Ryan Torres', specialty: 'Orthopedics', rating: 4.5, reviews: 329, fee: 65, wait: '< 20 min', img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=DrRyan', keywords: ['back', 'joint', 'knee', 'shoulder', 'pain', 'orthopedic', 'sprain'] },
+  { id: 1, name: 'Dr. Sandya Perera', specialty: 'Cardiology', rating: 4.9, reviews: 1284, fee: 18150, wait: '< 5 min', img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=DrSandya', keywords: ['chest', 'heart', 'cardio', 'palpitation', 'blood pressure'] },
+  { id: 2, name: 'Dr. Kamal Jayasinghe', specialty: 'General', rating: 4.7, reviews: 892, fee: 14850, wait: '< 10 min', img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=DrKamal', keywords: ['fever', 'cold', 'cough', 'flu', 'general', 'headache'] },
+  { id: 3, name: 'Dr. Niluka Gunawardena', specialty: 'Dermatology', rating: 4.8, reviews: 567, fee: 19800, wait: '< 8 min', img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=DrNiluka', keywords: ['skin', 'rash', 'acne', 'eczema', 'derma'] },
+  { id: 4, name: 'Dr. Thilak Fernando', specialty: 'Pediatrics', rating: 4.6, reviews: 734, fee: 16500, wait: '< 12 min', img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=DrThilak', keywords: ['child', 'pediatric', 'baby', 'kid', 'infant'] },
+  { id: 5, name: 'Dr. Madhavi Wickramasinghe', specialty: 'Mental Health', rating: 4.9, reviews: 418, fee: 23100, wait: '< 15 min', img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=DrMadhavi', keywords: ['anxiety', 'depression', 'stress', 'mental', 'therapy', 'sleep', 'insomnia'] },
+  { id: 6, name: 'Dr. Ruwan Dissanayake', specialty: 'Orthopedics', rating: 4.5, reviews: 329, fee: 21450, wait: '< 20 min', img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=DrRuwan', keywords: ['back', 'joint', 'knee', 'shoulder', 'pain', 'orthopedic', 'sprain'] },
 ];
 
 const SAMPLE_REVIEWS = {
   1: [
-    { user: 'Alex J.', rating: 5, text: 'Dr. Chen diagnosed my irregular heartbeat immediately. Exceptional care!' },
-    { user: 'Maria L.', rating: 5, text: 'Very thorough and knowledgeable. Highly recommend for cardiac concerns.' },
-    { user: 'Tom B.', rating: 4, text: 'Great consultation. A little rushed at the end but overall excellent.' },
+    { user: 'Asanka R.', rating: 5, text: 'Dr. Perera diagnosed my irregular heartbeat immediately. ඉතා ගුණදායක සත්කාර!' },
+    { user: 'Malini L.', rating: 5, text: 'Very thorough and knowledgeable. Highly recommend for cardiac concerns.' },
+    { user: 'Tharaka B.', rating: 4, text: 'Great consultation. A little rushed at the end but overall excellent.' },
   ],
-  2: [{ user: 'Sandra P.', rating: 5, text: 'Quick and professional. Sorted my fever diagnosis in minutes.' }, { user: 'Raj K.', rating: 4, text: 'Good general practitioner. Clear advice.' }],
-  3: [{ user: 'Zoe M.', rating: 5, text: 'Finally cleared up my eczema after seeing 3 other doctors. Dr. Sharma is amazing!' }],
-  4: [{ user: 'Parent of Lily', rating: 5, text: 'Dr. Lee was so patient and calm with my anxious toddler. Brilliant.' }],
+  2: [{ user: 'Sandamali P.', rating: 5, text: 'Quick and professional. Sorted my fever diagnosis in minutes.' }, { user: 'Rajitha K.', rating: 4, text: 'Good general practitioner. Clear advice.' }],
+  3: [{ user: 'Zoysa M.', rating: 5, text: 'Finally cleared up my eczema after seeing 3 other doctors. Dr. Gunawardena is amazing!' }],
+  4: [{ user: 'Amaya ගේ දෙමව්පියෝ', rating: 5, text: 'Dr. Fernando was so patient and calm with my anxious toddler. Brilliant.' }],
   5: [{ user: 'Anonymous', rating: 5, text: 'Changed my life. Supportive, non-judgmental, and truly listens.' }],
-  6: [{ user: 'Chris N.', rating: 4, text: 'Good advice on my knee injury. Recommended physio rather than surgery.' }],
+  6: [{ user: 'Chamara N.', rating: 4, text: 'Good advice on my knee injury. Recommended physio rather than surgery.' }],
 };
 
 const HISTORY_ITEMS = [
-  { date: 'Aug 22, 2026', doctor: 'Dr. Sarah Chen', specialty: 'Cardiology', diagnosis: 'Stable Angina (I20.8)', rx: 'Atenolol 25mg · 1x daily for 30 days' },
-  { date: 'Jul 15, 2026', doctor: 'Dr. James Okafor', specialty: 'General Medicine', diagnosis: 'Viral URI (J06.9)', rx: 'Paracetamol 500mg · 3x daily for 5 days' },
-  { date: 'Jun 03, 2026', doctor: 'Dr. Aisha Patel', specialty: 'Mental Health', diagnosis: 'Generalized Anxiety (F41.1)', rx: 'Sertraline 50mg · 1x daily for 30 days' },
+  { date: 'Aug 22, 2026', doctor: 'Dr. Sandya Perera', specialty: 'Cardiology', diagnosis: 'Stable Angina (I20.8)', rx: 'Atenolol 25mg · 1x daily for 30 days' },
+  { date: 'Jul 15, 2026', doctor: 'Dr. Kamal Jayasinghe', specialty: 'General Medicine', diagnosis: 'Viral URI (J06.9)', rx: 'Paracetamol 500mg · 3x daily for 5 days' },
+  { date: 'Jun 03, 2026', doctor: 'Dr. Madhavi Wickramasinghe', specialty: 'Mental Health', diagnosis: 'Generalized Anxiety (F41.1)', rx: 'Sertraline 50mg · 1x daily for 30 days' },
 ];
 
 const KANBAN_DATA = [
@@ -76,10 +76,10 @@ const RETRO_DATA = {
 };
 
 const BUDGET_ITEMS = [
-  { label: 'Engineering (4 Developers)', spend: 72000, budget: 75000, color: 'cyan' },
-  { label: 'Infrastructure (AWS + Twilio)', spend: 18400, budget: 20000, color: 'purple' },
-  { label: 'QA & Security Audit', spend: 14000, budget: 14000, color: 'green' },
-  { label: 'Design & UX', spend: 12000, budget: 11000, color: 'amber' },
+  { label: 'Engineering (4 Developers)', spend: 23760000, budget: 24750000, color: 'cyan' },
+  { label: 'Infrastructure (AWS + Twilio)', spend: 6072000, budget: 6600000, color: 'purple' },
+  { label: 'QA & Security Audit', spend: 4620000, budget: 4620000, color: 'green' },
+  { label: 'Design & UX', spend: 3960000, budget: 3630000, color: 'amber' },
 ];
 
 const RAID_ITEMS = [
@@ -106,11 +106,11 @@ const POKER_STORIES = [
 
 const SCRUM_MEMBERS = [
   { name: 'Numesh (PM)', role: 'IT PM / Scrum Master', icon: 'fa-chart-gantt' },
-  { name: 'Elena (FE)', role: 'Frontend Engineer', icon: 'fa-code' },
-  { name: 'Raj (BE)', role: 'Backend Engineer', icon: 'fa-server' },
-  { name: 'Zara (QA)', role: 'QA Lead', icon: 'fa-shield-check' },
-  { name: 'Liam (UX)', role: 'UI/UX Designer', icon: 'fa-pen-ruler' },
-  { name: 'Priya (PO)', role: 'Product Owner', icon: 'fa-star' },
+  { name: 'Eranga (FE)', role: 'Frontend Engineer', icon: 'fa-code' },
+  { name: 'Ranjith (BE)', role: 'Backend Engineer', icon: 'fa-server' },
+  { name: 'Nadeeka (QA)', role: 'QA Lead', icon: 'fa-shield-check' },
+  { name: 'Lahiru (UX)', role: 'UI/UX Designer', icon: 'fa-pen-ruler' },
+  { name: 'Priyanka (PO)', role: 'Product Owner', icon: 'fa-star' },
 ];
 
 const PENICILLIN_DRUGS = ['amoxicillin', 'ampicillin', 'penicillin', 'augmentin', 'amoxil', 'piperacillin', 'flucloxacillin', 'oxacillin'];
@@ -134,11 +134,11 @@ const AI_RESPONSES = {
 };
 
 const DOCTOR_CALENDAR = {
-  Mon: [{ time: '09:00', type: 'booked', name: 'James R.' }, { time: '10:00', type: 'live', name: 'Marcus W.' }, { time: '11:00', type: 'booked', name: 'Priya N.' }, { time: '14:00', type: 'free' }, { time: '15:00', type: 'free' }],
-  Tue: [{ time: '09:00', type: 'free' }, { time: '10:00', type: 'booked', name: 'Elena T.' }, { time: '11:00', type: 'free' }, { time: '14:00', type: 'booked', name: 'Sam K.' }, { time: '16:00', type: 'free' }],
-  Wed: [{ time: '09:00', type: 'booked', name: 'David C.' }, { time: '10:00', type: 'free' }, { time: '11:00', type: 'booked', name: 'Mia J.' }, { time: '14:00', type: 'free' }, { time: '15:00', type: 'booked', name: 'Noah L.' }],
-  Thu: [{ time: '09:00', type: 'free' }, { time: '10:00', type: 'free' }, { time: '11:00', type: 'booked', name: 'Sara B.' }, { time: '14:00', type: 'free' }, { time: '15:00', type: 'booked', name: 'Chris M.' }],
-  Fri: [{ time: '09:00', type: 'booked', name: 'Lena H.' }, { time: '10:00', type: 'free' }, { time: '11:00', type: 'free' }, { time: '14:00', type: 'booked', name: 'Felix T.' }, { time: '15:00', type: 'free' }],
+  Mon: [{ time: '09:00', type: 'booked', name: 'Janaka R.' }, { time: '10:00', type: 'live', name: 'Mahesh W.' }, { time: '11:00', type: 'booked', name: 'Priyanka N.' }, { time: '14:00', type: 'free' }, { time: '15:00', type: 'free' }],
+  Tue: [{ time: '09:00', type: 'free' }, { time: '10:00', type: 'booked', name: 'Eranga T.' }, { time: '11:00', type: 'free' }, { time: '14:00', type: 'booked', name: 'Saman K.' }, { time: '16:00', type: 'free' }],
+  Wed: [{ time: '09:00', type: 'booked', name: 'Dinesh C.' }, { time: '10:00', type: 'free' }, { time: '11:00', type: 'booked', name: 'Mala J.' }, { time: '14:00', type: 'free' }, { time: '15:00', type: 'booked', name: 'Nuwan L.' }],
+  Thu: [{ time: '09:00', type: 'free' }, { time: '10:00', type: 'free' }, { time: '11:00', type: 'booked', name: 'Sumudu B.' }, { time: '14:00', type: 'free' }, { time: '15:00', type: 'booked', name: 'Chamara M.' }],
+  Fri: [{ time: '09:00', type: 'booked', name: 'Lakshmi H.' }, { time: '10:00', type: 'free' }, { time: '11:00', type: 'free' }, { time: '14:00', type: 'booked', name: 'Fathima T.' }, { time: '15:00', type: 'free' }],
 };
 
 // ==========================================================================
@@ -254,7 +254,7 @@ function renderDoctorList(docs) {
         <span style="font-size:10px;color:var(--accent-emerald);">${d.wait}</span>
       </div>
       <div class="doc-card-bottom">
-        <span class="doc-fee">$${d.fee}/consult</span>
+        <span class="doc-fee">Rs. ${d.fee.toLocaleString()}/consult</span>
         <div style="display:flex;gap:6px;">
           <button class="btn-book-sm" style="background:transparent;border:1px solid var(--border-color);color:var(--text-secondary);" onclick="openReviews(${d.id})">Reviews</button>
           <button class="btn-book-sm" onclick="openBooking(${d.id})">Book Now</button>
@@ -278,7 +278,7 @@ function renderBookingDoctors() {
         </div>
       </div>
       <div class="doc-card-bottom">
-        <span class="doc-fee">$${d.fee}/consult</span>
+        <span class="doc-fee">Rs. ${d.fee.toLocaleString()}/consult</span>
         <button class="btn-book-sm" onclick="openBooking(${d.id})">Book</button>
       </div>
     </div>

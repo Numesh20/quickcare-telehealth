@@ -1,1800 +1,1104 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QuickCare Telehealth — Live App & IT PM Suite</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuickCare Telehealth — IT PM Portfolio | Numesh</title>
+  <meta name="description" content="QuickCare Telehealth — A full-stack HIPAA-compliant telehealth MVP portfolio project showcasing end-to-end IT Project Management, Agile Scrum, Kanban, Planning Poker, and Doctor-Patient consultation workflows." />
+  <meta name="keywords" content="telehealth, IT project management, scrum master, agile, kanban, quickcare, portfolio" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
-  <!-- Top Navigation Header -->
+  <!-- =====================================================================
+       TOAST NOTIFICATION CONTAINER
+       ===================================================================== -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- =====================================================================
+       HEADER & NAVIGATION
+       ===================================================================== -->
   <header class="app-header">
     <div class="header-container">
       <div class="brand">
-        <div class="brand-icon">
-          <i class="fa-solid fa-heart-pulse"></i>
-        </div>
+        <div class="brand-icon"><i class="fa-solid fa-heart-pulse"></i></div>
         <div class="brand-text">
           <span class="brand-title">QuickCare</span>
-          <span class="brand-tag">Telehealth MVP • IT PM Portfolio</span>
+          <span class="brand-tag">Telehealth MVP</span>
         </div>
       </div>
 
-      <!-- Mode Switcher Tabs -->
-      <nav class="nav-tabs">
-        <button class="nav-tab active" id="tab-patient" onclick="switchView('patient-view')">
-          <i class="fa-solid fa-mobile-screen-button"></i> Patient App
+      <nav class="nav-tabs" role="tablist" aria-label="Main navigation">
+        <button class="nav-tab active" id="tab-patient" role="tab" aria-selected="true" aria-controls="view-patient" onclick="switchView('patient')">
+          <i class="fa-solid fa-mobile-screen"></i> Patient App
         </button>
-        <button class="nav-tab" id="tab-doctor" onclick="switchView('doctor-view')">
-          <i class="fa-solid fa-user-doctor"></i> Doctor Portal
+        <button class="nav-tab" id="tab-doctor" role="tab" aria-selected="false" aria-controls="view-doctor" onclick="switchView('doctor')">
+          <i class="fa-solid fa-stethoscope"></i> Doctor Portal
         </button>
-        <button class="nav-tab highlight" id="tab-pm" onclick="switchView('pm-view')">
-          <i class="fa-solid fa-chart-pie"></i> IT PM Control Center
+        <button class="nav-tab highlight" id="tab-pm" role="tab" aria-selected="false" aria-controls="view-pm" onclick="switchView('pm')">
+          <i class="fa-solid fa-chart-gantt"></i> IT PM Center
         </button>
       </nav>
 
       <div class="header-actions">
-        <button class="theme-toggle-btn" id="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Light/Dark Theme">
-          <i class="fa-solid fa-moon"></i>
+        <button class="audio-toggle-btn" id="audioToggleBtn" title="Toggle sound" onclick="toggleAudio()">
+          <i class="fa-solid fa-volume-high" id="audioIcon"></i>
         </button>
-        <button class="audio-toggle-btn" id="audio-toggle-btn" onclick="toggleAudioFx()" title="Toggle Sound FX">
-          <i class="fa-solid fa-volume-high"></i>
+        <button class="theme-toggle-btn" id="themeToggleBtn" title="Toggle light/dark mode" onclick="toggleTheme()">
+          <i class="fa-solid fa-sun" id="themeIcon"></i>
         </button>
         <div class="live-status-pill">
-          <span class="pulse-dot"></span>
-          <span>Sprint 4: Ready for Release</span>
+          <span class="pulse-dot"></span> Live Demo
         </div>
-        <a href="https://github.com/Numesh20/quickcare-telehealth" target="_blank" class="github-btn" title="View Source Repository">
+        <a href="https://github.com/Numesh20/quickcare-telehealth" target="_blank" rel="noopener" class="github-btn" title="View on GitHub">
           <i class="fa-brands fa-github"></i>
         </a>
       </div>
     </div>
   </header>
 
-  <!-- Toast Notification Container -->
-  <div id="toast-container" class="toast-container"></div>
-
-  <!-- Main Application Body -->
+  <!-- =====================================================================
+       MAIN APPLICATION
+       ===================================================================== -->
   <main class="app-main">
 
-    <!-- ============================================== -->
-    <!-- VIEW 1: PATIENT APP EXPERIENCE                 -->
-    <!-- ============================================== -->
-    <section id="patient-view" class="view-panel active">
+    <!-- =================================================================
+         VIEW 1: PATIENT MOBILE APP
+         ================================================================= -->
+    <section class="view-panel active" id="view-patient" role="tabpanel" aria-labelledby="tab-patient">
       <div class="phone-frame-container">
         <div class="phone-mockup">
           <div class="phone-speaker"></div>
-          
-          <!-- Inner App Sub-Navbar -->
-          <div class="patient-sub-nav">
-            <button class="p-nav-btn active" id="p-sub-home" onclick="switchPatientSubTab('home')">
-              <i class="fa-solid fa-house"></i> Home
-            </button>
-            <button class="p-nav-btn" id="p-sub-history" onclick="switchPatientSubTab('history')">
-              <i class="fa-solid fa-file-medical"></i> My Records (<span id="record-count">1</span>)
-            </button>
-          </div>
 
-          <div class="phone-screen" id="patient-sub-home-panel">
-            
-            <!-- Patient Screen Header -->
+          <!-- Patient sub-nav -->
+          <nav class="patient-sub-nav" role="tablist" aria-label="Patient screens">
+            <button class="p-nav-btn active" id="pnav-search" onclick="switchPatientScreen('search')">
+              <i class="fa-solid fa-magnifying-glass"></i> Search
+            </button>
+            <button class="p-nav-btn" id="pnav-booking" onclick="switchPatientScreen('booking')">
+              <i class="fa-solid fa-calendar-check"></i> Booking
+            </button>
+            <button class="p-nav-btn" id="pnav-history" onclick="switchPatientScreen('history')">
+              <i class="fa-solid fa-clock-rotate-left"></i> History
+            </button>
+          </nav>
+
+          <!-- ---- SEARCH SCREEN ---- -->
+          <div class="phone-screen" id="screen-search">
+            <!-- Greeting -->
             <div class="patient-header">
-              <div class="user-greeting">
-                <span class="greeting-sub">Welcome back 👋</span>
-                <h3 class="greeting-name">Sarah Jenkins</h3>
+              <div>
+                <div class="greeting-sub">Good morning,</div>
+                <div class="greeting-name">Alex Johnson</div>
               </div>
               <div class="patient-avatar">
-                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80" alt="Patient">
+                <img src="https://api.dicebear.com/8.x/avataaars/svg?seed=Alex" alt="Patient avatar" />
               </div>
             </div>
 
-            <!-- Real-Time Doctor & Symptom Search -->
-            <div class="search-input-box">
-              <i class="fa-solid fa-magnifying-glass"></i>
-              <input type="text" id="patient-search-bar" placeholder="Search doctor, specialty, or condition..." oninput="searchDoctors(this.value)">
-              <button class="search-clear-btn hidden" id="search-clear-btn" onclick="clearDoctorSearch()">&times;</button>
+            <!-- Urgent Banner -->
+            <div class="urgent-consult-card">
+              <div>
+                <span class="urgent-badge">Instant</span>
+                <h4>Need a Doctor Now?</h4>
+                <p>Connect with a verified doctor in under 15 minutes</p>
+                <button class="btn-instant-call" onclick="openVideoRoom()">
+                  <i class="fa-solid fa-video"></i> Start Video Call
+                </button>
+              </div>
+              <div class="consult-illustration"><i class="fa-solid fa-user-doctor"></i></div>
             </div>
 
-            <!-- AI Symptom Checker & Doctor Matcher Card -->
-            <div class="ai-checker-card" onclick="openAiTriageModal()">
+            <!-- AI Symptom Checker -->
+            <div class="ai-checker-card" id="aiCheckerCard" onclick="openAIModal()" role="button" tabindex="0" aria-label="Open AI symptom checker">
               <div class="ai-sparkle-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
               <div class="ai-checker-text">
-                <strong>AI Clinical Symptom Checker</strong>
-                <span>Unsure who to see? Describe symptoms to our AI ➔</span>
+                <strong>AI Symptom Checker</strong>
+                <span>Describe your symptoms, get triage guidance</span>
               </div>
-              <span class="ai-new-pill">AI BOT</span>
+              <span class="ai-new-pill">NEW</span>
             </div>
 
-            <!-- Express Pharmacy Delivery Card -->
-            <div class="pharmacy-express-card" onclick="openPharmacyDeliveryModal('Amoxicillin 500mg Capsules', 'Dr. Marcus Vance, MD', '$14.50')">
-              <div class="pharm-icon-box"><i class="fa-solid fa-truck-medical"></i></div>
+            <!-- Pharmacy Express -->
+            <div class="pharmacy-express-card" id="pharmacyCard" onclick="openPharmacyModal()" role="button" tabindex="0" aria-label="Track pharmacy delivery">
+              <div class="pharm-icon-box"><i class="fa-solid fa-truck-fast"></i></div>
               <div class="pharm-meta-text">
                 <div class="pharm-title-row">
-                  <strong>Express Pharmacy Delivery</strong>
-                  <span class="pharm-status-tag" id="pharm-home-tag">30-Min Delivery</span>
+                  <strong>Pharmacy Express</strong>
+                  <span class="pharm-status-tag">En Route</span>
                 </div>
-                <span>Order prescribed medications delivered straight to your door</span>
+                <span>Amoxicillin 500mg — Arriving in 18 min</span>
               </div>
               <i class="fa-solid fa-chevron-right chevron-icon"></i>
             </div>
 
-            <!-- Health Status Card -->
-            <div class="urgent-consult-card">
-              <div class="consult-content">
-                <span class="urgent-badge"><i class="fa-solid fa-bolt"></i> Instant Connect</span>
-                <h4>Need a Doctor Right Now?</h4>
-                <p>Average wait time: <strong>3 mins</strong></p>
-                <button class="btn-instant-call" onclick="openInstantBookingModal()">
-                  <i class="fa-solid fa-video"></i> Start Fast Consult ($45)
-                </button>
+            <!-- Search Box -->
+            <div class="search-input-box">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="doctorSearchInput" placeholder='Search by symptom or specialty...' oninput="filterDoctors()" aria-label="Search doctors" />
+              <button class="search-clear-btn hidden" id="searchClearBtn" onclick="clearSearch()" aria-label="Clear search">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+
+            <!-- Specialty Chips -->
+            <div>
+              <div class="section-title-row">
+                <h4>Specialties</h4>
+                <span class="see-all">All</span>
               </div>
-              <div class="consult-illustration">
-                <i class="fa-solid fa-stethoscope"></i>
+              <div class="specialty-chips" id="specialtyChips">
+                <button class="chip active" onclick="filterBySpecialty('All', this)">All</button>
+                <button class="chip" onclick="filterBySpecialty('General', this)">General</button>
+                <button class="chip" onclick="filterBySpecialty('Dermatology', this)">Skin</button>
+                <button class="chip" onclick="filterBySpecialty('Cardiology', this)">Heart</button>
+                <button class="chip" onclick="filterBySpecialty('Pediatrics', this)">Pediatrics</button>
+                <button class="chip" onclick="filterBySpecialty('Mental Health', this)">Mental Health</button>
+                <button class="chip" onclick="filterBySpecialty('Orthopedics', this)">Ortho</button>
               </div>
             </div>
 
-            <!-- Specialty Filters -->
-            <div class="section-title-row">
-              <h4>Medical Specialties</h4>
-              <span class="see-all">5 Available</span>
-            </div>
-
-            <div class="specialty-chips" id="specialty-chips">
-              <button class="chip active" onclick="filterSpecialty('All')">All</button>
-              <button class="chip" onclick="filterSpecialty('General Medicine')">🩺 General</button>
-              <button class="chip" onclick="filterSpecialty('Dermatology')">✨ Dermatology</button>
-              <button class="chip" onclick="filterSpecialty('Pediatrics')">👶 Pediatrics</button>
-              <button class="chip" onclick="filterSpecialty('Cardiology')">❤️ Cardiology</button>
-            </div>
-
-            <!-- Available Doctors List -->
-            <div class="section-title-row">
-              <h4>Available Specialists</h4>
-              <span class="doctor-count" id="doc-count">4 Available Today</span>
-            </div>
-
-            <div class="doctor-list" id="doctor-list">
-              <!-- Dynamically Populated by JavaScript -->
-            </div>
-
-          </div>
-
-          <!-- Patient History Sub-Tab -->
-          <div class="phone-screen hidden" id="patient-sub-history-panel">
-            <div class="section-title-row">
-              <h4>Your Medical Consultations</h4>
-              <span class="see-all">HIPAA Vault</span>
-            </div>
-
-            <div class="history-list" id="patient-history-list">
-              <div class="history-card">
-                <div class="history-header">
-                  <div>
-                    <strong>Dr. Marcus Vance, MD</strong>
-                    <span class="history-date">Aug 27, 2026 • Video Call</span>
-                  </div>
-                  <span class="badge-status resolved">Completed</span>
-                </div>
-                <div class="history-diag">
-                  <strong>Diagnosis:</strong> Acute Upper Respiratory Tract Infection
-                </div>
-                <div class="history-rx">
-                  <span>💊 Amoxicillin 500mg (5 Days)</span>
-                </div>
-                <div style="display: flex; gap: 8px; margin-top: 8px;">
-                  <button class="btn-sm btn-outline" style="flex: 1;" onclick="viewHistoricalRx()">
-                    <i class="fa-solid fa-file-pdf"></i> View Rx
-                  </button>
-                  <button class="btn-sm btn-success" style="flex: 1;" onclick="openPharmacyDeliveryModal('Amoxicillin 500mg (5 Days)', 'Dr. Marcus Vance, MD', '$14.50')">
-                    <i class="fa-solid fa-truck-fast"></i> Order Meds ($14.50)
-                  </button>
-                </div>
+            <!-- Doctor List -->
+            <div>
+              <div class="section-title-row">
+                <h4>Available Doctors</h4>
+                <span class="doctor-count" id="doctorCount">6 Online</span>
               </div>
+              <div class="doctor-list" id="doctorList"></div>
             </div>
           </div>
 
-        </div>
-      </div>
+          <!-- ---- BOOKING SCREEN ---- -->
+          <div class="phone-screen hidden" id="screen-booking">
+            <div class="patient-header">
+              <div>
+                <div class="greeting-sub">Book a Consultation</div>
+                <div class="greeting-name">Select Symptoms</div>
+              </div>
+            </div>
+
+            <div class="symptom-tag-grid" id="symptomTagGrid">
+              <button class="sym-tag" onclick="toggleSymptom(this)">Fever</button>
+              <button class="sym-tag" onclick="toggleSymptom(this)">Headache</button>
+              <button class="sym-tag" onclick="toggleSymptom(this)">Sore Throat</button>
+              <button class="sym-tag" onclick="toggleSymptom(this)">Cough</button>
+              <button class="sym-tag" onclick="toggleSymptom(this)">Skin Rash</button>
+              <button class="sym-tag" onclick="toggleSymptom(this)">Chest Pain</button>
+              <button class="sym-tag" onclick="toggleSymptom(this)">Back Pain</button>
+              <button class="sym-tag" onclick="toggleSymptom(this)">Fatigue</button>
+              <button class="sym-tag" onclick="toggleSymptom(this)">Nausea</button>
+              <button class="sym-tag" onclick="toggleSymptom(this)">Anxiety</button>
+            </div>
+
+            <div class="section-title-row" style="margin-bottom:10px;">
+              <h4>Recommended Doctors</h4>
+              <span class="doctor-count">3 Available</span>
+            </div>
+            <div class="doctor-list" id="bookingDoctorList"></div>
+          </div>
+
+          <!-- ---- HISTORY SCREEN ---- -->
+          <div class="phone-screen hidden" id="screen-history">
+            <div class="patient-header">
+              <div>
+                <div class="greeting-sub">My Health</div>
+                <div class="greeting-name">Consultation History</div>
+              </div>
+            </div>
+            <div id="historyList"></div>
+          </div>
+        </div><!-- /phone-mockup -->
+      </div><!-- /phone-frame-container -->
     </section>
 
-    <!-- ============================================== -->
-    <!-- VIEW 2: DOCTOR PORTAL (Prescription & Calls)   -->
-    <!-- ============================================== -->
-    <section id="doctor-view" class="view-panel">
+    <!-- =================================================================
+         VIEW 2: DOCTOR PORTAL
+         ================================================================= -->
+    <section class="view-panel" id="view-doctor" role="tabpanel" aria-labelledby="tab-doctor">
       <div class="doctor-portal-layout">
-        
-        <div class="doctor-sidebar">
+        <!-- Sidebar -->
+        <aside class="doctor-sidebar">
+          <!-- Profile Card -->
           <div class="doctor-profile-card">
-            <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150&auto=format&fit=crop&q=80" alt="Dr. Marcus" class="doc-img-lg">
-            <h3>Dr. Marcus Vance, MD</h3>
-            <span class="doc-badge">Chief Medical Officer & Specialist</span>
+            <img src="https://api.dicebear.com/8.x/avataaars/svg?seed=DrSarah" alt="Dr. Sarah Chen" class="doc-img-lg" />
+            <h3>Dr. Sarah Chen</h3>
+            <span class="doc-badge">MD, Cardiology — License #MED-4821</span>
             <div class="doc-stats-grid">
               <div class="stat-box">
-                <span class="stat-num">4.9 ⭐</span>
+                <span class="stat-num">4.9</span>
                 <span class="stat-lbl">Rating</span>
               </div>
               <div class="stat-box">
-                <span class="stat-num">1,240+</span>
+                <span class="stat-num">1,284</span>
                 <span class="stat-lbl">Consults</span>
               </div>
               <div class="stat-box">
-                <span class="stat-num">$45</span>
-                <span class="stat-lbl">Fee</span>
+                <span class="stat-num">7 yrs</span>
+                <span class="stat-lbl">Experience</span>
               </div>
             </div>
           </div>
 
+          <!-- Patient Queue -->
           <div class="doctor-queue-card">
-            <h4><i class="fa-solid fa-clock"></i> Today's Queue (3 Patients)</h4>
-            <div class="patient-queue-list">
-              <div class="queue-item active-queue" onclick="selectQueuePatient('Sarah Jenkins', 'Flu, Fever (38.5°C), Sore Throat')">
+            <h4><i class="fa-solid fa-list-ul"></i> Patient Queue <span class="kpi-tag info" style="margin-left:auto;">3 Waiting</span></h4>
+            <div class="patient-queue-list" id="patientQueueList">
+              <div class="queue-item active-queue" onclick="selectPatient(this, 'Marcus Webb', 'Chest tightness, SOB', 'penicillin')" tabindex="0">
                 <div class="queue-info">
-                  <strong>Sarah Jenkins (Active)</strong>
-                  <span>Flu & Fever • 10:30 AM</span>
+                  <strong>Marcus Webb</strong>
+                  <span>Chest tightness · Urgent</span>
                 </div>
-                <button class="btn-sm btn-success" onclick="launchVideoCall('Dr. Marcus Vance', 'General Medicine')">
-                  <i class="fa-solid fa-video"></i> Connect
-                </button>
+                <span class="status-waiting">Now</span>
               </div>
-              <div class="queue-item" onclick="selectQueuePatient('Michael Chang', 'Skin rash on forearm, itchiness for 2 days')">
+              <div class="queue-item" onclick="selectPatient(this, 'Priya Nair', 'Skin rash on forearm', 'none')" tabindex="0">
                 <div class="queue-info">
-                  <strong>Michael Chang</strong>
-                  <span>Skin Rash Check • 11:00 AM</span>
+                  <strong>Priya Nair</strong>
+                  <span>Skin rash · Moderate</span>
                 </div>
-                <span class="status-waiting">Waiting</span>
+                <span class="status-waiting">+12 min</span>
               </div>
-              <div class="queue-item" onclick="selectQueuePatient('Elena Rostova', 'Hypertension routine monthly refill')">
+              <div class="queue-item" onclick="selectPatient(this, 'David Kim', 'Anxiety, insomnia', 'none')" tabindex="0">
                 <div class="queue-info">
-                  <strong>Elena Rostova</strong>
-                  <span>Prescription Refill • 11:30 AM</span>
+                  <strong>David Kim</strong>
+                  <span>Mental health · Routine</span>
                 </div>
-                <span class="status-waiting">Confirmed</span>
+                <span class="status-waiting">+28 min</span>
               </div>
             </div>
           </div>
-        </div>
+        </aside>
 
+        <!-- Workspace -->
         <div class="doctor-workspace">
-          
-          <!-- Doctor Workspace Navigation Tabs -->
-          <div class="doc-workspace-nav">
-            <button class="doc-tab-btn active" id="doc-tab-rx" onclick="switchDocSubTab('rx')">
-              <i class="fa-solid fa-file-prescription"></i> Digital Rx Studio
+          <!-- Workspace Tabs -->
+          <nav class="doc-workspace-nav" role="tablist">
+            <button class="doc-tab-btn active" id="docTab-rx" onclick="switchDocTab('rx')" role="tab" aria-selected="true">
+              <i class="fa-solid fa-prescription"></i> Rx Studio
             </button>
-            <button class="doc-tab-btn" id="doc-tab-calendar" onclick="switchDocSubTab('calendar')">
-              <i class="fa-solid fa-calendar-days"></i> Weekly Schedule (Mon–Fri)
+            <button class="doc-tab-btn" id="docTab-calendar" onclick="switchDocTab('calendar')" role="tab" aria-selected="false">
+              <i class="fa-solid fa-calendar-week"></i> Schedule
             </button>
-          </div>
+          </nav>
 
-          <!-- SUBTAB A: RX PRESCRIPTION STUDIO -->
-          <div id="doc-subtab-rx-panel">
+          <!-- ---- RX STUDIO TAB ---- -->
+          <div id="docContent-rx">
             <div class="workspace-header">
-              <h3><i class="fa-solid fa-file-prescription"></i> Digital Rx Prescription Studio</h3>
-              <p>Generate HIPAA-compliant official digital prescriptions with verified signature</p>
+              <h3><i class="fa-solid fa-file-medical"></i> Consultation &amp; Rx Workspace</h3>
+              <p id="currentPatientLabel">Current Patient: <strong>Marcus Webb</strong> — Chest tightness, shortness of breath</p>
             </div>
 
-            <!-- Patient Allergy Warning Banner -->
-            <div class="allergy-alert-banner" id="allergy-banner">
+            <!-- Allergy Alert -->
+            <div class="allergy-alert-banner" id="allergyBanner">
               <div class="allergy-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
               <div class="allergy-text">
-                <strong>PATIENT ALLERGY ALERT: Severe Penicillin & Beta-Lactam Allergy</strong>
-                <small>Cross-reactivity warning active. System will validate prescribed antibiotics.</small>
+                <strong>ALLERGY ALERT — Penicillin</strong>
+                <small>Patient has documented allergy. Avoid all beta-lactam antibiotics.</small>
               </div>
               <span class="allergy-badge">HIGH ALERT</span>
             </div>
 
-            <!-- Live Contraindication Warning Box -->
-            <div class="contraindication-warning hidden" id="contraindication-box">
-              <i class="fa-solid fa-triangle-exclamation"></i>
+            <!-- Contraindication Warning -->
+            <div class="contraindication-warning hidden" id="contraindicationBanner">
+              <i class="fa-solid fa-circle-exclamation"></i>
               <div class="contra-info">
-                <strong>CONTRAINDICATION DETECTED: Amoxicillin</strong>
-                <p>Amoxicillin is a penicillin derivative. Risk of allergic reaction with patient Sarah Jenkins.</p>
+                <strong>CONTRAINDICATION DETECTED</strong>
+                <p id="contraText">Amoxicillin is a penicillin-class antibiotic — CONTRAINDICATED for this patient.</p>
               </div>
-              <button type="button" class="btn-sm btn-success" onclick="autoFixAllergySafeMed()">
-                <i class="fa-solid fa-wand-magic-sparkles"></i> Switch to Azithromycin (Safe)
-              </button>
             </div>
 
-            <!-- 1-Click Clinical Presets Bar -->
+            <!-- 1-Click Rx Presets -->
             <div class="rx-presets-strip">
-              <span class="preset-title"><i class="fa-solid fa-wand-magic-sparkles"></i> 1-Click Clinical Presets:</span>
+              <span class="preset-title"><i class="fa-solid fa-bolt"></i> 1-Click Presets:</span>
               <div class="preset-chips">
-                <button type="button" class="preset-chip" onclick="applyRxPreset('flu')">🩺 Viral Flu & URI</button>
-                <button type="button" class="preset-chip" onclick="applyRxPreset('eczema')">✨ Atopic Eczema</button>
-                <button type="button" class="preset-chip" onclick="applyRxPreset('pediatric')">👶 Pediatric Fever</button>
-                <button type="button" class="preset-chip" onclick="applyRxPreset('cardio')">💓 Hypertension Refill</button>
-                <button type="button" class="preset-chip clear" onclick="applyRxPreset('clear')">🧹 Clear Form</button>
+                <button class="preset-chip" onclick="applyPreset('URI')">URI</button>
+                <button class="preset-chip" onclick="applyPreset('HTN')">Hypertension</button>
+                <button class="preset-chip" onclick="applyPreset('T2D')">Type 2 Diabetes</button>
+                <button class="preset-chip" onclick="applyPreset('Anxiety')">Anxiety</button>
+                <button class="preset-chip" onclick="applyPreset('Skin')">Skin Infection</button>
+                <button class="preset-chip clear" onclick="clearRxForm()">Clear Form</button>
               </div>
             </div>
 
-            <!-- Clinical Vitals Row -->
+            <!-- Vitals Strip -->
             <div class="vitals-strip">
               <div class="vital-item">
-                <span class="v-label">Blood Pressure:</span>
-                <input type="text" id="vit-bp" value="120/80 mmHg" class="vital-input">
+                <span class="v-label">Blood Pressure</span>
+                <input type="text" class="vital-input" id="vitBP" value="138/86 mmHg" aria-label="Blood pressure" />
               </div>
               <div class="vital-item">
-                <span class="v-label">Heart Rate:</span>
-                <input type="text" id="vit-hr" value="76 bpm" class="vital-input">
+                <span class="v-label">Heart Rate</span>
+                <input type="text" class="vital-input" id="vitHR" value="92 bpm" aria-label="Heart rate" />
               </div>
               <div class="vital-item">
-                <span class="v-label">Temperature:</span>
-                <input type="text" id="vit-temp" value="98.6 °F" class="vital-input">
+                <span class="v-label">SpO2</span>
+                <input type="text" class="vital-input" id="vitSPO2" value="97%" aria-label="Oxygen saturation" />
               </div>
             </div>
 
-            <form id="rx-form" class="rx-form" onsubmit="generatePrescription(event)">
+            <!-- Rx Form -->
+            <form class="rx-form" id="rxForm" onsubmit="return false;">
               <div class="form-row-2">
                 <div class="form-group">
-                  <label>Patient Name</label>
-                  <input type="text" id="rx-patient-name" value="Sarah Jenkins" required>
+                  <label for="rxPatientName">Patient Name</label>
+                  <input type="text" id="rxPatientName" value="Marcus Webb" />
                 </div>
                 <div class="form-group">
-                  <label>Date of Consultation</label>
-                  <input type="date" id="rx-date" value="2026-08-27" required>
+                  <label for="rxDate">Date</label>
+                  <input type="date" id="rxDate" />
                 </div>
               </div>
 
               <div class="form-group">
-                <div class="label-with-action">
-                  <label>Diagnosis / Clinical Assessment</label>
-                  <button type="button" class="btn-voice-dictate" id="btn-dictate-diag" onclick="toggleVoiceDictation('rx-diagnosis', this)">
-                    <i class="fa-solid fa-microphone"></i> <span>Dictate Notes</span>
-                  </button>
-                </div>
-                <input type="text" id="rx-diagnosis" value="Acute Upper Respiratory Tract Infection (Viral Rhinitis)" required>
+                <label for="rxDiagnosis">Diagnosis (ICD-10)</label>
+                <input type="text" id="rxDiagnosis" placeholder="e.g. Unstable Angina (I20.0)" />
               </div>
 
               <div class="medications-block">
-                <label>Prescribed Medications & Dosages</label>
-                <div class="form-row-3">
-                  <input type="text" id="rx-med1" placeholder="Medication" value="Amoxicillin 500mg Capsules" oninput="checkAllergySafety(this.value)" required>
-                  <input type="text" id="rx-dose1" placeholder="Dosage" value="1 Capsule 3x Daily (with food)" required>
-                  <input type="text" id="rx-dur1" placeholder="Duration" value="5 Days" required>
+                <div class="label-with-action">
+                  <label>Medications</label>
+                  <button class="btn-voice-dictate" id="voiceBtn" type="button" onclick="toggleVoiceDictation()">
+                    <i class="fa-solid fa-microphone"></i> Dictate
+                  </button>
                 </div>
                 <div class="form-row-3">
-                  <input type="text" id="rx-med2" placeholder="Medication 2" value="Paracetamol 650mg Tablet">
-                  <input type="text" id="rx-dose2" placeholder="Dosage" value="1 Tablet as needed for fever">
-                  <input type="text" id="rx-dur2" placeholder="Duration" value="As needed">
+                  <input type="text" id="rxMed1" placeholder="Drug name" oninput="checkContraindication()" />
+                  <input type="text" id="rxDose1" placeholder="Dosage" />
+                  <input type="text" id="rxFreq1" placeholder="Freq" />
+                </div>
+                <div class="form-row-3">
+                  <input type="text" id="rxMed2" placeholder="Drug name" oninput="checkContraindication()" />
+                  <input type="text" id="rxDose2" placeholder="Dosage" />
+                  <input type="text" id="rxFreq2" placeholder="Freq" />
+                </div>
+                <div class="form-row-3">
+                  <input type="text" id="rxMed3" placeholder="Drug name" oninput="checkContraindication()" />
+                  <input type="text" id="rxDose3" placeholder="Dosage" />
+                  <input type="text" id="rxFreq3" placeholder="Freq" />
                 </div>
               </div>
 
               <div class="form-group">
-                <div class="label-with-action">
-                  <label>Doctor Advice / Recovery Instructions</label>
-                  <button type="button" class="btn-voice-dictate" id="btn-dictate-adv" onclick="toggleVoiceDictation('rx-advice', this)">
-                    <i class="fa-solid fa-microphone"></i> <span>Dictate Voice Notes</span>
-                  </button>
-                </div>
-                <textarea id="rx-advice" rows="3">Drink plenty of fluids, rest for 48 hours, and monitor body temperature. Contact clinic if fever persists beyond 3 days.</textarea>
+                <label for="rxNotes">Clinical Notes</label>
+                <textarea id="rxNotes" rows="3" placeholder="Follow-up in 2 weeks. Avoid strenuous activity..."></textarea>
               </div>
 
               <div class="form-footer">
                 <div class="doctor-signature-preview">
-                  <span>Signed Digitally:</span>
-                  <strong>Dr. Marcus Vance, MD (Lic #MED-884210)</strong>
+                  <span>Signed by:</span>
+                  <strong>Dr. Sarah Chen, MD</strong>
+                  <span>Lic. #MED-4821</span>
                 </div>
-                <button type="submit" class="btn-primary">
-                  <i class="fa-solid fa-file-pdf"></i> Generate & Issue Prescription
+                <button type="button" class="btn-primary" onclick="generateRxPreview()">
+                  <i class="fa-solid fa-file-prescription"></i> Generate Rx Pad
                 </button>
               </div>
             </form>
+
+            <!-- Rx Preview (hospital pad) -->
+            <div class="rx-preview-card" id="rxPreviewCard" style="display:none;">
+              <div class="rx-pad-header">
+                <div class="rx-hospital-brand">
+                  <div class="rx-logo-box"><i class="fa-solid fa-heart-pulse"></i></div>
+                  <div>
+                    <h4>QUICKCARE MEDICAL CENTER</h4>
+                    <small>1200 Health Ave, San Francisco, CA 94102 | (415) 555-0199</small>
+                  </div>
+                </div>
+                <div class="rx-pad-meta">
+                  <span id="rxPadDate"></span>
+                  <span id="rxPadId"></span>
+                </div>
+              </div>
+
+              <div id="rxPadBody"></div>
+
+              <div class="rx-pad-footer">
+                <div class="rx-qr-code">
+                  <i class="fa-solid fa-qrcode"></i>
+                  <span>Scan to Verify Rx</span>
+                </div>
+                <div class="rx-signature-seal">
+                  <div class="seal-line"></div>
+                  <strong>Dr. Sarah Chen, MD</strong>
+                  <span style="font-size:11px;color:#64748b;">Cardiologist · Lic. #MED-4821</span>
+                </div>
+              </div>
+
+              <div class="rx-actions">
+                <button class="btn-sm btn-outline" onclick="window.print()"><i class="fa-solid fa-print"></i> Print</button>
+                <button class="btn-sm btn-success" onclick="showToast('Prescription sent to patient pharmacy!','success')"><i class="fa-solid fa-paper-plane"></i> Send to Patient</button>
+              </div>
+            </div>
           </div>
 
-          <!-- SUBTAB B: DOCTOR WEEKLY CALENDAR SCHEDULE -->
-          <div id="doc-subtab-calendar-panel" class="hidden">
+          <!-- ---- SCHEDULE TAB ---- -->
+          <div id="docContent-calendar" style="display:none;">
             <div class="workspace-header">
-              <h3><i class="fa-solid fa-calendar-week"></i> Dr. Marcus Vance — Weekly Schedule</h3>
-              <p>Manage tele-consultation capacity, booked patients, and clinic office hours</p>
+              <h3><i class="fa-solid fa-calendar-week"></i> Weekly Schedule</h3>
+              <p>Current week — Mon Sep 1 to Fri Sep 5, 2026</p>
             </div>
-
-            <div class="doc-calendar-grid">
-              <!-- Monday -->
-              <div class="calendar-day-col">
-                <div class="day-head">
-                  <strong>Mon</strong>
-                  <span>Aug 24</span>
-                </div>
-                <div class="day-slots">
-                  <div class="slot-item booked">09:00 AM • John D.</div>
-                  <div class="slot-item booked">10:30 AM • Lisa P.</div>
-                  <div class="slot-item free" onclick="toggleCalendarSlot(this)">02:00 PM • Open</div>
-                  <div class="slot-item free" onclick="toggleCalendarSlot(this)">04:00 PM • Open</div>
-                </div>
-              </div>
-
-              <!-- Tuesday -->
-              <div class="calendar-day-col">
-                <div class="day-head">
-                  <strong>Tue</strong>
-                  <span>Aug 25</span>
-                </div>
-                <div class="day-slots">
-                  <div class="slot-item booked">09:30 AM • Kevin S.</div>
-                  <div class="slot-item booked">11:00 AM • Maria H.</div>
-                  <div class="slot-item booked">03:30 PM • Sam R.</div>
-                  <div class="slot-item free" onclick="toggleCalendarSlot(this)">04:30 PM • Open</div>
-                </div>
-              </div>
-
-              <!-- Wednesday -->
-              <div class="calendar-day-col">
-                <div class="day-head">
-                  <strong>Wed</strong>
-                  <span>Aug 26</span>
-                </div>
-                <div class="day-slots">
-                  <div class="slot-item booked">10:00 AM • Rachel F.</div>
-                  <div class="slot-item booked">01:30 PM • Alex G.</div>
-                  <div class="slot-item free" onclick="toggleCalendarSlot(this)">03:00 PM • Open</div>
-                  <div class="slot-item free" onclick="toggleCalendarSlot(this)">04:30 PM • Open</div>
-                </div>
-              </div>
-
-              <!-- Thursday (Today) -->
-              <div class="calendar-day-col today-col">
-                <div class="day-head today">
-                  <strong>Thu (Today)</strong>
-                  <span>Aug 27</span>
-                </div>
-                <div class="day-slots">
-                  <div class="slot-item live">10:30 AM • Sarah (Active)</div>
-                  <div class="slot-item booked">11:00 AM • Michael C.</div>
-                  <div class="slot-item booked">11:30 AM • Elena R.</div>
-                  <div class="slot-item free" onclick="toggleCalendarSlot(this)">03:00 PM • Open</div>
-                </div>
-              </div>
-
-              <!-- Friday -->
-              <div class="calendar-day-col">
-                <div class="day-head">
-                  <strong>Fri</strong>
-                  <span>Aug 28</span>
-                </div>
-                <div class="day-slots">
-                  <div class="slot-item booked">09:00 AM • Zoe T.</div>
-                  <div class="slot-item free" onclick="toggleCalendarSlot(this)">11:00 AM • Open</div>
-                  <div class="slot-item free" onclick="toggleCalendarSlot(this)">02:00 PM • Open</div>
-                  <div class="slot-item free" onclick="toggleCalendarSlot(this)">04:00 PM • Open</div>
-                </div>
-              </div>
-            </div>
-
+            <div class="doc-calendar-grid" id="docCalendarGrid"></div>
             <div class="calendar-legend-bar">
-              <span><span class="dot-legend live"></span> Telehealth Active</span>
-              <span><span class="dot-legend booked"></span> Patient Booked</span>
-              <span><span class="dot-legend free"></span> Available Slot (Click to Toggle)</span>
+              <span><span class="dot-legend live"></span>Live Now</span>
+              <span><span class="dot-legend booked"></span>Booked</span>
+              <span><span class="dot-legend free"></span>Available</span>
             </div>
           </div>
-
-          <!-- Generated Rx Output Hospital Pad -->
-          <div id="rx-preview-card" class="rx-preview-card hidden">
-            <div class="rx-pad-header">
-              <div class="rx-hospital-brand">
-                <div class="rx-logo-box"><i class="fa-solid fa-heart-pulse"></i></div>
-                <div>
-                  <h4>QUICKCARE DIGITAL CLINIC</h4>
-                  <small>Telehealth & Urgent Care Network • HIPAA Certified</small>
-                </div>
-              </div>
-              <div class="rx-pad-meta">
-                <span>Rx No: <strong>#QC-2026-8891</strong></span>
-                <span id="rx-pad-date">Date: Aug 27, 2026</span>
-              </div>
-            </div>
-
-            <div class="rx-details" id="rx-details-output"></div>
-
-            <div class="rx-pad-footer">
-              <div class="rx-qr-code">
-                <i class="fa-solid fa-qrcode"></i>
-                <span>Verify Rx Online</span>
-              </div>
-              <div class="rx-signature-seal">
-                <div class="seal-line"></div>
-                <strong>Dr. Marcus Vance, MD</strong>
-                <small>State License: #MED-884210</small>
-              </div>
-            </div>
-
-            <div class="rx-actions">
-              <button class="btn-sm btn-outline" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Prescription</button>
-              <button class="btn-sm btn-success" onclick="pushRxToPatientApp()"><i class="fa-solid fa-cloud-arrow-up"></i> Sync to Patient App</button>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
+        </div><!-- /doctor-workspace -->
+      </div><!-- /doctor-portal-layout -->
     </section>
 
-    <!-- ============================================== -->
-    <!-- VIEW 3: IT PM CONTROL CENTER                   -->
-    <!-- ============================================== -->
-    <section id="pm-view" class="view-panel">
+    <!-- =================================================================
+         VIEW 3: IT PM CONTROL CENTER
+         ================================================================= -->
+    <section class="view-panel" id="view-pm" role="tabpanel" aria-labelledby="tab-pm">
       <div class="pm-dashboard">
-        
-        <!-- PM Dashboard Top Summary Cards -->
+
+        <!-- KPI Banner -->
         <div class="pm-stats-banner">
           <div class="pm-kpi-card">
-            <div class="kpi-icon blue"><i class="fa-solid fa-calendar-check"></i></div>
+            <div class="kpi-icon blue"><i class="fa-solid fa-rocket"></i></div>
             <div class="kpi-data">
-              <span class="kpi-label">Project Timeline</span>
-              <h3>15 Weeks <span class="kpi-tag success">On Schedule</span></h3>
-              <small>Sprints 1–4 Completed</small>
+              <h3>4 Sprints <span class="kpi-tag success">100% On Time</span></h3>
+              <div class="kpi-label">Delivery Schedule</div>
+              <small>15-week lifecycle · Completed</small>
             </div>
           </div>
-
           <div class="pm-kpi-card">
             <div class="kpi-icon green"><i class="fa-solid fa-dollar-sign"></i></div>
             <div class="kpi-data">
-              <span class="kpi-label">Budget Variance</span>
-              <h3>$116,400 <span class="kpi-tag success">+$3.6k Saved</span></h3>
-              <small>Approved: $120,000</small>
+              <h3>$116,400 <span class="kpi-tag success">+$3,600</span></h3>
+              <div class="kpi-label">Budget Spent (3% Under)</div>
+              <small>Budget: $120,000 USD</small>
             </div>
           </div>
-
           <div class="pm-kpi-card">
             <div class="kpi-icon purple"><i class="fa-solid fa-gauge-high"></i></div>
             <div class="kpi-data">
-              <span class="kpi-label">Average Velocity</span>
               <h3>30.5 Pts <span class="kpi-tag info">Predictable</span></h3>
-              <small>122 Total Points Delivered</small>
+              <div class="kpi-label">Avg. Sprint Velocity</div>
+              <small>122 total story points delivered</small>
             </div>
           </div>
-
           <div class="pm-kpi-card">
-            <div class="kpi-icon orange"><i class="fa-solid fa-shield-halved"></i></div>
+            <div class="kpi-icon orange"><i class="fa-solid fa-shield-check"></i></div>
             <div class="kpi-data">
-              <span class="kpi-label">Open Critical Risks</span>
-              <h3>0 Active <span class="kpi-tag success">100% Mitigated</span></h3>
-              <small>5 Logged in RAID Register</small>
+              <h3>99.2% <span class="kpi-tag success">0 Critical</span></h3>
+              <div class="kpi-label">QA Test Pass Rate</div>
+              <small>141/142 test cases passed</small>
             </div>
           </div>
         </div>
 
-        <!-- PM Section Tabs -->
-        <div class="pm-subtabs">
-          <button class="pm-subtab active" onclick="switchPmTab('kanban-tab')"><i class="fa-solid fa-table-columns"></i> Live Agile Kanban</button>
-          <button class="pm-subtab" onclick="switchPmTab('standup-tab')"><i class="fa-solid fa-stopwatch-20"></i> Standup Runner</button>
-          <button class="pm-subtab" onclick="switchPmTab('poker-tab')"><i class="fa-solid fa-clone"></i> Planning Poker</button>
-          <button class="pm-subtab" onclick="switchPmTab('retro-tab')"><i class="fa-solid fa-comments"></i> Retrospective</button>
-          <button class="pm-subtab" onclick="switchPmTab('budget-tab')"><i class="fa-solid fa-wallet"></i> Budget & Burn</button>
-          <button class="pm-subtab" onclick="switchPmTab('velocity-tab')"><i class="fa-solid fa-chart-line"></i> Velocity & Burndown</button>
-          <button class="pm-subtab" onclick="switchPmTab('raid-tab')"><i class="fa-solid fa-triangle-exclamation"></i> RAID Log</button>
-          <button class="pm-subtab" onclick="switchPmTab('raci-tab')"><i class="fa-solid fa-users-gear"></i> RACI Matrix</button>
-          <button class="pm-subtab special" onclick="switchPmTab('exec-tab')"><i class="fa-solid fa-briefcase"></i> Exec Report</button>
+        <!-- PM Sub-Tabs -->
+        <div class="pm-subtabs" role="tablist" id="pmSubTabs">
+          <button class="pm-subtab active" onclick="switchPMTab('kanban', this)" role="tab"><i class="fa-solid fa-table-columns"></i> Kanban</button>
+          <button class="pm-subtab" onclick="switchPMTab('sprint', this)" role="tab"><i class="fa-solid fa-chart-line"></i> Sprint Sim</button>
+          <button class="pm-subtab special" onclick="switchPMTab('poker', this)" role="tab"><i class="fa-solid fa-cards-blank"></i> Planning Poker</button>
+          <button class="pm-subtab" onclick="switchPMTab('retro', this)" role="tab"><i class="fa-solid fa-note-sticky"></i> Retro Board</button>
+          <button class="pm-subtab" onclick="switchPMTab('budget', this)" role="tab"><i class="fa-solid fa-money-bill-trend-up"></i> Budget</button>
+          <button class="pm-subtab" onclick="switchPMTab('raid', this)" role="tab"><i class="fa-solid fa-shield-halved"></i> RAID/RACI</button>
+          <button class="pm-subtab" onclick="switchPMTab('standup', this)" role="tab"><i class="fa-solid fa-users"></i> Standup</button>
         </div>
 
-        <!-- SUBTAB 1: KANBAN BOARD -->
-        <div id="kanban-tab" class="pm-tab-content active">
+        <!-- ---- KANBAN ---- -->
+        <div class="pm-tab-content active" id="pmTab-kanban">
           <div class="kanban-header-row">
-            <div>
-              <h4>Interactive Scrum Story Board</h4>
-              <small style="color: var(--text-secondary);">Click any story card to advance its sprint state, or create a new user story.</small>
-            </div>
-            <div style="display: flex; gap: 8px;">
-              <button class="btn-sm btn-outline" onclick="exportProjectDataCSV()"><i class="fa-solid fa-file-csv"></i> Export Backlog CSV</button>
-              <button class="btn-sm btn-primary" onclick="openNewStoryModal()"><i class="fa-solid fa-plus"></i> Add User Story</button>
-              <button class="btn-sm btn-outline" onclick="resetKanban()"><i class="fa-solid fa-rotate-left"></i> Reset</button>
-            </div>
+            <h3 style="font-size:16px;font-weight:700;">Sprint 4 — Agile Kanban Board</h3>
+            <button class="btn-sm btn-outline" onclick="exportBacklogCSV()"><i class="fa-solid fa-file-csv"></i> Export Backlog CSV</button>
           </div>
-
-          <div class="kanban-board-grid">
-            
-            <div class="kanban-column" id="col-backlog">
-              <div class="column-header">
-                <span class="col-title">📋 Product Backlog</span>
-                <span class="col-count" id="count-backlog">1</span>
-              </div>
-              <div class="column-cards" id="cards-backlog"></div>
-            </div>
-
-            <div class="kanban-column" id="col-progress">
-              <div class="column-header">
-                <span class="col-title">⚡ In Development</span>
-                <span class="col-count" id="count-progress">1</span>
-              </div>
-              <div class="column-cards" id="cards-progress"></div>
-            </div>
-
-            <div class="kanban-column" id="col-qa">
-              <div class="column-header">
-                <span class="col-title">🧪 QA & Security Test</span>
-                <span class="col-count" id="count-qa">1</span>
-              </div>
-              <div class="column-cards" id="cards-qa"></div>
-            </div>
-
-            <div class="kanban-column" id="col-done">
-              <div class="column-header">
-                <span class="col-title">✅ Done & Deployed (MVP)</span>
-                <span class="col-count" id="count-done">4</span>
-              </div>
-              <div class="column-cards" id="cards-done"></div>
-            </div>
-
-          </div>
+          <div class="kanban-board-grid" id="kanbanBoard"></div>
         </div>
 
-        <!-- SUBTAB 2: VELOCITY & BURNDOWN (INTERACTIVE SIMULATOR) -->
-        <div id="velocity-tab" class="pm-tab-content">
-          
-          <!-- Sprint Selection Bar -->
+        <!-- ---- SPRINT SIMULATION ---- -->
+        <div class="pm-tab-content" id="pmTab-sprint">
+          <!-- Sprint Selector -->
           <div class="sprint-selector-strip">
-            <span class="strip-label"><i class="fa-solid fa-list-check"></i> Select Sprint:</span>
-            <div class="sprint-chips">
-              <button class="s-chip" onclick="selectSprintView(1)">Sprint 1 (28 pts)</button>
-              <button class="s-chip" onclick="selectSprintView(2)">Sprint 2 (30 pts)</button>
-              <button class="s-chip" onclick="selectSprintView(3)">Sprint 3 (33 pts)</button>
-              <button class="s-chip active" onclick="selectSprintView(4)">Sprint 4: Active (29 pts)</button>
+            <span class="strip-label"><i class="fa-solid fa-layer-group"></i> Sprint:</span>
+            <div class="sprint-chips" id="sprintChips">
+              <button class="s-chip" onclick="selectSprint(1,this)">Sprint 1</button>
+              <button class="s-chip" onclick="selectSprint(2,this)">Sprint 2</button>
+              <button class="s-chip" onclick="selectSprint(3,this)">Sprint 3</button>
+              <button class="s-chip active" onclick="selectSprint(4,this)">Sprint 4</button>
             </div>
           </div>
 
-          <!-- Interactive Simulator Controls Widget -->
+          <!-- Simulation Controls -->
           <div class="sim-control-panel">
             <div class="sim-header">
               <div>
-                <h4><i class="fa-solid fa-sliders"></i> Agile Sprint Capacity & Burndown Simulation Studio</h4>
-                <small style="color: var(--text-secondary);">Adjust team size, developer sick days, or injected scope to simulate real-time burndown outcomes.</small>
+                <h4 style="font-size:15px;font-weight:700;"><i class="fa-solid fa-sliders"></i> Sprint Forecast Simulator</h4>
+                <small style="color:var(--text-secondary);">Adjust variables to simulate sprint outcomes</small>
               </div>
-              <button class="btn-sm btn-outline" onclick="resetBurndownSim()"><i class="fa-solid fa-rotate-left"></i> Reset Baseline</button>
             </div>
-
             <div class="sim-sliders-grid">
-              <!-- Control 1: Team Size -->
               <div class="sim-control-item">
-                <div class="sim-ctrl-label">
-                  <span>👨‍💻 Active Developers:</span>
-                  <strong id="sim-val-devs">6 Devs</strong>
-                </div>
-                <input type="range" id="sim-range-devs" min="3" max="8" value="6" oninput="updateBurndownSim()">
-                <div class="sim-scale-labels"><span>3 (Understaffed)</span><span>6 (Baseline)</span><span>8 (Augmented)</span></div>
+                <div class="sim-ctrl-label">Team Capacity <strong id="capVal">100%</strong></div>
+                <input type="range" min="40" max="100" value="100" oninput="updateSim(this,'capVal','%')" id="capSlider" />
+                <div class="sim-scale-labels"><span>40%</span><span>100%</span></div>
               </div>
-
-              <!-- Control 2: Injected Scope Creep -->
               <div class="sim-control-item">
-                <div class="sim-ctrl-label">
-                  <span>⚡ Scope Adjustments:</span>
-                  <strong id="sim-val-scope">0 pts</strong>
-                </div>
-                <input type="range" id="sim-range-scope" min="-8" max="12" step="2" value="0" oninput="updateBurndownSim()">
-                <div class="sim-scale-labels"><span>-8 pts (Descope)</span><span>0 (Committed)</span><span>+12 pts (Scope Creep)</span></div>
+                <div class="sim-ctrl-label">Scope Change <strong id="scopeVal">0 pts</strong></div>
+                <input type="range" min="0" max="20" value="0" oninput="updateSim(this,'scopeVal',' pts')" id="scopeSlider" />
+                <div class="sim-scale-labels"><span>0</span><span>+20</span></div>
               </div>
-
-              <!-- Control 3: Unplanned Sick Days / Impediments -->
               <div class="sim-control-item">
-                <div class="sim-ctrl-label">
-                  <span>🩹 Team Sick Days / Downtime:</span>
-                  <strong id="sim-val-sick">0 Days</strong>
-                </div>
-                <input type="range" id="sim-range-sick" min="0" max="4" value="0" oninput="updateBurndownSim()">
-                <div class="sim-scale-labels"><span>0 Days</span><span>2 Days</span><span>4 Days</span></div>
+                <div class="sim-ctrl-label">Blockers <strong id="blockVal">0</strong></div>
+                <input type="range" min="0" max="5" value="0" oninput="updateSim(this,'blockVal','')" id="blockSlider" />
+                <div class="sim-scale-labels"><span>0</span><span>5</span></div>
               </div>
             </div>
-
-            <!-- Dynamic Forecast Alert Banner -->
-            <div class="sim-forecast-banner success" id="sim-forecast-box">
-              <i class="fa-solid fa-circle-check" id="sim-forecast-icon"></i>
+            <div class="sim-forecast-banner success" id="simForecastBanner">
+              <i class="fa-solid fa-circle-check" id="simForecastIcon"></i>
               <div class="forecast-content">
-                <strong id="sim-forecast-title">SPRINT ON TRACK: 100% Delivery Projected</strong>
-                <p id="sim-forecast-desc">At current velocity of 3.2 pts/day, all 29 points will complete by Day 9.5 with 0 spillover.</p>
+                <strong id="simForecastTitle">On Track to Complete</strong>
+                <p id="simForecastMsg">All 32 sprint points forecasted to be delivered by end of sprint.</p>
               </div>
-              <span class="forecast-pts-tag" id="sim-forecast-tag">0 Pt Spillover</span>
+              <span class="forecast-pts-tag" id="simForecastPts">32 pts</span>
             </div>
           </div>
 
+          <!-- Charts -->
           <div class="charts-grid-2">
-            <!-- Dynamic Burndown Chart -->
             <div class="chart-card">
               <div class="chart-header-row">
-                <h4 id="burndown-chart-title">📉 Sprint 4 Burndown (10-Day Cadence)</h4>
+                <h4 style="font-size:13px;font-weight:700;">Sprint Velocity</h4>
                 <div class="chart-legend-compact">
-                  <span><span class="dot-legend-dash"></span> Ideal</span>
-                  <span><span class="dot-legend-solid"></span> Simulated</span>
+                  <span><span class="leg-box planned" style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#334155;margin-right:4px;"></span>Planned</span>
+                  <span><span class="leg-box actual" style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#06b6d4;margin-right:4px;"></span>Actual</span>
                 </div>
               </div>
-              
-              <div class="burndown-visual">
-                <svg viewBox="0 0 420 220" class="burndown-svg" id="dynamic-burndown-svg">
-                  <!-- Grid lines -->
-                  <line x1="40" y1="20" x2="400" y2="20" stroke="rgba(255,255,255,0.08)" stroke-dasharray="3"/>
-                  <line x1="40" y1="65" x2="400" y2="65" stroke="rgba(255,255,255,0.08)" stroke-dasharray="3"/>
-                  <line x1="40" y1="110" x2="400" y2="110" stroke="rgba(255,255,255,0.08)" stroke-dasharray="3"/>
-                  <line x1="40" y1="155" x2="400" y2="155" stroke="rgba(255,255,255,0.08)" stroke-dasharray="3"/>
-                  <line x1="40" y1="190" x2="400" y2="190" stroke="rgba(255,255,255,0.15)"/>
-                  
-                  <!-- Ideal Baseline Line (Grey Dash) -->
-                  <line x1="40" y1="20" x2="400" y2="190" stroke="#64748b" stroke-width="2" stroke-dasharray="4"/>
-                  
-                  <!-- Dynamic Actual / Simulated Polyline -->
-                  <polyline id="burndown-polyline" points="40,20 80,35 120,55 160,85 200,90 240,120 280,140 320,165 360,178 400,190" fill="none" stroke="#00f2fe" stroke-width="3.5" stroke-linecap="round"/>
-                  
-                  <!-- Dynamic Data Dots -->
-                  <g id="burndown-dots-group">
-                    <circle cx="40" cy="20" r="4.5" fill="#00f2fe"/>
-                    <circle cx="120" cy="55" r="4.5" fill="#00f2fe"/>
-                    <circle cx="200" cy="90" r="4.5" fill="#00f2fe"/>
-                    <circle cx="280" cy="140" r="4.5" fill="#00f2fe"/>
-                    <circle cx="400" cy="190" r="4.5" fill="#00f2fe"/>
-                  </g>
-                </svg>
-                <div class="burndown-labels">
-                  <span>Day 1 (Start)</span>
-                  <span>Day 3</span>
-                  <span>Day 5 (Mid)</span>
-                  <span>Day 8</span>
-                  <span>Day 10 (Sprint Close)</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Historical Velocity Comparison -->
-            <div class="chart-card">
-              <h4>🏃 Historical Velocity & Team Stability (Sprints 1–4)</h4>
-              <div class="velocity-bars-container">
-                <div class="v-bar-group" onclick="selectSprintView(1)" style="cursor: pointer;">
-                  <div class="v-bars">
-                    <div class="v-bar planned" style="height: 130px;" title="Planned: 28 pts"><span>28</span></div>
-                    <div class="v-bar actual" style="height: 130px;" title="Delivered: 28 pts"><span>28</span></div>
-                  </div>
-                  <span class="v-label">Sprint 1</span>
-                </div>
-
-                <div class="v-bar-group" onclick="selectSprintView(2)" style="cursor: pointer;">
-                  <div class="v-bars">
-                    <div class="v-bar planned" style="height: 150px;" title="Planned: 32 pts"><span>32</span></div>
-                    <div class="v-bar actual" style="height: 140px;" title="Delivered: 30 pts"><span>30</span></div>
-                  </div>
-                  <span class="v-label">Sprint 2</span>
-                </div>
-
-                <div class="v-bar-group" onclick="selectSprintView(3)" style="cursor: pointer;">
-                  <div class="v-bars">
-                    <div class="v-bar planned" style="height: 155px;" title="Planned: 33 pts"><span>33</span></div>
-                    <div class="v-bar actual" style="height: 155px;" title="Delivered: 33 pts"><span>33</span></div>
-                  </div>
-                  <span class="v-label">Sprint 3</span>
-                </div>
-
-                <div class="v-bar-group active-sprint-bar" onclick="selectSprintView(4)" style="cursor: pointer;">
-                  <div class="v-bars">
-                    <div class="v-bar planned" style="height: 135px;" title="Planned: 29 pts"><span>29</span></div>
-                    <div class="v-bar actual" style="height: 135px;" title="Delivered: 29 pts"><span>29</span></div>
-                  </div>
-                  <span class="v-label">Sprint 4 ★</span>
-                </div>
-              </div>
-
-              <div class="chart-legend">
-                <span class="leg-item"><span class="leg-box planned"></span> Committed</span>
-                <span class="leg-item"><span class="leg-box actual"></span> Delivered</span>
-              </div>
-
+              <div class="velocity-bars-container" id="velocityChart"></div>
               <div class="velocity-metrics-strip">
-                <div class="v-met"><span>Average Velocity:</span><strong>30.5 pts</strong></div>
-                <div class="v-met"><span>Commitment Ratio:</span><strong class="text-success">98.4%</strong></div>
-                <div class="v-met"><span>Total Delivered:</span><strong>122 pts</strong></div>
+                <div class="v-met"><span>Avg. Velocity</span><strong>30.5 pts</strong></div>
+                <div class="v-met"><span>Peak Sprint</span><strong>Sprint 4 · 32 pts</strong></div>
+                <div class="v-met"><span>Predictability</span><strong>98.4%</strong></div>
               </div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-header-row">
+                <h4 style="font-size:13px;font-weight:700;">Burndown Chart — Sprint 4</h4>
+                <div class="chart-legend-compact">
+                  <span><span class="dot-legend-dash"></span>Ideal</span>
+                  <span><span class="dot-legend-solid"></span>Actual</span>
+                </div>
+              </div>
+              <div class="burndown-visual">
+                <svg class="burndown-svg" id="burndownSvg" viewBox="0 0 300 160" xmlns="http://www.w3.org/2000/svg"></svg>
+                <div class="burndown-labels">
+                  <span>Day 1</span><span>Day 3</span><span>Day 5</span><span>Day 7</span><span>Day 10</span>
+                </div>
+              </div>
+              <div class="chart-caption">Sprint completed 1 day ahead of schedule</div>
             </div>
           </div>
         </div>
 
-        <!-- SUBTAB 3: RAID LOG & INTERACTIVE RISK CALCULATOR -->
-        <div id="raid-tab" class="pm-tab-content">
-          
-          <!-- Live Interactive Risk Calculator Widget -->
-          <div class="risk-calc-card">
-            <div class="calc-header">
-              <h4><i class="fa-solid fa-calculator"></i> Interactive PM Risk Matrix Calculator</h4>
-              <small>Score risks using the formula: Risk Score = Probability (P) × Impact (I)</small>
-            </div>
-            <div class="calc-grid">
-              <div class="slider-group">
-                <label>Probability (1 = Rare, 5 = Highly Likely): <strong id="lbl-prob" class="val-tag">3</strong></label>
-                <input type="range" id="input-prob" min="1" max="5" value="3" oninput="updateRiskScore()">
-              </div>
-              <div class="slider-group">
-                <label>Impact (1 = Minor bug, 5 = Fatal / Outage): <strong id="lbl-imp" class="val-tag">4</strong></label>
-                <input type="range" id="input-imp" min="1" max="5" value="4" oninput="updateRiskScore()">
-              </div>
-              <div class="score-display">
-                <span class="score-num" id="calc-score-val">12</span>
-                <span class="score-badge med" id="calc-score-badge">MEDIUM RISK</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="raid-table-container">
-            <table class="pm-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Category</th>
-                  <th>Risk Description</th>
-                  <th>P</th>
-                  <th>I</th>
-                  <th>Score (P×I)</th>
-                  <th>Mitigation Strategy</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="raid-table-body">
-                <tr>
-                  <td><strong>RSK-01</strong></td>
-                  <td><span class="badge tech">Technical</span></td>
-                  <td>Twilio video call drops on slow 3G mobile data</td>
-                  <td>4</td>
-                  <td>4</td>
-                  <td><span class="risk-pill high">16 (High)</span></td>
-                  <td>Auto bitrate downscaling + 120s reconnection logic</td>
-                  <td><span class="badge-status resolved">Mitigated</span></td>
-                </tr>
-                <tr>
-                  <td><strong>RSK-02</strong></td>
-                  <td><span class="badge compliance">Compliance</span></td>
-                  <td>HIPAA privacy penalty during video transmission</td>
-                  <td>2</td>
-                  <td>5</td>
-                  <td><span class="risk-pill med">10 (Med)</span></td>
-                  <td>End-to-end AES-256 encryption & external auditor audit</td>
-                  <td><span class="badge-status resolved">Closed</span></td>
-                </tr>
-                <tr>
-                  <td><strong>RSK-03</strong></td>
-                  <td><span class="badge scope">Scope</span></td>
-                  <td>Sponsor asking for automated insurance billing mid-sprint</td>
-                  <td>4</td>
-                  <td>4</td>
-                  <td><span class="risk-pill high">16 (High)</span></td>
-                  <td>Defended scope boundary; prioritized for Version 2.0</td>
-                  <td><span class="badge-status resolved">Resolved</span></td>
-                </tr>
-                <tr>
-                  <td><strong>RSK-04</strong></td>
-                  <td><span class="badge vendor">Vendor</span></td>
-                  <td>Stripe sandbox test key approval delay</td>
-                  <td>3</td>
-                  <td>3</td>
-                  <td><span class="risk-pill low">9 (Low)</span></td>
-                  <td>PM escalated to security team; unblocked dev in 30 mins</td>
-                  <td><span class="badge-status resolved">Resolved</span></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- SUBTAB 4: RACI MATRIX -->
-        <div id="raci-tab" class="pm-tab-content">
-          <div class="raci-table-container">
-            <table class="pm-table">
-              <thead>
-                <tr>
-                  <th>Project Deliverable</th>
-                  <th>Project Sponsor</th>
-                  <th>Product Owner</th>
-                  <th>IT PM (You)</th>
-                  <th>Lead Architect</th>
-                  <th>Mobile Devs</th>
-                  <th>QA Lead</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><strong>Project Charter & Budget</strong></td>
-                  <td><span class="raci-tag a">A</span></td>
-                  <td><span class="raci-tag c">C</span></td>
-                  <td><span class="raci-tag r">R</span></td>
-                  <td><span class="raci-tag c">C</span></td>
-                  <td><span class="raci-tag i">I</span></td>
-                  <td><span class="raci-tag i">I</span></td>
-                </tr>
-                <tr>
-                  <td><strong>User Stories & Backlog</strong></td>
-                  <td><span class="raci-tag i">I</span></td>
-                  <td><span class="raci-tag ar">A/R</span></td>
-                  <td><span class="raci-tag c">C</span></td>
-                  <td><span class="raci-tag c">C</span></td>
-                  <td><span class="raci-tag i">I</span></td>
-                  <td><span class="raci-tag i">I</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Sprint Execution & Standups</strong></td>
-                  <td><span class="raci-tag i">I</span></td>
-                  <td><span class="raci-tag c">C</span></td>
-                  <td><span class="raci-tag a">A</span></td>
-                  <td><span class="raci-tag r">R</span></td>
-                  <td><span class="raci-tag r">R</span></td>
-                  <td><span class="raci-tag r">R</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Video Call & Payment Build</strong></td>
-                  <td><span class="raci-tag i">I</span></td>
-                  <td><span class="raci-tag i">I</span></td>
-                  <td><span class="raci-tag c">C</span></td>
-                  <td><span class="raci-tag a">A</span></td>
-                  <td><span class="raci-tag r">R</span></td>
-                  <td><span class="raci-tag i">I</span></td>
-                </tr>
-                <tr>
-                  <td><strong>QA Testing & Security Audit</strong></td>
-                  <td><span class="raci-tag i">I</span></td>
-                  <td><span class="raci-tag c">C</span></td>
-                  <td><span class="raci-tag c">C</span></td>
-                  <td><span class="raci-tag c">C</span></td>
-                  <td><span class="raci-tag c">C</span></td>
-                  <td><span class="raci-tag ar">A/R</span></td>
-                </tr>
-                <tr>
-                  <td><strong>App Store Release & Launch</strong></td>
-                  <td><span class="raci-tag i">I</span></td>
-                  <td><span class="raci-tag a">A</span></td>
-                  <td><span class="raci-tag r">R</span></td>
-                  <td><span class="raci-tag r">R</span></td>
-                  <td><span class="raci-tag r">R</span></td>
-                  <td><span class="raci-tag c">C</span></td>
-                </tr>
-              </tbody>
-            </table>
-            <div class="raci-legend">
-              <span><strong>R</strong> = Responsible (Doer)</span>
-              <span><strong>A</strong> = Accountable (Approver)</span>
-              <span><strong>C</strong> = Consulted (Expert)</span>
-              <span><strong>I</strong> = Informed (Notified)</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- SUBTAB 5: EXECUTIVE REPORT -->
-        <div id="exec-tab" class="pm-tab-content">
-          <div class="exec-report-card">
-            <div class="exec-report-header">
-              <div>
-                <h3>QuickCare Telehealth MVP — Executive Project Status Report</h3>
-                <span>Prepared by IT Project Manager for VP of Digital Health & Steering Committee</span>
-              </div>
-              <button class="btn-sm btn-outline" onclick="window.print()"><i class="fa-solid fa-print"></i> Export PDF</button>
-            </div>
-
-            <div class="exec-summary-grid">
-              <div class="exec-box">
-                <span class="exec-box-lbl">Overall Project Health</span>
-                <strong class="text-success"><i class="fa-solid fa-circle-check"></i> GREEN (On Track)</strong>
-              </div>
-              <div class="exec-box">
-                <span class="exec-box-lbl">Total Financial Spend</span>
-                <strong>$116,400 / $120,000</strong>
-              </div>
-              <div class="exec-box">
-                <span class="exec-box-lbl">Launch Milestone</span>
-                <strong>Dec 15, 2026 (Passed)</strong>
-              </div>
-            </div>
-
-            <div class="exec-text-block">
-              <h4>Key Project Accomplishments:</h4>
-              <ul>
-                <li>Delivered 100% of defined MVP in-scope features across 4 two-week Sprints.</li>
-                <li>Completed rigorous HIPAA Security & Penetration audit with zero critical vulnerabilities.</li>
-                <li>Successfully published on Apple App Store & Google Play Store with an initial 4.7-star rating.</li>
-        <!-- SUBTAB 6: AGILE PLANNING POKER ESTIMATION -->
-        <div id="poker-tab" class="pm-tab-content">
+        <!-- ---- PLANNING POKER ---- -->
+        <div class="pm-tab-content" id="pmTab-poker">
           <div class="poker-game-card">
             <div class="poker-header">
               <div>
-                <h4><i class="fa-solid fa-clone"></i> Agile Sprint Planning Poker (Fibonacci Estimation)</h4>
-                <small style="color: var(--text-secondary);">Select a card to vote on Story Point complexity with your Scrum team.</small>
+                <h4><i class="fa-solid fa-cards-blank"></i> Agile Planning Poker</h4>
+                <small style="color:var(--text-secondary);font-size:12px;">Fibonacci estimation game — select your story points</small>
               </div>
-              <span class="poker-status-tag" id="poker-consensus-status">Awaiting Your Vote</span>
+              <span class="poker-status-tag" id="pokerStatusTag">Voting Open</span>
             </div>
-
-            <!-- Current Story Being Estimated -->
             <div class="poker-story-box">
               <div class="poker-story-meta">
-                <span class="poker-badge">Active Story</span>
-                <strong id="poker-active-id">US-301</strong>
-                <span class="poker-epic">Epic: Telehealth Video Room</span>
+                <span class="poker-badge">US-08</span>
+                <span style="font-size:12px;color:var(--text-muted);">Epic: Video Consultation</span>
               </div>
-              <h3 id="poker-active-title">"As an approved patient, I want to join an encrypted 1-on-1 video call with my doctor at appointment time."</h3>
-              <p>Acceptance: WebRTC video stream, camera/mic toggle, reconnection on 3G network drop, HIPAA 256-bit encryption.</p>
+              <h3 id="pokerStoryTitle">As a patient, I want to join a secure video call with a licensed doctor in under 15 minutes, with a waiting room and call quality indicator.</h3>
+              <p id="pokerStoryDesc">Acceptance: Given I book a consult, when the doctor accepts, then I can join a Twilio encrypted video room with mic/cam controls.</p>
             </div>
-
-            <!-- Fibonacci Cards Deck -->
-            <div class="poker-cards-deck">
-              <div class="p-card" onclick="castPokerVote(1)">1</div>
-              <div class="p-card" onclick="castPokerVote(2)">2</div>
-              <div class="p-card" onclick="castPokerVote(3)">3</div>
-              <div class="p-card" onclick="castPokerVote(5)">5</div>
-              <div class="p-card active-card" onclick="castPokerVote(8)">8</div>
-              <div class="p-card" onclick="castPokerVote(13)">13</div>
-              <div class="p-card" onclick="castPokerVote('☕')">☕</div>
+            <div class="poker-cards-deck" id="pokerDeck"></div>
+            <div class="poker-team-votes" id="pokerTeamVotes"></div>
+            <div class="poker-consensus-banner hidden" id="pokerConsensusBanner">
+              <i class="fa-solid fa-circle-check" style="color:var(--accent-emerald);font-size:20px;"></i>
+              <span id="pokerConsensusMsg">Consensus reached! Story estimated at <strong id="pokerConsensusVal">8</strong> points.</span>
             </div>
-
-            <!-- Team Votes Breakdown -->
-            <div class="poker-team-votes" id="poker-team-votes">
-              <div class="team-vote-box">
-                <span class="vote-role">Lead Architect (LA)</span>
-                <strong class="vote-num" id="vote-la">8 pts</strong>
-              </div>
-              <div class="team-vote-box">
-                <span class="vote-role">Mobile Dev (iOS)</span>
-                <strong class="vote-num" id="vote-ios">8 pts</strong>
-              </div>
-              <div class="team-vote-box">
-                <span class="vote-role">QA Lead (QA)</span>
-                <strong class="vote-num" id="vote-qa">8 pts</strong>
-              </div>
-              <div class="team-vote-box user-vote-box">
-                <span class="vote-role">Your Vote (IT PM)</span>
-                <strong class="vote-num user-vote" id="vote-user">8 pts</strong>
-              </div>
-            </div>
-
-            <div class="poker-consensus-banner">
-              <i class="fa-solid fa-circle-check text-success"></i>
-              <span><strong>Team Consensus Reached:</strong> Story assigned <strong>8 Story Points</strong> & committed to Sprint 3!</span>
+            <div style="display:flex;gap:10px;justify-content:flex-end;">
+              <button class="btn-sm btn-outline" onclick="revealPokerVotes()"><i class="fa-solid fa-eye"></i> Reveal</button>
+              <button class="btn-sm btn-success" onclick="resetPoker()"><i class="fa-solid fa-rotate-left"></i> New Story</button>
             </div>
           </div>
         </div>
 
-        <!-- SUBTAB 7: SPRINT RETROSPECTIVE STICKY BOARD -->
-        <div id="retro-tab" class="pm-tab-content">
+        <!-- ---- RETROSPECTIVE ---- -->
+        <div class="pm-tab-content" id="pmTab-retro">
           <div class="retro-header-row">
-            <div>
-              <h4><i class="fa-solid fa-comments"></i> Sprint 4 Retrospective Board</h4>
-              <small style="color: var(--text-secondary);">Continuous improvement board: Add sticky notes & vote with your team.</small>
-            </div>
-            <button class="btn-sm btn-outline" onclick="resetRetroBoard()"><i class="fa-solid fa-rotate-left"></i> Reset Notes</button>
+            <h3 style="font-size:16px;font-weight:700;"><i class="fa-solid fa-note-sticky"></i> Sprint 4 Retrospective Board</h3>
+            <span class="poker-status-tag" style="background:rgba(99,102,241,0.15);border-color:var(--accent-indigo);color:#a5b4fc;">Post-Sprint</span>
           </div>
-
-          <div class="retro-board-grid">
-            <!-- Col 1: What Went Well -->
-            <div class="retro-col well-col">
-              <div class="retro-col-head">
-                <span>💚 What Went Well (Praise)</span>
-                <span class="retro-count" id="count-retro-well">2</span>
-              </div>
-              <div class="retro-cards" id="cards-retro-well">
-                <div class="retro-card">
-                  <p>Strict MVP scoping prevented 6-week delay requested by marketing.</p>
-                  <div class="retro-card-footer">
-                    <span class="retro-author">IT PM (You)</span>
-                    <button class="btn-upvote" onclick="upvoteRetro(this)">👍 <span>5</span></button>
-                  </div>
-                </div>
-                <div class="retro-card">
-                  <p>Daily 15-minute standup discipline helped resolve 12 technical blockers.</p>
-                  <div class="retro-card-footer">
-                    <span class="retro-author">Lead Architect</span>
-                    <button class="btn-upvote" onclick="upvoteRetro(this)">👍 <span>4</span></button>
-                  </div>
-                </div>
-              </div>
-              <div class="add-retro-input-row">
-                <input type="text" id="input-retro-well" placeholder="+ Add a note..." onkeydown="if(event.key==='Enter') addRetroNote('well')">
-                <button class="btn-sm btn-primary" onclick="addRetroNote('well')">+</button>
-              </div>
-            </div>
-
-            <!-- Col 2: What Slowed Us Down -->
-            <div class="retro-col slow-col">
-              <div class="retro-col-head">
-                <span>🛑 What Slowed Us Down (Blockers)</span>
-                <span class="retro-count" id="count-retro-slow">2</span>
-              </div>
-              <div class="retro-cards" id="cards-retro-slow">
-                <div class="retro-card">
-                  <p>Stripe sandbox production credentials took 48h for external security approval.</p>
-                  <div class="retro-card-footer">
-                    <span class="retro-author">Mobile Dev</span>
-                    <button class="btn-upvote" onclick="upvoteRetro(this)">👍 <span>6</span></button>
-                  </div>
-                </div>
-                <div class="retro-card">
-                  <p>Doctor appointment slot race condition caused booking bug in Sprint 2.</p>
-                  <div class="retro-card-footer">
-                    <span class="retro-author">QA Lead</span>
-                    <button class="btn-upvote" onclick="upvoteRetro(this)">👍 <span>3</span></button>
-                  </div>
-                </div>
-              </div>
-              <div class="add-retro-input-row">
-                <input type="text" id="input-retro-slow" placeholder="+ Add a note..." onkeydown="if(event.key==='Enter') addRetroNote('slow')">
-                <button class="btn-sm btn-primary" onclick="addRetroNote('slow')">+</button>
-              </div>
-            </div>
-
-            <!-- Col 3: Action Items -->
-            <div class="retro-col action-col">
-              <div class="retro-col-head">
-                <span>🚀 Action Items for Next Project</span>
-                <span class="retro-count" id="count-retro-action">2</span>
-              </div>
-              <div class="retro-cards" id="cards-retro-action">
-                <div class="retro-card">
-                  <p>Provision all 3rd-party sandbox API keys in Sprint 0 before development begins.</p>
-                  <div class="retro-card-footer">
-                    <span class="retro-author">IT PM (You)</span>
-                    <button class="btn-upvote" onclick="upvoteRetro(this)">👍 <span>8</span></button>
-                  </div>
-                </div>
-                <div class="retro-card">
-                  <p>Involve backend engineers earlier during acceptance criteria drafting for real-time APIs.</p>
-                  <div class="retro-card-footer">
-                    <span class="retro-author">Product Owner</span>
-                    <button class="btn-upvote" onclick="upvoteRetro(this)">👍 <span>5</span></button>
-                  </div>
-                </div>
-              </div>
-              <div class="add-retro-input-row">
-                <input type="text" id="input-retro-action" placeholder="+ Add a note..." onkeydown="if(event.key==='Enter') addRetroNote('action')">
-                <button class="btn-sm btn-primary" onclick="addRetroNote('action')">+</button>
-              </div>
-            </div>
+          <div class="retro-board-grid" id="retroBoard">
+            <!-- Columns injected by JS -->
           </div>
         </div>
 
-        <!-- SUBTAB 8: LIVE BUDGET & RESOURCE BURN TRACKER -->
-        <div id="budget-tab" class="pm-tab-content">
+        <!-- ---- BUDGET ---- -->
+        <div class="pm-tab-content" id="pmTab-budget">
           <div class="budget-tracker-card">
             <div class="budget-header-row">
               <div>
-                <h4><i class="fa-solid fa-wallet"></i> Budget & Financial Burn Reconciliation</h4>
-                <small style="color: var(--text-secondary);">Tracking CapEx/OpEx allocation against approved $120,000 baseline budget.</small>
+                <h3 style="font-size:18px;font-weight:700;"><i class="fa-solid fa-money-bill-trend-up"></i> Budget Reconciliation</h3>
+                <small style="color:var(--text-secondary);">Sprint 4 Final · CapEx + OpEx breakdown</small>
               </div>
               <div class="budget-variance-badge">
-                <span>Favorable Variance:</span>
-                <strong>+$3,600 (3% Saved)</strong>
+                <span>Cost Variance</span>
+                <strong>+$3,600 Favorable</strong>
               </div>
             </div>
-
-            <div class="budget-progress-bars">
-              <!-- Item 1: Engineering -->
-              <div class="b-prog-item">
-                <div class="b-prog-labels">
-                  <span>👨‍💻 Engineering & UX Design (6 Team Members)</span>
-                  <strong>$88,200 / $90,000 (98.0%)</strong>
-                </div>
-                <div class="b-prog-track">
-                  <div class="b-prog-fill green" style="width: 98%;"></div>
-                </div>
-              </div>
-
-              <!-- Item 2: Cloud -->
-              <div class="b-prog-item">
-                <div class="b-prog-labels">
-                  <span>☁️ AWS Cloud Hosting & Twilio/Stripe API Usage</span>
-                  <strong>$7,400 / $8,000 (92.5%)</strong>
-                </div>
-                <div class="b-prog-track">
-                  <div class="b-prog-fill cyan" style="width: 92.5%;"></div>
-                </div>
-              </div>
-
-              <!-- Item 3: Security -->
-              <div class="b-prog-item">
-                <div class="b-prog-labels">
-                  <span>🔒 HIPAA Security & Penetration Testing Audit</span>
-                  <strong>$12,000 / $12,000 (100%)</strong>
-                </div>
-                <div class="b-prog-track">
-                  <div class="b-prog-fill purple" style="width: 100%;"></div>
-                </div>
-              </div>
-
-              <!-- Item 4: Contingency Reserve -->
-              <div class="b-prog-item">
-                <div class="b-prog-labels">
-                  <span>🛡️ Contingency Risk Reserve (10% Managed Buffer)</span>
-                  <strong>$8,800 / $10,000 (88.0% - $1,200 Retained)</strong>
-                </div>
-                <div class="b-prog-track">
-                  <div class="b-prog-fill amber" style="width: 88%;"></div>
-                </div>
-              </div>
-            </div>
-
+            <div class="budget-progress-bars" id="budgetBars"></div>
             <div class="budget-totals-row">
               <div class="tot-box">
-                <span class="tot-lbl">Approved Budget</span>
+                <span class="tot-lbl">Total Budget</span>
                 <h3>$120,000</h3>
               </div>
               <div class="tot-box">
-                <span class="tot-lbl">Actual Invoiced Spend</span>
-                <h3 class="text-success">$116,400</h3>
+                <span class="tot-lbl">Actual Spend</span>
+                <h3 style="color:var(--accent-emerald);">$116,400</h3>
               </div>
               <div class="tot-box">
-                <span class="tot-lbl">Final Cost Variance</span>
-                <h3 class="text-success">+$3,600 (Under Budget)</h3>
+                <span class="tot-lbl">Savings</span>
+                <h3 style="color:var(--accent-cyan);">$3,600</h3>
               </div>
+            </div>
+          </div>
+
+          <!-- Executive Report -->
+          <div class="exec-report-card" style="margin-top:20px;">
+            <div class="exec-report-header">
+              <div>
+                <h3>Executive Summary Report</h3>
+                <span>QuickCare MVP — Project Closure · Q3 2026</span>
+              </div>
+              <button class="btn-sm btn-outline" onclick="showToast('Report downloaded as PDF','success')"><i class="fa-solid fa-download"></i> Download PDF</button>
+            </div>
+            <div class="exec-summary-grid">
+              <div class="exec-box">
+                <span class="exec-box-lbl">Schedule</span>
+                <strong style="font-size:16px;" class="text-success">On Time</strong>
+                <span style="font-size:12px;color:var(--text-secondary);">15 weeks · 4 sprints · 0-day delay</span>
+              </div>
+              <div class="exec-box">
+                <span class="exec-box-lbl">Quality</span>
+                <strong style="font-size:16px;" class="text-success">99.2% Pass</strong>
+                <span style="font-size:12px;color:var(--text-secondary);">141 of 142 test cases passed</span>
+              </div>
+              <div class="exec-box">
+                <span class="exec-box-lbl">App Rating</span>
+                <strong style="font-size:16px;" class="text-success">4.7 Stars</strong>
+                <span style="font-size:12px;color:var(--text-secondary);">First 500 App Store reviews</span>
+              </div>
+            </div>
+            <div class="exec-text-block">
+              <h4>Key Lessons Learned</h4>
+              <ul>
+                <li>Early HIPAA compliance reviews prevented 2 critical rework cycles in Sprint 3.</li>
+                <li>Fibonacci planning poker improved estimation accuracy from 72% to 98.4% by Sprint 4.</li>
+                <li>Daily standup blocker log reduced average issue resolution from 3.2 days to 0.8 days.</li>
+                <li>Twilio vendor SLA renegotiation saved $4,200 in Sprint 2 infrastructure costs.</li>
+              </ul>
             </div>
           </div>
         </div>
 
-        <!-- SUBTAB 9: AGILE 15-MINUTE DAILY STANDUP RUNNER -->
-        <div id="standup-tab" class="pm-tab-content">
-          <div class="standup-runner-card">
-            
-            <!-- Master Standup Header & Global Timers -->
-            <div class="standup-master-header">
-              <div class="standup-meta-col">
-                <h4><i class="fa-solid fa-stopwatch-20"></i> Agile Daily Scrum Runner (15-Min Timebox)</h4>
-                <small style="color: var(--text-secondary);">Facilitated by Scrum Master • 2 minutes per speaker round-robin cadence</small>
+        <!-- ---- RAID / RACI ---- -->
+        <div class="pm-tab-content" id="pmTab-raid">
+          <!-- Risk Calculator -->
+          <div class="risk-calc-card">
+            <div class="calc-header">
+              <h4><i class="fa-solid fa-calculator"></i> RAID Risk Calculator — P x I Matrix</h4>
+              <small>Adjust sliders to compute risk score</small>
+            </div>
+            <div class="calc-grid">
+              <div class="slider-group">
+                <label>Probability (P): <span class="val-tag" id="probVal">3</span>/5</label>
+                <input type="range" min="1" max="5" value="3" id="probSlider" oninput="updateRiskCalc()" />
               </div>
-              
+              <div class="slider-group">
+                <label>Impact (I): <span class="val-tag" id="impactVal">4</span>/5</label>
+                <input type="range" min="1" max="5" value="4" id="impactSlider" oninput="updateRiskCalc()" />
+              </div>
+              <div class="score-display" id="riskScoreDisplay">
+                <span class="score-num" id="riskScoreNum">12</span>
+                <span style="font-size:11px;color:var(--text-muted);">Risk Score</span>
+                <span class="score-badge high" id="riskScoreBadge">HIGH</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- RAID Table -->
+          <div class="raid-table-container" style="margin-bottom:20px;">
+            <table class="pm-table" aria-label="RAID Log">
+              <thead>
+                <tr>
+                  <th>ID</th><th>Type</th><th>Description</th><th>P×I</th><th>Level</th><th>Mitigation</th><th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="raidTableBody"></tbody>
+            </table>
+          </div>
+
+          <!-- RACI Table -->
+          <h4 style="font-size:14px;margin-bottom:12px;"><i class="fa-solid fa-sitemap"></i> RACI Responsibility Matrix</h4>
+          <div class="raci-table-container">
+            <table class="pm-table" aria-label="RACI Matrix">
+              <thead>
+                <tr>
+                  <th>Deliverable</th>
+                  <th>IT PM</th>
+                  <th>Lead Dev</th>
+                  <th>QA Lead</th>
+                  <th>UX Designer</th>
+                  <th>Product Owner</th>
+                </tr>
+              </thead>
+              <tbody id="raciTableBody"></tbody>
+            </table>
+            <div class="raci-legend">
+              <span><strong>R</strong> = Responsible</span>
+              <span><strong>A</strong> = Accountable</span>
+              <span><strong>C</strong> = Consulted</span>
+              <span><strong>I</strong> = Informed</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ---- STANDUP RUNNER ---- -->
+        <div class="pm-tab-content" id="pmTab-standup">
+          <div class="standup-runner-card">
+            <div class="standup-master-header">
+              <div>
+                <h3 style="font-size:16px;font-weight:700;"><i class="fa-solid fa-users"></i> Daily Scrum Standup Runner</h3>
+                <small style="color:var(--text-secondary);">Sprint 4 · Sep 1, 2026 · 9:00 AM</small>
+              </div>
               <div class="standup-timers-group">
                 <div class="timer-display-box">
-                  <span class="t-label">SPEAKER TIMER</span>
-                  <strong class="t-clock speaker" id="clock-speaker">02:00</strong>
+                  <span class="t-label">Speaker</span>
+                  <div class="t-clock speaker" id="speakerClock">02:00</div>
                 </div>
                 <div class="timer-display-box total-box">
-                  <span class="t-label">TOTAL MEETING</span>
-                  <strong class="t-clock total" id="clock-total">15:00</strong>
+                  <span class="t-label">Total</span>
+                  <div class="t-clock total" id="totalClock">00:00</div>
                 </div>
               </div>
             </div>
 
-            <!-- Standup Controller Buttons -->
             <div class="standup-ctrl-bar">
-              <button class="btn-sm btn-success" id="btn-standup-start" onclick="toggleStandupTimer()">
-                <i class="fa-solid fa-play"></i> Start Standup
-              </button>
-              <button class="btn-sm btn-primary" onclick="nextStandupSpeaker()">
-                <i class="fa-solid fa-forward-step"></i> Next Speaker ➔
-              </button>
-              <button class="btn-sm btn-outline" onclick="resetStandupMeeting()">
-                <i class="fa-solid fa-rotate-left"></i> Reset
-              </button>
-              <span class="standup-meeting-status" id="standup-status-tag">Ready to Start</span>
+              <button class="btn-sm btn-success" id="standupStartBtn" onclick="startStandup()"><i class="fa-solid fa-play"></i> Start</button>
+              <button class="btn-sm btn-outline" id="standupNextBtn" onclick="nextSpeaker()" disabled><i class="fa-solid fa-forward-step"></i> Next Speaker</button>
+              <button class="btn-sm btn-outline" onclick="resetStandup()"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+              <span class="standup-meeting-status" id="standupStatus">Not Started</span>
             </div>
 
-            <!-- 6-Member Scrum Team Carousel / Speaker Selection -->
-            <div class="scrum-members-strip" id="scrum-members-strip">
-              <!-- Dynamically populated / highlighted by JavaScript -->
-            </div>
+            <!-- Member strip -->
+            <div class="scrum-members-strip" id="scrumMembersStrip"></div>
 
-            <!-- Active Speaker 3-Questions Scrum Form -->
-            <div class="speaker-questions-card">
+            <!-- Speaker Q&A -->
+            <div class="speaker-questions-card" id="speakerQCard">
               <div class="speaker-profile-header">
-                <div class="spk-avatar-circle" id="spk-avatar-icon">👨‍💻</div>
+                <div class="spk-avatar-circle" id="spkAvatar"><i class="fa-solid fa-user"></i></div>
                 <div class="spk-info">
-                  <h3 id="spk-name">David Kim</h3>
-                  <span id="spk-role">Lead Architect & Backend Lead • Core WebRTC</span>
+                  <h3 id="spkName">Select a team member</h3>
+                  <span id="spkRole">Click Start to begin the standup</span>
                 </div>
-                <span class="speaking-badge" id="spk-badge">🎙️ Current Speaker</span>
+                <span class="speaking-badge hidden" id="speakingBadge">Speaking</span>
               </div>
-
               <div class="scrum-3q-grid">
-                <!-- Q1: Yesterday -->
                 <div class="scrum-q-box">
-                  <label><i class="fa-solid fa-clock-rotate-left"></i> 1. What did you complete yesterday?</label>
-                  <textarea id="q-yesterday" rows="2">Completed US-301 WebRTC bitrate adaptive throttling for low-bandwidth 3G connections.</textarea>
+                  <label><i class="fa-solid fa-check-circle" style="color:var(--accent-emerald);"></i> Yesterday</label>
+                  <textarea rows="2" id="q1Input" placeholder="What did you complete yesterday?"></textarea>
                 </div>
-
-                <!-- Q2: Today -->
                 <div class="scrum-q-box">
-                  <label><i class="fa-solid fa-bullseye"></i> 2. What will you commit to today?</label>
-                  <textarea id="q-today" rows="2">Implementing Stripe webhook tokenization & HIPAA audit log verification.</textarea>
+                  <label><i class="fa-solid fa-forward" style="color:var(--accent-cyan);"></i> Today</label>
+                  <textarea rows="2" id="q2Input" placeholder="What will you work on today?"></textarea>
                 </div>
-
-                <!-- Q3: Blockers / Impediments -->
                 <div class="scrum-q-box blocker-q-box">
                   <div class="label-with-action">
-                    <label><i class="fa-solid fa-triangle-exclamation"></i> 3. Any blockers or impediments?</label>
-                    <button type="button" class="btn-escalate-raid" onclick="escalateCurrentBlocker()">
-                      <i class="fa-solid fa-shield-halved"></i> Escalate to RAID Log
-                    </button>
+                    <label><i class="fa-solid fa-triangle-exclamation" style="color:var(--accent-rose);"></i> Blockers</label>
+                    <button class="btn-escalate-raid" onclick="escalateToRAID()"><i class="fa-solid fa-arrow-up-right-from-square"></i> Escalate RAID</button>
                   </div>
-                  <input type="text" id="q-blocker" value="External security team delay on Stripe sandbox API keys">
+                  <input type="text" id="q3Input" placeholder="Any blockers or impediments?" />
                 </div>
               </div>
-
               <div class="spk-action-row">
-                <button class="btn-sm btn-outline" onclick="saveSpeakerLog()"><i class="fa-solid fa-floppy-disk"></i> Log Speaker Updates</button>
-                <button class="btn-sm btn-primary" onclick="nextStandupSpeaker()"><i class="fa-solid fa-check"></i> Complete & Next Speaker ➔</button>
+                <button class="btn-sm btn-outline" onclick="saveStandupNote()"><i class="fa-solid fa-floppy-disk"></i> Save Note</button>
               </div>
             </div>
 
-            <!-- Meeting Standup Summary Notes Log -->
+            <!-- Summary log -->
             <div class="standup-summary-log">
-              <h5><i class="fa-solid fa-clipboard-list"></i> Today's Standup Impediments & Action Items</h5>
-              <div class="standup-items-list" id="standup-action-items">
-                <div class="standup-item-row blocker">
-                  <span class="item-tag blocker">BLOCKER</span>
-                  <span class="item-text"><strong>David Kim:</strong> Stripe sandbox production API keys awaiting external security review.</span>
-                  <span class="item-owner">Owner: IT PM (Numesh)</span>
-                </div>
-                <div class="standup-item-row action">
-                  <span class="item-tag action">COMMITMENT</span>
-                  <span class="item-text"><strong>Maya Lin:</strong> Deliver iOS push notification audio chime tests by 3:00 PM.</span>
-                  <span class="item-owner">Owner: Maya Lin</span>
-                </div>
+              <h5><i class="fa-solid fa-clipboard-list"></i> Today's Meeting Log</h5>
+              <div class="standup-items-list" id="standupLogList">
+                <div style="font-size:12px;color:var(--text-muted);">Notes will appear here as you run the standup...</div>
               </div>
             </div>
-
           </div>
         </div>
 
-      </div>
+      </div><!-- /pm-dashboard -->
     </section>
-
   </main>
 
-  <!-- ============================================== -->
-  <!-- MODAL 1: BOOKING & PAYMENT MODAL               -->
-  <!-- ============================================== -->
-  <div id="booking-modal" class="modal-overlay hidden">
+  <!-- =====================================================================
+       MODAL: BOOKING
+       ===================================================================== -->
+  <div class="modal-overlay hidden" id="bookingModal" role="dialog" aria-modal="true" aria-label="Book appointment">
     <div class="modal-card">
-      <button class="modal-close" onclick="closeModal('booking-modal')">&times;</button>
-      
-      <div class="modal-header">
-        <div class="doctor-badge-sm">
-          <img id="modal-doc-img" src="" alt="Doctor">
-          <div>
-            <h4 id="modal-doc-name">Doctor Name</h4>
-            <span id="modal-doc-spec">Specialty</span>
-          </div>
+      <button class="modal-close" onclick="closeModal('bookingModal')" aria-label="Close">&times;</button>
+      <h3 style="font-size:16px;margin-bottom:16px;">Book Appointment</h3>
+      <div class="doctor-badge-sm" id="bookingDocInfo"></div>
+      <span class="modal-label">Select Time Slot</span>
+      <div class="slot-grid" id="bookingSlotGrid"></div>
+      <div class="fee-breakdown-card">
+        <div class="fee-row"><span>Consultation Fee</span><span>$45.00</span></div>
+        <div class="fee-row"><span>Platform Fee</span><span>$2.50</span></div>
+        <div class="fee-divider"></div>
+        <div class="fee-row total"><span>Total</span><strong>$47.50</strong></div>
+      </div>
+      <div class="stripe-mock-box">
+        <div class="stripe-header"><span>Stripe Secure Checkout</span><i class="fa-brands fa-stripe" style="font-size:18px;"></i></div>
+        <div class="stripe-input-row">
+          <i class="fa-solid fa-credit-card" style="color:#94a3b8;"></i>
+          <input type="text" value="4242 4242 4242 4242" readonly style="background:transparent;border:none;color:white;font-size:12px;flex:1;outline:none;" />
         </div>
       </div>
+      <button class="btn-primary full-width" style="margin-top:14px;" onclick="confirmBooking()">
+        <i class="fa-solid fa-lock"></i> Pay $47.50 &amp; Confirm
+      </button>
+    </div>
+  </div>
 
-      <div class="modal-body">
-        <label class="modal-label">Select Consultation Reason</label>
-        <div class="symptom-tag-grid">
-          <button class="sym-tag active" onclick="toggleSymptom(this)">🤒 Fever / Flu</button>
-          <button class="sym-tag" onclick="toggleSymptom(this)">😷 Cough & Cold</button>
-          <button class="sym-tag" onclick="toggleSymptom(this)">✨ Skin Rash</button>
-          <button class="sym-tag" onclick="toggleSymptom(this)">💊 Rx Refill</button>
+  <!-- =====================================================================
+       MODAL: DOCTOR REVIEWS
+       ===================================================================== -->
+  <div class="modal-overlay hidden" id="reviewsModal" role="dialog" aria-modal="true" aria-label="Doctor reviews">
+    <div class="modal-card reviews-modal-card">
+      <button class="modal-close" onclick="closeModal('reviewsModal')" aria-label="Close">&times;</button>
+      <h3 style="font-size:16px;margin-bottom:4px;" id="reviewsDocName">Dr. Sarah Chen</h3>
+      <div style="color:var(--accent-amber);font-size:13px;margin-bottom:14px;" id="reviewsDocRating">★ 4.9 · 1,284 consultations</div>
+      <div class="reviews-list" id="reviewsList"></div>
+      <div class="write-review-box">
+        <div style="font-size:12px;font-weight:700;color:var(--text-secondary);margin-bottom:6px;">Write a Review</div>
+        <div class="star-rating-selector" id="starSelector">
+          <span class="star" data-val="1" onclick="setStarRating(1)">★</span>
+          <span class="star" data-val="2" onclick="setStarRating(2)">★</span>
+          <span class="star" data-val="3" onclick="setStarRating(3)">★</span>
+          <span class="star" data-val="4" onclick="setStarRating(4)">★</span>
+          <span class="star" data-val="5" onclick="setStarRating(5)">★</span>
         </div>
-
-        <label class="modal-label">Select Available Time Slot Today</label>
-        <div class="slot-grid" id="modal-slot-grid">
-          <button class="time-slot active" onclick="selectSlot(this)">10:30 AM (In 15m)</button>
-          <button class="time-slot" onclick="selectSlot(this)">11:15 AM</button>
-          <button class="time-slot" onclick="selectSlot(this)">02:00 PM</button>
-          <button class="time-slot" onclick="selectSlot(this)">04:30 PM</button>
-        </div>
-
-        <div class="fee-breakdown-card">
-          <div class="fee-row">
-            <span>Video Consultation (15 Mins)</span>
-            <strong id="modal-base-fee">$45.00</strong>
-          </div>
-          <div class="fee-row">
-            <span>HIPAA Secure Platform Fee</span>
-            <span>$3.00</span>
-          </div>
-          <div class="fee-divider"></div>
-          <div class="fee-row total">
-            <span>Total Payable</span>
-            <strong id="modal-total-fee">$48.00</strong>
-          </div>
-        </div>
-
-        <!-- Simulated Stripe Card Entry -->
-        <div class="stripe-mock-box">
-          <div class="stripe-header">
-            <i class="fa-brands fa-stripe"></i>
-            <span>Encrypted 256-Bit Payment</span>
-          </div>
-          <div class="stripe-input-row">
-            <i class="fa-regular fa-credit-card"></i>
-            <input type="text" value="4242 •••• •••• 4242 (Test Card)" readonly>
-            <span>08/28</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn-primary full-width" id="btn-pay-confirm" onclick="processPaymentAndLaunch()">
-          <i class="fa-solid fa-lock"></i> Pay $48.00 & Confirm Booking
-        </button>
+        <textarea class="review-textarea" id="reviewTextInput" rows="3" placeholder="Share your experience..."></textarea>
+        <button class="btn-primary" style="padding:8px 14px;font-size:12px;" onclick="submitReview()"><i class="fa-solid fa-paper-plane"></i> Submit Review</button>
       </div>
     </div>
   </div>
 
-  <!-- ============================================== -->
-  <!-- MODAL 2: LIVE TELEHEALTH VIDEO CALL ROOM       -->
-  <!-- ============================================== -->
-  <div id="video-modal" class="modal-overlay hidden">
+  <!-- =====================================================================
+       MODAL: VIDEO CALL ROOM
+       ===================================================================== -->
+  <div class="modal-overlay hidden" id="videoModal" role="dialog" aria-modal="true" aria-label="Video consultation room">
     <div class="video-room-container">
-      
       <div class="video-main-screen">
-        <!-- Doctor Video Stream -->
         <div class="doctor-video-feed">
-          <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=800&auto=format&fit=crop&q=80" alt="Doctor Stream" id="video-doc-stream" class="video-stream-img">
-          <div class="video-overlay-badge doc-badge">
-            <span class="pulse-dot green"></span>
-            <span id="call-doc-name">Dr. Marcus Vance (Live)</span>
-          </div>
-          <div class="call-timer-badge">
-            <i class="fa-solid fa-clock"></i> <span id="call-timer">00:00</span>
-          </div>
-        </div>
-
-        <!-- Patient Picture-in-Picture (PiP) with Real Camera Support -->
-        <div class="pip-video-feed">
-          <video id="webcam-video" autoplay playsinline muted class="hidden"></video>
-          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80" alt="Patient Stream" id="video-patient-stream">
-          <div class="pip-label">You (Sarah)</div>
-        </div>
-
-        <!-- In-Call Live Chat Drawer -->
-        <div id="call-chat-drawer" class="call-chat-drawer hidden">
-          <div class="chat-drawer-header">
-            <span><i class="fa-solid fa-comments"></i> Consultation Chat</span>
-            <button class="chat-close" onclick="toggleChatDrawer()">&times;</button>
-          </div>
-          <div class="chat-messages" id="chat-messages">
-            <div class="chat-bubble doc">
-              <strong>Dr. Marcus:</strong> Hello Sarah! I can see you clearly. Please tell me about your symptoms today.
+          <div style="width:100%;height:100%;background:linear-gradient(135deg,#0f172a,#1e3a5f);display:flex;align-items:center;justify-content:center;">
+            <div style="text-align:center;">
+              <div style="font-size:72px;margin-bottom:12px;"><i class="fa-solid fa-user-doctor" style="color:#38bdf8;"></i></div>
+              <div style="color:#94a3b8;font-size:14px;">Dr. Sarah Chen</div>
             </div>
           </div>
-          <form class="chat-input-row" onsubmit="sendChatMessage(event)">
-            <input type="text" id="chat-input-field" placeholder="Type a message..." required>
-            <button type="submit" class="btn-send"><i class="fa-solid fa-paper-plane"></i></button>
-          </form>
+        </div>
+        <div class="video-overlay-badge doc-badge">
+          <span class="pulse-dot green"></span> Dr. Sarah Chen · Cardiology
+        </div>
+        <div class="call-timer-badge" id="callTimerDisplay">00:00</div>
+        <div class="pip-video-feed">
+          <video id="patientVideo" autoplay muted playsinline></video>
+          <div class="pip-label">You</div>
+        </div>
+        <!-- Chat Drawer -->
+        <div class="call-chat-drawer hidden" id="chatDrawer">
+          <div class="chat-drawer-header">
+            <span>In-Call Chat</span>
+            <button class="chat-close" onclick="toggleCallChat()">&times;</button>
+          </div>
+          <div class="chat-messages" id="callChatMessages">
+            <div class="chat-bubble doc"><strong>Dr. Chen:</strong> Hello! I can see your vitals. What brings you in today?</div>
+          </div>
+          <div class="chat-input-row">
+            <input type="text" id="callChatInput" placeholder="Type a message..." onkeypress="handleCallChatEnter(event)" />
+            <button class="btn-send" onclick="sendCallChat()"><i class="fa-solid fa-paper-plane"></i></button>
+          </div>
         </div>
       </div>
-
-      <!-- Video Call Controls Bar -->
       <div class="video-controls-bar">
-        <button class="control-btn" id="btn-toggle-mic" onclick="toggleMic()" title="Toggle Mic">
-          <i class="fa-solid fa-microphone"></i>
-        </button>
-        <button class="control-btn" id="btn-toggle-cam" onclick="toggleCam()" title="Toggle Camera">
-          <i class="fa-solid fa-video"></i>
-        </button>
-        <button class="control-btn" id="btn-real-camera" onclick="toggleRealWebcam()" title="Use Real Webcam">
-          <i class="fa-solid fa-camera-rotate"></i>
-        </button>
-        <button class="control-btn" onclick="toggleChatDrawer()" title="Open Chat">
-          <i class="fa-solid fa-message"></i>
-        </button>
-        <button class="control-btn end-call-btn" onclick="endCallAndShowRx()" title="End Consultation">
-          <i class="fa-solid fa-phone-slash"></i>
-        </button>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ============================================== -->
-  <!-- MODAL 3: ADD NEW USER STORY (IT PM TOOL)       -->
-  <!-- ============================================== -->
-  <div id="new-story-modal" class="modal-overlay hidden">
-    <div class="modal-card">
-      <button class="modal-close" onclick="closeModal('new-story-modal')">&times;</button>
-      
-      <div class="modal-header">
-        <h3><i class="fa-solid fa-plus-circle"></i> Create New Agile User Story</h3>
-      </div>
-
-      <form id="new-story-form" onsubmit="submitNewUserStory(event)">
-        <div class="form-group">
-          <label>Story Title / User Requirement</label>
-          <input type="text" id="new-story-title" placeholder="As a patient, I want to..." required>
-        </div>
-
-        <div class="form-row-2">
-          <div class="form-group">
-            <label>Epic Category</label>
-            <select id="new-story-epic" class="custom-select">
-              <option value="Authentication">Authentication</option>
-              <option value="Discovery">Discovery & Search</option>
-              <option value="Telehealth">Video Consultation</option>
-              <option value="Payments">Payments & Billing</option>
-              <option value="Prescriptions">Prescriptions</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Story Points (Fibonacci)</label>
-            <select id="new-story-pts" class="custom-select">
-              <option value="1">1 Point (Trivial)</option>
-              <option value="2">2 Points (Small)</option>
-              <option value="3" selected>3 Points (Medium)</option>
-              <option value="5">5 Points (Large)</option>
-              <option value="8">8 Points (Complex)</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Assigned Scrum Role</label>
-          <select id="new-story-assignee" class="custom-select">
-            <option value="MD">Mobile Developer (MD)</option>
-            <option value="LA">Lead Architect (LA)</option>
-            <option value="QA">QA Lead (QA)</option>
-            <option value="UI">UI Designer (UI)</option>
-          </select>
-        </div>
-
-        <div class="modal-footer" style="margin-top: 16px;">
-          <button type="submit" class="btn-primary full-width">
-            <i class="fa-solid fa-check"></i> Add to Sprint Backlog
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- ============================================== -->
-  <!-- MODAL 4: DOCTOR REVIEWS & PATIENT RATING       -->
-  <!-- ============================================== -->
-  <div id="reviews-modal" class="modal-overlay hidden">
-    <div class="modal-card reviews-modal-card">
-      <button class="modal-close" onclick="closeModal('reviews-modal')">&times;</button>
-      
-      <div class="modal-header">
-        <div class="doctor-badge-sm">
-          <img id="rev-doc-img" src="" alt="Doctor">
-          <div>
-            <h4 id="rev-doc-name">Doctor Name</h4>
-            <span id="rev-doc-rating">⭐ 4.9 (320 Patient Reviews)</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="modal-body">
-        <div class="reviews-list" id="doctor-reviews-list">
-          <!-- Dynamic reviews list -->
-        </div>
-
-        <!-- Leave a Review Form -->
-        <div class="write-review-box">
-          <label class="modal-label">Rate Your Experience</label>
-          <div class="star-rating-selector" id="star-rating-selector">
-            <span class="star" onclick="setReviewRating(1)">★</span>
-            <span class="star" onclick="setReviewRating(2)">★</span>
-            <span class="star" onclick="setReviewRating(3)">★</span>
-            <span class="star" onclick="setReviewRating(4)">★</span>
-            <span class="star active" onclick="setReviewRating(5)">★</span>
-          </div>
-          <textarea id="review-comment-input" rows="2" placeholder="Write your feedback..." class="review-textarea"></textarea>
-          <button class="btn-sm btn-primary full-width" onclick="submitPatientReview()">
-            <i class="fa-solid fa-star"></i> Submit Verified Review
-          </button>
-        </div>
+        <button class="control-btn" id="micBtn" onclick="toggleMic()" title="Toggle microphone"><i class="fa-solid fa-microphone" id="micIcon"></i></button>
+        <button class="control-btn" id="camBtn" onclick="toggleCam()" title="Toggle camera"><i class="fa-solid fa-video" id="camIcon"></i></button>
+        <button class="control-btn end-call-btn" onclick="endCall()" title="End call"><i class="fa-solid fa-phone-slash"></i></button>
+        <button class="control-btn" onclick="toggleCallChat()" title="In-call chat"><i class="fa-solid fa-comment"></i></button>
+        <button class="control-btn" onclick="showToast('Screen sharing started','info')" title="Share screen"><i class="fa-solid fa-display"></i></button>
       </div>
     </div>
   </div>
 
-  <!-- ============================================== -->
-  <!-- MODAL 5: PAYMENT RECEIPT & TAX INVOICE         -->
-  <!-- ============================================== -->
-  <div id="invoice-modal" class="modal-overlay hidden">
+  <!-- =====================================================================
+       MODAL: PAYMENT INVOICE
+       ===================================================================== -->
+  <div class="modal-overlay hidden" id="invoiceModal" role="dialog" aria-modal="true" aria-label="Payment invoice">
     <div class="modal-card invoice-modal-card">
-      <button class="modal-close" onclick="closeModal('invoice-modal')">&times;</button>
-      
+      <button class="modal-close" onclick="closeModal('invoiceModal')" aria-label="Close">&times;</button>
       <div class="invoice-pad">
         <div class="invoice-header">
           <div class="invoice-brand">
             <i class="fa-solid fa-heart-pulse"></i>
             <div>
-              <h4>QUICKCARE TELEHEALTH INC.</h4>
-              <small>Tax Invoice & Payment Receipt</small>
+              <h4>QuickCare Telehealth</h4>
+              <small>Tax Invoice</small>
             </div>
           </div>
-          <div class="invoice-status-badge">PAID</div>
+          <span class="invoice-status-badge">PAID</span>
         </div>
-
-        <div class="invoice-meta-grid">
-          <div>
-            <span class="inv-lbl">Transaction ID</span>
-            <strong id="inv-tx-id">tx_live_9948201</strong>
-          </div>
-          <div>
-            <span class="inv-lbl">Date & Time</span>
-            <span id="inv-date">Aug 27, 2026 • 10:30 AM</span>
-          </div>
-          <div>
-            <span class="inv-lbl">Billed To</span>
-            <span>Sarah Jenkins (Patient)</span>
-          </div>
-          <div>
-            <span class="inv-lbl">Payment Method</span>
-            <span><i class="fa-brands fa-cc-visa"></i> Visa •••• 4242</span>
-          </div>
-        </div>
-
+        <div class="invoice-meta-grid" id="invoiceMetaGrid"></div>
         <div class="invoice-table">
-          <div class="inv-row header">
-            <span>Description</span>
-            <span>Qty</span>
-            <span>Amount</span>
-          </div>
-          <div class="inv-row">
-            <span id="inv-service-name">Telehealth Consultation (15 Mins)</span>
-            <span>1</span>
-            <span id="inv-base-price">$45.00</span>
-          </div>
-          <div class="inv-row">
-            <span>HIPAA Secure Platform Fee</span>
-            <span>1</span>
-            <span>$3.00</span>
-          </div>
+          <div class="inv-row header"><span>Description</span><span>Qty</span><span>Amount</span></div>
+          <div class="inv-row"><span>Video Consultation (15 min)</span><span>1</span><span>$45.00</span></div>
+          <div class="inv-row"><span>Platform Fee</span><span>1</span><span>$2.50</span></div>
           <div class="inv-divider"></div>
-          <div class="inv-row total">
-            <span>Total Paid (USD)</span>
-            <span></span>
-            <strong id="inv-total-price">$48.00</strong>
-          </div>
+          <div class="inv-row total"><span>Total</span><span></span><strong>$47.50</strong></div>
         </div>
-
         <div class="invoice-footer">
-          <button class="btn-sm btn-outline" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Invoice</button>
-          <button class="btn-sm btn-primary" onclick="closeModal('invoice-modal')"><i class="fa-solid fa-check"></i> Done</button>
+          <span style="font-size:12px;color:var(--text-muted);">Paid via Stripe · **** 4242</span>
+          <button class="btn-sm btn-outline" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Receipt</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ============================================== -->
-  <!-- MODAL 6: AI CLINICAL SYMPTOM CHECKER CHATBOT   -->
-  <!-- ============================================== -->
-  <div id="ai-triage-modal" class="modal-overlay hidden">
+  <!-- =====================================================================
+       MODAL: AI SYMPTOM CHECKER CHATBOT
+       ===================================================================== -->
+  <div class="modal-overlay hidden" id="aiModal" role="dialog" aria-modal="true" aria-label="AI Symptom Checker">
     <div class="modal-card ai-chat-modal-card">
-      <button class="modal-close" onclick="closeModal('ai-triage-modal')">&times;</button>
-      
       <div class="ai-modal-header">
-        <div class="ai-bot-avatar">
-          <i class="fa-solid fa-robot"></i>
-        </div>
+        <div class="ai-bot-avatar"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
         <div class="ai-header-info">
-          <h4>QuickCare AI Health Assistant</h4>
-          <span><span class="pulse-dot green"></span> Clinical Triage Engine Online</span>
+          <h4>QuickCare AI Triage</h4>
+          <span><span class="pulse-dot" style="width:6px;height:6px;display:inline-block;"></span> Online · Powered by Clinical AI</span>
         </div>
+        <button class="modal-close" style="position:relative;top:auto;right:auto;" onclick="closeModal('aiModal')" aria-label="Close">&times;</button>
       </div>
-
-      <!-- Chat History Area -->
-      <div class="ai-chat-messages" id="ai-chat-messages">
-        <div class="ai-bubble-row bot">
-          <div class="ai-mini-avatar"><i class="fa-solid fa-robot"></i></div>
-          <div class="ai-bubble">
-            <p>Hello <strong>Sarah</strong>! 👋 I'm your AI Clinical Assistant. What symptoms or health concerns are you experiencing today?</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Quick Symptom Selector Pills -->
+      <div class="ai-chat-messages" id="aiChatMessages"></div>
       <div class="ai-quick-symptoms">
-        <span class="quick-title">Quick Select:</span>
-        <button class="quick-sym-btn" onclick="sendAiQuickSymptom('Fever, sore throat, and body chills for 2 days')">🌡️ Fever & Sore Throat</button>
-        <button class="quick-sym-btn" onclick="sendAiQuickSymptom('Red itchy skin rash with small bumps')">🔴 Skin Rash & Itch</button>
-        <button class="quick-sym-btn" onclick="sendAiQuickSymptom('Chest palpitations and rapid heart rate')">💓 Heart Palpitations</button>
-        <button class="quick-sym-btn" onclick="sendAiQuickSymptom('My 3-year-old child has a fever of 39C')">👶 Child High Fever</button>
+        <span class="quick-title">Quick:</span>
+        <button class="quick-sym-btn" onclick="sendAIMessage('Fever')">Fever</button>
+        <button class="quick-sym-btn" onclick="sendAIMessage('Headache')">Headache</button>
+        <button class="quick-sym-btn" onclick="sendAIMessage('Chest Pain')">Chest Pain</button>
+        <button class="quick-sym-btn" onclick="sendAIMessage('Skin Rash')">Skin Rash</button>
+        <button class="quick-sym-btn" onclick="sendAIMessage('Fatigue')">Fatigue</button>
       </div>
-
-      <!-- Chat Input Form -->
-      <form class="ai-chat-form" onsubmit="handleAiChatSubmit(event)">
-        <input type="text" id="ai-chat-input" placeholder="Type your symptoms (e.g. sharp headache, nausea)..." autocomplete="off">
-        <button type="submit" class="btn-ai-send" title="Send to AI"><i class="fa-solid fa-paper-plane"></i></button>
+      <form class="ai-chat-form" onsubmit="return false;">
+        <input type="text" id="aiChatInput" placeholder="Describe your symptoms..." />
+        <button type="button" class="btn-ai-send" onclick="sendAIMessage()"><i class="fa-solid fa-paper-plane"></i></button>
       </form>
     </div>
   </div>
 
-  <!-- ============================================== -->
-  <!-- MODAL 7: PHARMACY HOME DELIVERY & LIVE TRACKER -->
-  <!-- ============================================== -->
-  <div id="pharmacy-modal" class="modal-overlay hidden">
+  <!-- =====================================================================
+       MODAL: PHARMACY TRACKER
+       ===================================================================== -->
+  <div class="modal-overlay hidden" id="pharmacyModal" role="dialog" aria-modal="true" aria-label="Pharmacy delivery tracker">
     <div class="modal-card pharmacy-modal-card">
-      <button class="modal-close" onclick="closeModal('pharmacy-modal')">&times;</button>
-      
       <div class="pharm-modal-header">
         <div class="pharm-brand-row">
-          <div class="pharm-logo-circle"><i class="fa-solid fa-prescription-bottle-medical"></i></div>
+          <div class="pharm-logo-circle"><i class="fa-solid fa-pills"></i></div>
           <div>
-            <h4>QuickCare Express Pharmacy</h4>
-            <span>Order #QC-DEL-9842 • HIPAA Certified Sealed Dispatch</span>
+            <h4>QuickCare Pharmacy</h4>
+            <span>Express Delivery · Order #PHR-2847</span>
           </div>
         </div>
-        <span class="delivery-live-badge"><span class="pulse-dot green"></span> Live Tracking</span>
+        <div class="delivery-live-badge"><span class="pulse-dot" style="width:6px;height:6px;display:inline-block;"></span> Live</div>
+        <button class="modal-close" style="position:relative;top:auto;right:auto;" onclick="closeModal('pharmacyModal')" aria-label="Close">&times;</button>
       </div>
 
-      <!-- Medication Order Detail Strip -->
       <div class="del-med-strip">
         <div class="del-med-info">
-          <span class="del-lbl">Prescribed Pharmacotherapy</span>
-          <strong id="del-med-title">Amoxicillin 500mg (15 Capsules)</strong>
-          <small id="del-doc-info">Prescribed by Dr. Marcus Vance, MD • Licensed Telehealth</small>
+          <span class="del-lbl">Prescribed Medication</span>
+          <strong>Amoxicillin 500mg</strong>
+          <small>Prescribed by Dr. Sarah Chen · 7-day course</small>
         </div>
         <div class="del-price-box">
-          <span class="del-lbl">Total with Express Courier</span>
-          <strong id="del-total-cost">$14.50</strong>
+          <strong>$12.40</strong>
+          <small style="font-size:11px;color:var(--text-muted);">Insured</small>
         </div>
       </div>
 
-      <!-- 4-Stage Stepper Progress Tracker -->
+      <!-- Stepper -->
       <div class="del-stepper-container">
-        <div class="del-stepper-bar">
-          <div class="del-stepper-fill" id="del-progress-fill" style="width: 66%;"></div>
-        </div>
-        
+        <div class="del-stepper-bar"><div class="del-stepper-fill" style="width:60%;"></div></div>
         <div class="del-steps-row">
-          <div class="del-step done" id="step-node-1">
-            <div class="step-circle"><i class="fa-solid fa-check"></i></div>
-            <span>1. Verified</span>
-          </div>
-          <div class="del-step done" id="step-node-2">
-            <div class="step-circle"><i class="fa-solid fa-box-archive"></i></div>
-            <span>2. Dispensed</span>
-          </div>
-          <div class="del-step active" id="step-node-3">
-            <div class="step-circle"><i class="fa-solid fa-motorcycle"></i></div>
-            <span>3. On The Way</span>
-          </div>
-          <div class="del-step" id="step-node-4">
-            <div class="step-circle"><i class="fa-solid fa-house-chimney-medical"></i></div>
-            <span>4. Delivered</span>
-          </div>
+          <div class="del-step done"><div class="step-circle"><i class="fa-solid fa-check"></i></div><span>Order Placed</span></div>
+          <div class="del-step done"><div class="step-circle"><i class="fa-solid fa-check"></i></div><span>Dispensed</span></div>
+          <div class="del-step active"><div class="step-circle"><i class="fa-solid fa-truck-fast"></i></div><span>En Route</span></div>
+          <div class="del-step"><div class="step-circle"><i class="fa-solid fa-house"></i></div><span>Delivered</span></div>
         </div>
       </div>
 
-      <!-- Live GPS Map Simulation Canvas/SVG -->
+      <!-- Map -->
       <div class="del-map-wrapper">
-        <div class="del-map-bg">
-          <svg viewBox="0 0 400 160" class="del-map-svg">
-            <!-- Road Paths -->
-            <path d="M 30,130 Q 120,130 140,80 T 260,80 T 360,30" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="12" stroke-linecap="round"/>
-            <path d="M 30,130 Q 120,130 140,80 T 260,80 T 360,30" fill="none" stroke="rgba(6, 182, 212, 0.4)" stroke-width="4" stroke-dasharray="6"/>
-            
-            <!-- Origin Pharmacy Pin -->
-            <circle cx="30" cy="130" r="10" fill="#6366f1"/>
-            <text x="30" y="154" fill="#a5b4fc" font-size="10" text-anchor="middle" font-weight="700">🏥 Pharmacy</text>
-
-            <!-- Destination Patient Pin -->
-            <circle cx="360" cy="30" r="10" fill="#10b981"/>
-            <text x="360" y="20" fill="#6ee7b7" font-size="10" text-anchor="middle" font-weight="700">🏠 Sarah's Home</text>
-
-            <!-- Animated Courier Vehicle Marker -->
-            <g id="del-courier-marker" transform="translate(250, 72)">
-              <circle cx="0" cy="0" r="14" fill="#00f2fe" opacity="0.3" class="pulse-ring"/>
-              <circle cx="0" cy="0" r="8" fill="#00f2fe"/>
-              <circle cx="0" cy="0" r="4" fill="#ffffff"/>
-            </g>
-          </svg>
-        </div>
-
+        <svg class="del-map-svg" viewBox="0 0 420 140" xmlns="http://www.w3.org/2000/svg">
+          <rect width="420" height="140" fill="#090e17"/>
+          <!-- Road grid lines -->
+          <line x1="0" y1="70" x2="420" y2="70" stroke="#1e293b" stroke-width="8"/>
+          <line x1="0" y1="35" x2="420" y2="35" stroke="#1e293b" stroke-width="4"/>
+          <line x1="0" y1="105" x2="420" y2="105" stroke="#1e293b" stroke-width="4"/>
+          <line x1="105" y1="0" x2="105" y2="140" stroke="#1e293b" stroke-width="4"/>
+          <line x1="210" y1="0" x2="210" y2="140" stroke="#1e293b" stroke-width="4"/>
+          <line x1="315" y1="0" x2="315" y2="140" stroke="#1e293b" stroke-width="4"/>
+          <!-- Destination marker -->
+          <circle cx="360" cy="70" r="10" fill="rgba(16,185,129,0.3)" stroke="#10b981" stroke-width="2"/>
+          <text x="360" y="74" text-anchor="middle" font-size="10" fill="#10b981">H</text>
+          <!-- Driver marker (animated) -->
+          <circle cx="160" cy="70" r="8" fill="rgba(6,182,212,0.3)" stroke="#06b6d4" stroke-width="2">
+            <animateTransform attributeName="transform" type="translate" values="0,0; 30,0; 60,0" dur="6s" repeatCount="indefinite"/>
+          </circle>
+          <text x="160" y="74" text-anchor="middle" font-size="9" fill="#06b6d4">
+            <animateTransform attributeName="transform" type="translate" values="0,0; 30,0; 60,0" dur="6s" repeatCount="indefinite"/>
+            T
+          </text>
+          <!-- Route line -->
+          <line x1="168" y1="70" x2="350" y2="70" stroke="#06b6d4" stroke-width="2" stroke-dasharray="6,4" opacity="0.5"/>
+        </svg>
         <div class="del-eta-floating-card">
           <div class="eta-time-box">
-            <span class="eta-lbl">ESTIMATED DELIVERY</span>
-            <h3 id="del-eta-timer">18 Mins <small style="font-size: 11px; font-weight: normal; color: #a5f3fc;">(7:45 PM)</small></h3>
+            <span class="eta-lbl">Estimated Arrival</span>
+            <h3>~18 min</h3>
           </div>
-          <div class="del-otp-box">
-            <span class="eta-lbl">HANDOVER OTP</span>
-            <strong class="otp-code">4 8 2 1</strong>
+          <div>
+            <span class="eta-lbl">Delivery OTP</span>
+            <div class="otp-code">7 4 2 9</div>
           </div>
         </div>
       </div>
 
-      <!-- Courier Driver Profile & Contact Bar -->
+      <!-- Driver -->
       <div class="del-driver-card">
         <div class="driver-profile-row">
-          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" alt="Courier Driver" class="driver-img">
+          <img src="https://api.dicebear.com/8.x/avataaars/svg?seed=Driver7" alt="Driver" class="driver-img" />
           <div class="driver-meta">
-            <strong>Carlos Mendez</strong>
-            <span>Verified Courier • ⭐ 4.9 (1,420 Deliveries)</span>
-            <small style="color: var(--text-muted);">Vehicle: Honda CB500 • Insulated Cold-Chain Bag</small>
+            <strong>Raj Kumar</strong>
+            <span>4.8 ★ · Honda Activa · KA-05-AB-1234</span>
           </div>
         </div>
         <div class="driver-actions">
-          <button class="btn-driver-call" onclick="simulateDriverCall()"><i class="fa-solid fa-phone"></i> Call</button>
-          <button class="btn-driver-chat" onclick="simulateDriverMessage()"><i class="fa-solid fa-comment-dots"></i> Chat</button>
+          <button class="btn-driver-call" onclick="showToast('Calling Raj Kumar...','info')"><i class="fa-solid fa-phone"></i> Call</button>
+          <button class="btn-driver-chat" onclick="showToast('Opening chat with driver','info')"><i class="fa-solid fa-comment"></i> Chat</button>
         </div>
       </div>
-
-      <!-- Simulation Action Buttons -->
-      <div class="del-sim-controls">
-        <button class="btn-sm btn-primary full-width" id="btn-advance-del" onclick="advanceDeliveryStage()">
-          <i class="fa-solid fa-forward-step"></i> Fast-Forward Delivery Stage ➔
-        </button>
-      </div>
-
     </div>
   </div>
 

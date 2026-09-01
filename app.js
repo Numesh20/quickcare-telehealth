@@ -1,1615 +1,1370 @@
 /* ==========================================================================
-   QuickCare Telehealth App & IT PM Suite Logic (Upgraded with Step 1)
+   QuickCare Telehealth — app.js
+   Complete Application Logic
    ========================================================================== */
 
-// 1. Doctor Database
-const doctors = [
-  {
-    id: 1,
-    name: "Dr. Marcus Vance, MD",
-    specialty: "General Medicine",
-    rating: "4.9 (320 reviews)",
-    experience: "12 Yrs Exp",
-    fee: "$45.00",
-    image: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=200&auto=format&fit=crop&q=80"
-  },
-  {
-    id: 2,
-    name: "Dr. Emily Zhang, MD",
-    specialty: "Dermatology",
-    rating: "4.8 (210 reviews)",
-    experience: "8 Yrs Exp",
-    fee: "$55.00",
-    image: "https://images.unsplash.com/photo-1594824813583-4a112c2196a6?w=200&auto=format&fit=crop&q=80"
-  },
-  {
-    id: 3,
-    name: "Dr. Rajesh Patel, MD",
-    specialty: "Pediatrics",
-    rating: "4.9 (440 reviews)",
-    experience: "15 Yrs Exp",
-    fee: "$50.00",
-    image: "https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=200&auto=format&fit=crop&q=80"
-  },
-  {
-    id: 4,
-    name: "Dr. Olivia Bennett, MD",
-    specialty: "Cardiology",
-    rating: "4.9 (180 reviews)",
-    experience: "14 Yrs Exp",
-    fee: "$65.00",
-    image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=200&auto=format&fit=crop&q=80"
-  }
+'use strict';
+
+// ==========================================================================
+//  DATA
+// ==========================================================================
+
+const DOCTORS = [
+  { id: 1, name: 'Dr. Sarah Chen', specialty: 'Cardiology', rating: 4.9, reviews: 1284, fee: 55, wait: '< 5 min', img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=DrSarah', keywords: ['chest', 'heart', 'cardio', 'palpitation', 'blood pressure'] },
+  { id: 2, name: 'Dr. James Okafor', specialty: 'General', rating: 4.7, reviews: 892, fee: 45, wait: '< 10 min', img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=DrJames', keywords: ['fever', 'cold', 'cough', 'flu', 'general', 'headache'] },
+  { id: 3, name: 'Dr. Priya Sharma', specialty: 'Dermatology', rating: 4.8, reviews: 567, fee: 60, wait: '< 8 min', img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=DrPriya', keywords: ['skin', 'rash', 'acne', 'eczema', 'derma'] },
+  { id: 4, name: 'Dr. Marcus Lee', specialty: 'Pediatrics', rating: 4.6, reviews: 734, fee: 50, wait: '< 12 min', img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=DrMarcus', keywords: ['child', 'pediatric', 'baby', 'kid', 'infant'] },
+  { id: 5, name: 'Dr. Aisha Patel', specialty: 'Mental Health', rating: 4.9, reviews: 418, fee: 70, wait: '< 15 min', img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=DrAisha', keywords: ['anxiety', 'depression', 'stress', 'mental', 'therapy', 'sleep', 'insomnia'] },
+  { id: 6, name: 'Dr. Ryan Torres', specialty: 'Orthopedics', rating: 4.5, reviews: 329, fee: 65, wait: '< 20 min', img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=DrRyan', keywords: ['back', 'joint', 'knee', 'shoulder', 'pain', 'orthopedic', 'sprain'] },
 ];
 
-// Doctor Verified Reviews Data
-const doctorReviews = {
+const SAMPLE_REVIEWS = {
   1: [
-    { name: "Jessica T.", stars: 5, date: "2 days ago", comment: "Dr. Vance was extremely thorough and diagnosed my throat infection quickly. The prescription arrived instantly on my phone." },
-    { name: "David K.", stars: 5, date: "1 week ago", comment: "Saved me a 4-hour trip to urgent care! Video quality was crystal clear and no lag." },
-    { name: "Amanda L.", stars: 5, date: "2 weeks ago", comment: "Great bedside manner. Very polite, helpful, and knowledgeable." }
+    { user: 'Alex J.', rating: 5, text: 'Dr. Chen diagnosed my irregular heartbeat immediately. Exceptional care!' },
+    { user: 'Maria L.', rating: 5, text: 'Very thorough and knowledgeable. Highly recommend for cardiac concerns.' },
+    { user: 'Tom B.', rating: 4, text: 'Great consultation. A little rushed at the end but overall excellent.' },
   ],
-  2: [
-    { name: "Robert M.", stars: 5, date: "3 days ago", comment: "Dr. Zhang identified my skin allergy trigger immediately. Prescribed a topical lotion that worked in 24 hours!" }
-  ],
-  3: [
-    { name: "Priya S.", stars: 5, date: "Yesterday", comment: "Wonderful with my 4-year old son. Calmed our fever worries and gave clear dosing advice." }
-  ],
-  4: [
-    { name: "Thomas B.", stars: 5, date: "5 days ago", comment: "Dr. Bennett reviewed my ECG results and explained the heart rate readings very clearly." }
-  ]
+  2: [{ user: 'Sandra P.', rating: 5, text: 'Quick and professional. Sorted my fever diagnosis in minutes.' }, { user: 'Raj K.', rating: 4, text: 'Good general practitioner. Clear advice.' }],
+  3: [{ user: 'Zoe M.', rating: 5, text: 'Finally cleared up my eczema after seeing 3 other doctors. Dr. Sharma is amazing!' }],
+  4: [{ user: 'Parent of Lily', rating: 5, text: 'Dr. Lee was so patient and calm with my anxious toddler. Brilliant.' }],
+  5: [{ user: 'Anonymous', rating: 5, text: 'Changed my life. Supportive, non-judgmental, and truly listens.' }],
+  6: [{ user: 'Chris N.', rating: 4, text: 'Good advice on my knee injury. Recommended physio rather than surgery.' }],
 };
 
-// 2. Initial Kanban Agile Stories
-const initialKanbanCards = [
-  { id: "US-601", title: "Automated SMS/Push Consultation Reminders (15m before)", epic: "Notifications", pts: 2, status: "backlog", assignee: "MD" },
-  { id: "TECH-401", title: "Memory Leak Optimization & WebRTC Bitrate Throttling", epic: "Infrastructure", pts: 5, status: "progress", assignee: "LA" },
-  { id: "US-501", title: "Doctor Digital Prescription PDF Generator & Signature", epic: "Prescription", pts: 3, status: "qa", assignee: "QA" },
-  { id: "US-101", title: "Patient Registration via Phone OTP Verification", epic: "Auth", pts: 3, status: "done", assignee: "MD" },
-  { id: "US-201", title: "Doctor Specialty Filter & Directory Search API", epic: "Discovery", pts: 5, status: "done", assignee: "LA" },
-  { id: "US-301", title: "1-on-1 End-to-End Encrypted Video Consultation Call", epic: "Telehealth", pts: 8, status: "done", assignee: "MD" },
-  { id: "US-401", title: "Stripe Payment Gateway SDK & In-App Card Checkout", epic: "Payments", pts: 5, status: "done", assignee: "LA" }
+const HISTORY_ITEMS = [
+  { date: 'Aug 22, 2026', doctor: 'Dr. Sarah Chen', specialty: 'Cardiology', diagnosis: 'Stable Angina (I20.8)', rx: 'Atenolol 25mg · 1x daily for 30 days' },
+  { date: 'Jul 15, 2026', doctor: 'Dr. James Okafor', specialty: 'General Medicine', diagnosis: 'Viral URI (J06.9)', rx: 'Paracetamol 500mg · 3x daily for 5 days' },
+  { date: 'Jun 03, 2026', doctor: 'Dr. Aisha Patel', specialty: 'Mental Health', diagnosis: 'Generalized Anxiety (F41.1)', rx: 'Sertraline 50mg · 1x daily for 30 days' },
 ];
 
-let kanbanCards = [...initialKanbanCards];
-let selectedDoctor = doctors[0];
-let selectedReviewStars = 5;
-let callTimerInterval = null;
-let callSeconds = 0;
-let isMicMuted = false;
-let isCamOff = false;
-let isRealCamActive = false;
-let realCamStream = null;
-let soundEnabled = true;
+const KANBAN_DATA = [
+  { col: 'todo', id: 'US-09', pts: 5, title: 'HIPAA audit trail logging for all data access', epic: 'Compliance', assignee: 'QA' },
+  { col: 'todo', id: 'US-10', pts: 3, title: 'Push notification when doctor accepts appointment', epic: 'Notifications', assignee: 'BE' },
+  { col: 'todo', id: 'US-11', pts: 8, title: 'In-app pharmacy prescription fulfillment flow', epic: 'Pharmacy', assignee: 'FE' },
+  { col: 'inprogress', id: 'US-05', pts: 8, title: 'Twilio WebRTC video room integration with waiting room', epic: 'Video', assignee: 'BE' },
+  { col: 'inprogress', id: 'US-07', pts: 5, title: 'Stripe payment gateway integration + refund flow', epic: 'Payments', assignee: 'FE' },
+  { col: 'review', id: 'US-03', pts: 13, title: 'Doctor Rx prescription pad + allergy contraindication engine', epic: 'Clinical', assignee: 'FE' },
+  { col: 'review', id: 'US-06', pts: 8, title: 'Patient search with real-time specialty filter + ratings', epic: 'Patient', assignee: 'FE' },
+  { col: 'done', id: 'US-01', pts: 5, title: 'Patient registration & KYC onboarding flow', epic: 'Auth', assignee: 'FE' },
+  { col: 'done', id: 'US-02', pts: 8, title: 'Doctor profile onboarding, license verification & schedule', epic: 'Doctor', assignee: 'BE' },
+  { col: 'done', id: 'US-04', pts: 5, title: 'Agile Kanban board with drag-and-drop story management', epic: 'PM Tools', assignee: 'PM' },
+  { col: 'done', id: 'US-08', pts: 8, title: 'Sprint burndown chart + velocity tracker dashboard', epic: 'PM Tools', assignee: 'PM' },
+];
+
+const SPRINT_DATA = [
+  { label: 'S1', planned: 30, actual: 29 },
+  { label: 'S2', planned: 30, actual: 31 },
+  { label: 'S3', planned: 30, actual: 30 },
+  { label: 'S4', planned: 32, actual: 32 },
+];
+
+const RETRO_DATA = {
+  well: [
+    { text: 'CI/CD pipeline cut deployment time by 70%', author: 'BE Team', votes: 5 },
+    { text: 'Planning Poker improved estimation accuracy to 98.4%', author: 'Scrum Master', votes: 8 },
+    { text: 'Daily standups kept blockers resolved in < 1 day', author: 'Dev Team', votes: 6 },
+  ],
+  slow: [
+    { text: 'HIPAA documentation review took 2x longer than estimated', author: 'QA Lead', votes: 4 },
+    { text: 'Twilio API rate limits caused Sprint 2 delay', author: 'BE Dev', votes: 3 },
+  ],
+  action: [
+    { text: 'Add HIPAA review to Definition of Ready for all compliance stories', author: 'PM', votes: 7 },
+    { text: 'Pre-negotiate API rate limit tiers with vendors in Sprint Planning', author: 'PM', votes: 5 },
+    { text: 'Run design reviews 1 sprint ahead to reduce UX rework', author: 'UX Designer', votes: 4 },
+  ],
+};
+
+const BUDGET_ITEMS = [
+  { label: 'Engineering (4 Developers)', spend: 72000, budget: 75000, color: 'cyan' },
+  { label: 'Infrastructure (AWS + Twilio)', spend: 18400, budget: 20000, color: 'purple' },
+  { label: 'QA & Security Audit', spend: 14000, budget: 14000, color: 'green' },
+  { label: 'Design & UX', spend: 12000, budget: 11000, color: 'amber' },
+];
+
+const RAID_ITEMS = [
+  { id: 'R-01', type: 'Risk', desc: 'HIPAA non-compliance due to unencrypted PHI at rest', p: 3, i: 5, level: 'high', badge: 'compliance', mitigation: 'AES-256 encryption + pen test in Sprint 2', status: 'Resolved' },
+  { id: 'R-02', type: 'Risk', desc: 'Twilio API rate limits blocking video calls at scale', p: 4, i: 4, level: 'high', badge: 'tech', mitigation: 'Renegotiated SLA + circuit breaker pattern', status: 'Resolved' },
+  { id: 'R-03', type: 'Issue', desc: 'Lead developer out for 1 week due to illness', p: 5, i: 3, level: 'med', badge: 'scope', mitigation: 'Cross-training; backlog re-prioritized', status: 'Resolved' },
+  { id: 'R-04', type: 'Risk', desc: 'Scope creep: client added pharmacy delivery feature', p: 2, i: 3, level: 'low', badge: 'vendor', mitigation: 'Added to backlog for Sprint 5 post-MVP', status: 'Open' },
+];
+
+const RACI_ROWS = [
+  { task: 'Sprint Planning & Backlog Grooming', pm: 'A', dev: 'R', qa: 'C', ux: 'C', po: 'R' },
+  { task: 'HIPAA Compliance Audit', pm: 'A', dev: 'C', qa: 'R', ux: 'I', po: 'I' },
+  { task: 'UI/UX Design Approval', pm: 'A', dev: 'C', qa: 'I', ux: 'R', po: 'C' },
+  { task: 'API Integration (Twilio + Stripe)', pm: 'I', dev: 'R', qa: 'C', ux: 'I', po: 'A' },
+  { task: 'QA Test Execution', pm: 'I', dev: 'C', qa: 'R', ux: 'I', po: 'A' },
+  { task: 'Go-Live & App Store Release', pm: 'AR', dev: 'R', qa: 'R', ux: 'C', po: 'A' },
+];
+
+const POKER_STORIES = [
+  { id: 'US-08', epic: 'Video Consultation', title: 'As a patient, I want to join a secure video call with a licensed doctor in under 15 minutes, with a waiting room and call quality indicator.', desc: 'Acceptance: Given I book a consult, when the doctor accepts, then I can join a Twilio encrypted video room with mic/cam controls.' },
+  { id: 'US-11', epic: 'Pharmacy', title: 'As a patient, I want to order my prescribed medications and track real-time delivery on a live map.', desc: 'Acceptance: Given a prescription is issued, when I tap Order, then I can track delivery with driver GPS and receive an OTP.' },
+  { id: 'US-03', epic: 'Clinical', title: 'As a doctor, I want to write digital prescriptions with automatic allergy contraindication detection.', desc: 'Acceptance: Given a patient allergy on file, when I prescribe a contraindicated drug, then a blocking alert fires before submission.' },
+];
+
+const SCRUM_MEMBERS = [
+  { name: 'Numesh (PM)', role: 'IT PM / Scrum Master', icon: 'fa-chart-gantt' },
+  { name: 'Elena (FE)', role: 'Frontend Engineer', icon: 'fa-code' },
+  { name: 'Raj (BE)', role: 'Backend Engineer', icon: 'fa-server' },
+  { name: 'Zara (QA)', role: 'QA Lead', icon: 'fa-shield-check' },
+  { name: 'Liam (UX)', role: 'UI/UX Designer', icon: 'fa-pen-ruler' },
+  { name: 'Priya (PO)', role: 'Product Owner', icon: 'fa-star' },
+];
+
+const PENICILLIN_DRUGS = ['amoxicillin', 'ampicillin', 'penicillin', 'augmentin', 'amoxil', 'piperacillin', 'flucloxacillin', 'oxacillin'];
+
+const PRESETS = {
+  URI: { diagnosis: 'Viral Upper Respiratory Infection (J06.9)', meds: [['Paracetamol', '500mg', '3x daily for 5 days'], ['Cetirizine', '10mg', '1x daily for 7 days'], ['', '', '']] },
+  HTN: { diagnosis: 'Essential Hypertension (I10)', meds: [['Amlodipine', '5mg', '1x daily'], ['Ramipril', '5mg', '1x daily'], ['', '', '']] },
+  T2D: { diagnosis: 'Type 2 Diabetes Mellitus (E11)', meds: [['Metformin', '500mg', '2x daily with food'], ['Sitagliptin', '100mg', '1x daily'], ['', '', '']] },
+  Anxiety: { diagnosis: 'Generalized Anxiety Disorder (F41.1)', meds: [['Sertraline', '50mg', '1x daily for 30 days'], ['Alprazolam', '0.25mg', 'As needed (max 3x daily)'], ['', '', '']] },
+  Skin: { diagnosis: 'Skin Infection — Cellulitis (L03.9)', meds: [['Doxycycline', '100mg', '2x daily for 7 days'], ['Mupirocin cream', 'Topical', 'Apply 3x daily for 10 days'], ['', '', '']] },
+};
+
+const AI_RESPONSES = {
+  fever: { level: 'mod', msg: 'Based on your symptoms, this could be a viral infection or flu. I recommend consulting a General Practitioner. Stay hydrated and monitor temperature.', doc: DOCTORS[1] },
+  headache: { level: 'mild', msg: 'Headaches can have many causes — tension, dehydration, or migraine. If this is recurrent or very severe (thunderclap headache), seek immediate care.', doc: DOCTORS[1] },
+  'chest pain': { level: 'mod', msg: 'Chest pain requires prompt medical attention. Please consult a Cardiologist immediately. If severe, call emergency services.', doc: DOCTORS[0] },
+  'skin rash': { level: 'mild', msg: 'A skin rash may indicate an allergic reaction or infection. A Dermatologist can diagnose and prescribe appropriate treatment.', doc: DOCTORS[2] },
+  fatigue: { level: 'mild', msg: 'Persistent fatigue can be caused by anaemia, thyroid issues, or stress. A General Practitioner can run a blood panel to identify causes.', doc: DOCTORS[1] },
+  anxiety: { level: 'mod', msg: 'Anxiety symptoms are manageable with proper support. Our Mental Health specialist can provide a safe, confidential consultation.', doc: DOCTORS[4] },
+  default: { level: 'mild', msg: 'Thank you for describing your symptoms. Based on your input, I recommend consulting one of our available specialists. Would you like me to find the best match?', doc: DOCTORS[1] },
+};
+
+const DOCTOR_CALENDAR = {
+  Mon: [{ time: '09:00', type: 'booked', name: 'James R.' }, { time: '10:00', type: 'live', name: 'Marcus W.' }, { time: '11:00', type: 'booked', name: 'Priya N.' }, { time: '14:00', type: 'free' }, { time: '15:00', type: 'free' }],
+  Tue: [{ time: '09:00', type: 'free' }, { time: '10:00', type: 'booked', name: 'Elena T.' }, { time: '11:00', type: 'free' }, { time: '14:00', type: 'booked', name: 'Sam K.' }, { time: '16:00', type: 'free' }],
+  Wed: [{ time: '09:00', type: 'booked', name: 'David C.' }, { time: '10:00', type: 'free' }, { time: '11:00', type: 'booked', name: 'Mia J.' }, { time: '14:00', type: 'free' }, { time: '15:00', type: 'booked', name: 'Noah L.' }],
+  Thu: [{ time: '09:00', type: 'free' }, { time: '10:00', type: 'free' }, { time: '11:00', type: 'booked', name: 'Sara B.' }, { time: '14:00', type: 'free' }, { time: '15:00', type: 'booked', name: 'Chris M.' }],
+  Fri: [{ time: '09:00', type: 'booked', name: 'Lena H.' }, { time: '10:00', type: 'free' }, { time: '11:00', type: 'free' }, { time: '14:00', type: 'booked', name: 'Felix T.' }, { time: '15:00', type: 'free' }],
+};
 
 // ==========================================================================
-// Web Audio API Synthesizer (Zero External Dependencies)
+//  STATE
 // ==========================================================================
 
-function playChime(type) {
-  if (!soundEnabled) return;
-  try {
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-
-    if (type === "success") {
-      osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
-      osc.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
-      osc.frequency.exponentialRampToValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
-      gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.5);
-    } else if (type === "call") {
-      osc.frequency.setValueAtTime(440, audioCtx.currentTime); // A4
-      osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.15); // A5
-      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.35);
-    } else if (type === "click") {
-      osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-      gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.08);
-    }
-  } catch (e) {
-    console.log("Audio not allowed yet by user interaction");
-  }
-}
-
-function toggleAudioFx() {
-  soundEnabled = !soundEnabled;
-  const btn = document.getElementById("audio-toggle-btn");
-  btn.innerHTML = soundEnabled ? `<i class="fa-solid fa-volume-high"></i>` : `<i class="fa-solid fa-volume-xmark"></i>`;
-  showToast(soundEnabled ? "Sound FX Enabled" : "Sound FX Muted", "info");
-}
-
-// Toast Popup Notification Engine
-function showToast(message, type = "success") {
-  const container = document.getElementById("toast-container");
-  const toast = document.createElement("div");
-  toast.className = `toast ${type}`;
-  toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-info'}"></i> <span>${message}</span>`;
-  container.appendChild(toast);
-  setTimeout(() => {
-    toast.style.opacity = "0";
-    toast.style.transform = "translateX(100%)";
-    toast.style.transition = "all 0.3s ease";
-    setTimeout(() => toast.remove(), 300);
-  }, 3500);
-}
+let state = {
+  currentView: 'patient',
+  patientScreen: 'search',
+  currentSpecialty: 'All',
+  selectedSlot: null,
+  selectedDoctor: null,
+  currentPatientAllergy: 'penicillin',
+  selectedStarRating: 0,
+  pokerSelectedCard: null,
+  pokerRevealed: false,
+  currentPokerStory: 0,
+  pokerVotes: {},
+  retroData: JSON.parse(JSON.stringify(RETRO_DATA)),
+  docTab: 'rx',
+  pmTab: 'kanban',
+  dragCard: null,
+  dragCol: null,
+  standupActive: false,
+  standupMemberIndex: -1,
+  standupTimer: null,
+  totalStandupTimer: null,
+  standupSpeakerSeconds: 120,
+  standupTotalSeconds: 0,
+  standupDone: new Set(),
+  callActive: false,
+  callTimer: null,
+  callSeconds: 0,
+  micOn: true,
+  camOn: true,
+  chatOpen: false,
+  audioOn: true,
+  themeLight: false,
+  kanbanData: JSON.parse(JSON.stringify(KANBAN_DATA)),
+  sprintSelected: 4,
+  voiceRecording: false,
+  voiceInterval: null,
+  aiMessages: [],
+  standupLog: [],
+  bookingForDoctor: null,
+  bookingConfirmedDoctor: null,
+};
 
 // ==========================================================================
-// Initialization & View Switching
+//  INIT
 // ==========================================================================
 
-document.addEventListener("DOMContentLoaded", () => {
-  renderDoctors("All");
+document.addEventListener('DOMContentLoaded', () => {
+  renderDoctorList();
+  renderBookingDoctors();
+  renderHistoryList();
   renderKanban();
-  updateRiskScore();
+  renderVelocityChart();
+  renderBurndown();
+  renderPokerDeck();
+  renderPokerTeamVotes();
+  renderRetroBoard();
+  renderBudgetBars();
+  renderRAIDTable();
+  renderRACITable();
+  renderScrumMembers();
+  renderDocCalendar();
+  setTodayDate();
+  updateRiskCalc();
+  initAIChat();
+  updateSim(null, null, null, true);
 });
 
-function switchView(viewId) {
-  document.querySelectorAll(".view-panel").forEach(panel => panel.classList.remove("active"));
-  document.querySelectorAll(".nav-tab").forEach(tab => tab.classList.remove("active"));
+// ==========================================================================
+//  MAIN VIEW SWITCHER
+// ==========================================================================
 
-  document.getElementById(viewId).classList.add("active");
-
-  if (viewId === "patient-view") document.getElementById("tab-patient").classList.add("active");
-  if (viewId === "doctor-view") document.getElementById("tab-doctor").classList.add("active");
-  if (viewId === "pm-view") document.getElementById("tab-pm").classList.add("active");
-  playChime("click");
-}
-
-function switchPatientSubTab(tab) {
-  document.querySelectorAll(".p-nav-btn").forEach(btn => btn.classList.remove("active"));
-  if (tab === "home") {
-    document.getElementById("p-sub-home").classList.add("active");
-    document.getElementById("patient-sub-home-panel").classList.remove("hidden");
-    document.getElementById("patient-sub-history-panel").classList.add("hidden");
-  } else {
-    document.getElementById("p-sub-history").classList.add("active");
-    document.getElementById("patient-sub-home-panel").classList.add("hidden");
-    document.getElementById("patient-sub-history-panel").classList.remove("hidden");
-  }
-}
-
-function switchPmTab(tabId) {
-  document.querySelectorAll(".pm-tab-content").forEach(tab => tab.classList.remove("active"));
-  document.querySelectorAll(".pm-subtab").forEach(btn => btn.classList.remove("active"));
-
-  document.getElementById(tabId).classList.add("active");
-  event.currentTarget.classList.add("active");
-  playChime("click");
+function switchView(view) {
+  state.currentView = view;
+  document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+  document.getElementById('view-' + view).classList.add('active');
+  const tab = document.getElementById('tab-' + view);
+  tab.classList.add('active');
+  tab.setAttribute('aria-selected', 'true');
 }
 
 // ==========================================================================
-// Patient View Logic (Search, Filters, Booking & Reviews)
+//  PATIENT APP
 // ==========================================================================
 
-function filterSpecialty(specialty) {
-  document.querySelectorAll(".specialty-chips .chip").forEach(chip => {
-    chip.classList.toggle("active", chip.innerText.includes(specialty) || (specialty === "All" && chip.innerText === "All"));
-  });
-  renderDoctors(specialty);
+function switchPatientScreen(screen) {
+  state.patientScreen = screen;
+  document.querySelectorAll('.phone-screen').forEach(s => s.classList.add('hidden'));
+  document.querySelectorAll('.p-nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('screen-' + screen).classList.remove('hidden');
+  document.getElementById('pnav-' + screen).classList.add('active');
 }
 
-function renderDoctors(filter) {
-  const container = document.getElementById("doctor-list");
-  const filtered = filter === "All" ? doctors : doctors.filter(d => d.specialty === filter);
-  
-  document.getElementById("doc-count").innerText = `${filtered.length} Available Today`;
-
-  container.innerHTML = filtered.map(doc => `
+function renderDoctorList(docs) {
+  const list = document.getElementById('doctorList');
+  const data = docs || DOCTORS;
+  document.getElementById('doctorCount').textContent = data.length + ' Online';
+  list.innerHTML = data.map(d => `
     <div class="doc-card">
       <div class="doc-card-top">
-        <img src="${doc.image}" alt="${doc.name}" class="doc-card-img">
+        <img src="${d.img}" alt="${d.name}" class="doc-card-img" />
         <div class="doc-meta">
-          <h5>${doc.name}</h5>
-          <span class="doc-specialty">${doc.specialty} • ${doc.experience}</span>
-          <div class="doc-rating" onclick="openReviewsModal(${doc.id})" style="cursor: pointer;" title="View Verified Reviews">
-            ⭐ ${doc.rating} <span style="font-size: 10px; color: #38bdf8; text-decoration: underline;">(Reviews)</span>
-          </div>
+          <h5>${d.name}</h5>
+          <span class="doc-specialty">${d.specialty}</span>
+          <div class="doc-rating">★ ${d.rating} <span style="color:var(--text-muted);">(${d.reviews.toLocaleString()} reviews)</span></div>
+        </div>
+        <span style="font-size:10px;color:var(--accent-emerald);">${d.wait}</span>
+      </div>
+      <div class="doc-card-bottom">
+        <span class="doc-fee">$${d.fee}/consult</span>
+        <div style="display:flex;gap:6px;">
+          <button class="btn-book-sm" style="background:transparent;border:1px solid var(--border-color);color:var(--text-secondary);" onclick="openReviews(${d.id})">Reviews</button>
+          <button class="btn-book-sm" onclick="openBooking(${d.id})">Book Now</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderBookingDoctors() {
+  const list = document.getElementById('bookingDoctorList');
+  const subset = DOCTORS.slice(0, 3);
+  list.innerHTML = subset.map(d => `
+    <div class="doc-card">
+      <div class="doc-card-top">
+        <img src="${d.img}" alt="${d.name}" class="doc-card-img" />
+        <div class="doc-meta">
+          <h5>${d.name}</h5>
+          <span class="doc-specialty">${d.specialty}</span>
+          <div class="doc-rating">★ ${d.rating}</div>
         </div>
       </div>
       <div class="doc-card-bottom">
-        <span class="doc-fee">${doc.fee} / 15-min call</span>
-        <button class="btn-book-sm" onclick="openBookingModal(${doc.id})">Book Consult</button>
+        <span class="doc-fee">$${d.fee}/consult</span>
+        <button class="btn-book-sm" onclick="openBooking(${d.id})">Book</button>
       </div>
     </div>
-  `).join("");
+  `).join('');
 }
 
-// Real-Time Search Function
-function searchDoctors(query) {
-  const clean = query.toLowerCase().trim();
-  const clearBtn = document.getElementById("search-clear-btn");
-  if (clearBtn) clearBtn.classList.toggle("hidden", clean.length === 0);
+function renderHistoryList() {
+  const list = document.getElementById('historyList');
+  list.innerHTML = HISTORY_ITEMS.map(h => `
+    <div class="history-card">
+      <div class="history-header">
+        <div>
+          <span class="history-date">${h.date}</span>
+          <span class="history-diag"><strong>${h.doctor}</strong> · ${h.specialty}</span>
+        </div>
+        <button class="btn-book-sm" onclick="showInvoice('${h.date}', '${h.doctor}')">Invoice</button>
+      </div>
+      <div style="font-size:12px;color:var(--text-secondary);">Diagnosis: ${h.diagnosis}</div>
+      <div class="history-rx"><i class="fa-solid fa-prescription" style="margin-right:6px;"></i>${h.rx}</div>
+    </div>
+  `).join('');
+}
 
-  const container = document.getElementById("doctor-list");
-  const filtered = doctors.filter(d => 
-    d.name.toLowerCase().includes(clean) ||
-    d.specialty.toLowerCase().includes(clean) ||
-    (d.specialty === "General Medicine" && (clean.includes("fever") || clean.includes("flu") || clean.includes("cough") || clean.includes("cold"))) ||
-    (d.specialty === "Dermatology" && (clean.includes("skin") || clean.includes("rash") || clean.includes("acne") || clean.includes("itch"))) ||
-    (d.specialty === "Cardiology" && (clean.includes("heart") || clean.includes("bp") || clean.includes("chest") || clean.includes("cardio"))) ||
-    (d.specialty === "Pediatrics" && (clean.includes("child") || clean.includes("baby") || clean.includes("kid") || clean.includes("infant")))
+function filterDoctors() {
+  const input = document.getElementById('doctorSearchInput').value.toLowerCase();
+  const clearBtn = document.getElementById('searchClearBtn');
+  clearBtn.classList.toggle('hidden', !input);
+  if (!input) { renderDoctorList(); return; }
+  const filtered = DOCTORS.filter(d =>
+    d.name.toLowerCase().includes(input) ||
+    d.specialty.toLowerCase().includes(input) ||
+    d.keywords.some(k => k.includes(input))
   );
-
-  document.getElementById("doc-count").innerText = `${filtered.length} Doctors Found`;
-
-  if (filtered.length === 0) {
-    container.innerHTML = `<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">No doctors found matching "<strong>${query}</strong>". Try searching "General" or "Skin".</div>`;
-    return;
-  }
-
-  container.innerHTML = filtered.map(doc => `
-    <div class="doc-card">
-      <div class="doc-card-top">
-        <img src="${doc.image}" alt="${doc.name}" class="doc-card-img">
-        <div class="doc-meta">
-          <h5>${doc.name}</h5>
-          <span class="doc-specialty">${doc.specialty} • ${doc.experience}</span>
-          <div class="doc-rating" onclick="openReviewsModal(${doc.id})" style="cursor: pointer;">
-            ⭐ ${doc.rating} <span style="font-size: 10px; color: #38bdf8; text-decoration: underline;">(Reviews)</span>
-          </div>
-        </div>
-      </div>
-      <div class="doc-card-bottom">
-        <span class="doc-fee">${doc.fee} / 15-min call</span>
-        <button class="btn-book-sm" onclick="openBookingModal(${doc.id})">Book Consult</button>
-      </div>
-    </div>
-  `).join("");
+  renderDoctorList(filtered);
 }
 
-function clearDoctorSearch() {
-  document.getElementById("patient-search-bar").value = "";
-  searchDoctors("");
+function clearSearch() {
+  document.getElementById('doctorSearchInput').value = '';
+  document.getElementById('searchClearBtn').classList.add('hidden');
+  renderDoctorList();
 }
 
-// Doctor Reviews Modal Logic
-function openReviewsModal(doctorId) {
-  selectedDoctor = doctors.find(d => d.id === doctorId) || doctors[0];
-  document.getElementById("rev-doc-img").src = selectedDoctor.image;
-  document.getElementById("rev-doc-name").innerText = selectedDoctor.name;
-  document.getElementById("rev-doc-rating").innerText = `⭐ ${selectedDoctor.rating}`;
+function filterBySpecialty(specialty, el) {
+  state.currentSpecialty = specialty;
+  document.querySelectorAll('#specialtyChips .chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  if (specialty === 'All') { renderDoctorList(); return; }
+  renderDoctorList(DOCTORS.filter(d => d.specialty === specialty));
+}
 
-  const listContainer = document.getElementById("doctor-reviews-list");
-  const reviews = doctorReviews[doctorId] || doctorReviews[1];
+function toggleSymptom(el) {
+  el.classList.toggle('active');
+}
 
-  listContainer.innerHTML = reviews.map(r => `
+// ==========================================================================
+//  BOOKING MODAL
+// ==========================================================================
+
+const SLOTS = ['09:00 AM', '10:00 AM', '11:00 AM', '02:00 PM', '03:00 PM', '04:00 PM'];
+
+function openBooking(doctorId) {
+  const doc = DOCTORS.find(d => d.id === doctorId);
+  state.bookingForDoctor = doc;
+  state.selectedSlot = null;
+  document.getElementById('bookingDocInfo').innerHTML = `
+    <img src="${doc.img}" alt="${doc.name}" />
+    <div><h4>${doc.name}</h4><span>${doc.specialty} · ★ ${doc.rating}</span></div>
+  `;
+  const slotGrid = document.getElementById('bookingSlotGrid');
+  slotGrid.innerHTML = SLOTS.map(s => `
+    <button class="time-slot" onclick="selectSlot(this, '${s}')">${s}</button>
+  `).join('');
+  openModal('bookingModal');
+}
+
+function selectSlot(el, slot) {
+  state.selectedSlot = slot;
+  document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function confirmBooking() {
+  if (!state.selectedSlot) { showToast('Please select a time slot first', 'info'); return; }
+  const doc = state.bookingForDoctor;
+  state.bookingConfirmedDoctor = doc;
+  closeModal('bookingModal');
+  showToast(`Appointment confirmed with ${doc.name} at ${state.selectedSlot}!`, 'success');
+  setTimeout(() => showInvoice(new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), doc.name), 800);
+}
+
+// ==========================================================================
+//  INVOICE MODAL
+// ==========================================================================
+
+function showInvoice(date, docName) {
+  const id = 'INV-' + Math.floor(Math.random() * 9000 + 1000);
+  document.getElementById('invoiceMetaGrid').innerHTML = `
+    <div><span class="inv-lbl">Invoice No.</span><strong>${id}</strong></div>
+    <div><span class="inv-lbl">Date</span><strong>${date}</strong></div>
+    <div><span class="inv-lbl">Patient</span><strong>Alex Johnson</strong></div>
+    <div><span class="inv-lbl">Doctor</span><strong>${docName}</strong></div>
+  `;
+  openModal('invoiceModal');
+}
+
+// ==========================================================================
+//  REVIEWS MODAL
+// ==========================================================================
+
+function openReviews(doctorId) {
+  const doc = DOCTORS.find(d => d.id === doctorId);
+  state.selectedStarRating = 0;
+  document.getElementById('reviewsDocName').textContent = doc.name;
+  document.getElementById('reviewsDocRating').textContent = `★ ${doc.rating} · ${doc.reviews.toLocaleString()} consultations`;
+  const reviews = SAMPLE_REVIEWS[doctorId] || [];
+  document.getElementById('reviewsList').innerHTML = reviews.map(r => `
     <div class="review-item">
       <div class="review-user-row">
-        <strong>${r.name}</strong>
-        <span>${"★".repeat(r.stars)}</span>
+        <strong>${r.user}</strong>
+        <span>${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</span>
       </div>
-      <div class="review-text">${r.comment}</div>
-      <small style="font-size: 10px; color: var(--text-muted);">${r.date} • Verified Consultation</small>
+      <div class="review-text">${r.text}</div>
     </div>
-  `).join("");
-
-  document.getElementById("reviews-modal").classList.remove("hidden");
-  playChime("click");
+  `).join('');
+  updateStarDisplay(0);
+  openModal('reviewsModal');
 }
 
-function setReviewRating(stars) {
-  selectedReviewStars = stars;
-  const starEls = document.querySelectorAll("#star-rating-selector .star");
-  starEls.forEach((s, idx) => {
-    s.classList.toggle("active", idx < stars);
+function setStarRating(val) {
+  state.selectedStarRating = val;
+  updateStarDisplay(val);
+}
+
+function updateStarDisplay(val) {
+  document.querySelectorAll('#starSelector .star').forEach((s, i) => {
+    s.classList.toggle('active', i < val);
   });
-  playChime("click");
 }
 
-function submitPatientReview() {
-  const comment = document.getElementById("review-comment-input").value.trim();
-  if (!comment) {
-    showToast("Please enter a short comment", "info");
-    return;
+function submitReview() {
+  if (state.selectedStarRating === 0) { showToast('Please select a star rating', 'info'); return; }
+  const text = document.getElementById('reviewTextInput').value.trim();
+  if (!text) { showToast('Please write a review', 'info'); return; }
+  const newItem = document.createElement('div');
+  newItem.className = 'review-item';
+  newItem.innerHTML = `<div class="review-user-row"><strong>You</strong><span>${'★'.repeat(state.selectedStarRating)}${'☆'.repeat(5 - state.selectedStarRating)}</span></div><div class="review-text">${text}</div>`;
+  document.getElementById('reviewsList').prepend(newItem);
+  document.getElementById('reviewTextInput').value = '';
+  updateStarDisplay(0);
+  state.selectedStarRating = 0;
+  showToast('Review submitted! Thank you.', 'success');
+}
+
+// ==========================================================================
+//  VIDEO CALL ROOM
+// ==========================================================================
+
+function openVideoRoom() {
+  openModal('videoModal');
+  startCallTimer();
+  requestCameraAccess();
+}
+
+function requestCameraAccess() {
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+      .then(stream => {
+        const v = document.getElementById('patientVideo');
+        v.srcObject = stream;
+        state.camStream = stream;
+      })
+      .catch(() => { /* camera not available in this environment */ });
   }
-
-  if (!doctorReviews[selectedDoctor.id]) doctorReviews[selectedDoctor.id] = [];
-  doctorReviews[selectedDoctor.id].unshift({
-    name: "Sarah Jenkins (You)",
-    stars: selectedReviewStars,
-    date: "Just now",
-    comment: comment
-  });
-
-  document.getElementById("review-comment-input").value = "";
-  closeModal("reviews-modal");
-  playChime("success");
-  showToast("Thank you! Your verified rating was submitted.", "success");
 }
 
-function openBookingModal(doctorId) {
-  selectedDoctor = doctors.find(d => d.id === doctorId) || doctors[0];
-  document.getElementById("modal-doc-img").src = selectedDoctor.image;
-  document.getElementById("modal-doc-name").innerText = selectedDoctor.name;
-  document.getElementById("modal-doc-spec").innerText = selectedDoctor.specialty;
-  document.getElementById("modal-base-fee").innerText = selectedDoctor.fee;
-  
-  const baseNum = parseFloat(selectedDoctor.fee.replace("$", ""));
-  document.getElementById("modal-total-fee").innerText = `$${(baseNum + 3.00).toFixed(2)}`;
-  document.getElementById("btn-pay-confirm").innerHTML = `<i class="fa-solid fa-lock"></i> Pay $${(baseNum + 3.00).toFixed(2)} & Confirm`;
-
-  document.getElementById("booking-modal").classList.remove("hidden");
-  playChime("click");
-}
-
-function openInstantBookingModal() {
-  openBookingModal(1);
-}
-
-function closeModal(modalId) {
-  document.getElementById(modalId).classList.add("hidden");
-}
-
-function selectSlot(btn) {
-  document.querySelectorAll(".time-slot").forEach(s => s.classList.remove("active"));
-  btn.classList.add("active");
-}
-
-function toggleSymptom(btn) {
-  document.querySelectorAll(".sym-tag").forEach(s => s.classList.remove("active"));
-  btn.classList.add("active");
-}
-
-function processPaymentAndLaunch() {
-  const payBtn = document.getElementById("btn-pay-confirm");
-  payBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Authorizing with Stripe...`;
-  payBtn.disabled = true;
-
-  setTimeout(() => {
-    playChime("success");
-    payBtn.innerHTML = `<i class="fa-solid fa-check"></i> Payment Approved! Launching Room...`;
-    showToast("Payment Authorized via Stripe ($48.00)", "success");
-    
-    setTimeout(() => {
-      closeModal("booking-modal");
-      payBtn.disabled = false;
-      launchVideoCall(selectedDoctor.name, selectedDoctor.specialty);
-    }, 800);
-  }, 1200);
-}
-
-// Payment Invoice Modal Logic
-function openInvoiceModal() {
-  document.getElementById("inv-tx-id").innerText = `tx_live_${Math.floor(1000000 + Math.random() * 9000000)}`;
-  document.getElementById("inv-date").innerText = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + " • " + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  document.getElementById("inv-service-name").innerText = `${selectedDoctor.specialty} Video Call (${selectedDoctor.name})`;
-  document.getElementById("inv-base-price").innerText = selectedDoctor.fee;
-  
-  const baseNum = parseFloat(selectedDoctor.fee.replace("$", ""));
-  document.getElementById("inv-total-price").innerText = `$${(baseNum + 3.00).toFixed(2)}`;
-
-  document.getElementById("invoice-modal").classList.remove("hidden");
-  playChime("click");
-}
-
-// ==========================================================================
-// Live Video Call Room Simulation
-// ==========================================================================
-
-function launchVideoCall(doctorName, specialty) {
-  document.getElementById("call-doc-name").innerText = `${doctorName} (Live Consultation)`;
-  document.getElementById("video-modal").classList.remove("hidden");
-  playChime("call");
-  
-  callSeconds = 0;
-  clearInterval(callTimerInterval);
-  callTimerInterval = setInterval(() => {
-    callSeconds++;
-    const mins = String(Math.floor(callSeconds / 60)).padStart(2, '0');
-    const secs = String(callSeconds % 60).padStart(2, '0');
-    document.getElementById("call-timer").innerText = `${mins}:${secs}`;
+function startCallTimer() {
+  state.callActive = true;
+  state.callSeconds = 0;
+  clearInterval(state.callTimer);
+  state.callTimer = setInterval(() => {
+    state.callSeconds++;
+    document.getElementById('callTimerDisplay').textContent = formatTime(state.callSeconds);
   }, 1000);
+}
+
+function endCall() {
+  clearInterval(state.callTimer);
+  state.callActive = false;
+  if (state.camStream) { state.camStream.getTracks().forEach(t => t.stop()); state.camStream = null; }
+  document.getElementById('patientVideo').srcObject = null;
+  document.getElementById('callTimerDisplay').textContent = '00:00';
+  closeModal('videoModal');
+  showToast('Call ended. Prescription will be sent to your pharmacy.', 'success');
 }
 
 function toggleMic() {
-  isMicMuted = !isMicMuted;
-  const btn = document.getElementById("btn-toggle-mic");
-  btn.style.background = isMicMuted ? "#f43f5e" : "";
-  btn.innerHTML = isMicMuted ? `<i class="fa-solid fa-microphone-slash"></i>` : `<i class="fa-solid fa-microphone"></i>`;
-  showToast(isMicMuted ? "Microphone Muted" : "Microphone Active", "info");
+  state.micOn = !state.micOn;
+  const icon = document.getElementById('micIcon');
+  icon.className = state.micOn ? 'fa-solid fa-microphone' : 'fa-solid fa-microphone-slash';
+  document.getElementById('micBtn').style.background = state.micOn ? '' : 'rgba(244,63,94,0.3)';
 }
 
 function toggleCam() {
-  isCamOff = !isCamOff;
-  const btn = document.getElementById("btn-toggle-cam");
-  btn.style.background = isCamOff ? "#f43f5e" : "";
-  btn.innerHTML = isCamOff ? `<i class="fa-solid fa-video-slash"></i>` : `<i class="fa-solid fa-video"></i>`;
-  document.getElementById("video-patient-stream").style.opacity = isCamOff ? "0.1" : "1";
-}
-
-async function toggleRealWebcam() {
-  const videoEl = document.getElementById("webcam-video");
-  const imgEl = document.getElementById("video-patient-stream");
-  const btn = document.getElementById("btn-real-camera");
-
-  if (!isRealCamActive) {
-    try {
-      realCamStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-      videoEl.srcObject = realCamStream;
-      videoEl.classList.remove("hidden");
-      imgEl.classList.add("hidden");
-      btn.style.background = "#10b981";
-      isRealCamActive = true;
-      showToast("Live Webcam Connected!", "success");
-    } catch (err) {
-      showToast("Webcam permission denied or unavailable", "info");
-    }
-  } else {
-    if (realCamStream) {
-      realCamStream.getTracks().forEach(t => t.stop());
-    }
-    videoEl.classList.add("hidden");
-    imgEl.classList.remove("hidden");
-    btn.style.background = "";
-    isRealCamActive = false;
-    showToast("Switched to Patient Avatar", "info");
+  state.camOn = !state.camOn;
+  const icon = document.getElementById('camIcon');
+  icon.className = state.camOn ? 'fa-solid fa-video' : 'fa-solid fa-video-slash';
+  document.getElementById('camBtn').style.background = state.camOn ? '' : 'rgba(244,63,94,0.3)';
+  if (state.camStream) {
+    state.camStream.getVideoTracks().forEach(t => { t.enabled = state.camOn; });
   }
 }
 
-function toggleChatDrawer() {
-  const drawer = document.getElementById("call-chat-drawer");
-  drawer.classList.toggle("hidden");
+function toggleCallChat() {
+  state.chatOpen = !state.chatOpen;
+  document.getElementById('chatDrawer').classList.toggle('hidden', !state.chatOpen);
 }
 
-function sendChatMessage(e) {
-  e.preventDefault();
-  const input = document.getElementById("chat-input-field");
+function handleCallChatEnter(e) {
+  if (e.key === 'Enter') sendCallChat();
+}
+
+function sendCallChat() {
+  const input = document.getElementById('callChatInput');
   const msg = input.value.trim();
   if (!msg) return;
-
-  const messagesDiv = document.getElementById("chat-messages");
-  
-  // Patient Message
-  const pBubble = document.createElement("div");
-  pBubble.className = "chat-bubble patient";
-  pBubble.innerText = msg;
-  messagesDiv.appendChild(pBubble);
-  input.value = "";
-  messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-  // Automated Doctor Reply
+  const container = document.getElementById('callChatMessages');
+  const bubble = document.createElement('div');
+  bubble.className = 'chat-bubble patient';
+  bubble.textContent = msg;
+  container.appendChild(bubble);
+  input.value = '';
+  container.scrollTop = container.scrollHeight;
   setTimeout(() => {
-    playChime("click");
-    const dBubble = document.createElement("div");
-    dBubble.className = "chat-bubble doc";
-    dBubble.innerHTML = `<strong>Dr. Marcus:</strong> Thank you for that detail. I've noted that in your consultation file.`;
-    messagesDiv.appendChild(dBubble);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-  }, 1000);
-}
-
-function endCallAndShowRx() {
-  clearInterval(callTimerInterval);
-  if (realCamStream) {
-    realCamStream.getTracks().forEach(t => t.stop());
-  }
-  closeModal("video-modal");
-  playChime("call");
-  showToast("Consultation Finished • Redirected to Doctor Studio", "success");
-  switchView("doctor-view");
+    const docBubble = document.createElement('div');
+    docBubble.className = 'chat-bubble doc';
+    docBubble.innerHTML = '<strong>Dr. Chen:</strong> Understood. I\'ll note that in your chart.';
+    container.appendChild(docBubble);
+    container.scrollTop = container.scrollHeight;
+  }, 1500);
 }
 
 // ==========================================================================
-// Doctor Portal & Clinical Safety Logic
+//  AI SYMPTOM CHECKER
 // ==========================================================================
 
-function switchDocSubTab(tab) {
-  document.querySelectorAll(".doc-tab-btn").forEach(b => b.classList.remove("active"));
-  if (tab === "rx") {
-    document.getElementById("doc-tab-rx").classList.add("active");
-    document.getElementById("doc-subtab-rx-panel").classList.remove("hidden");
-    document.getElementById("doc-subtab-calendar-panel").classList.add("hidden");
-  } else {
-    document.getElementById("doc-tab-calendar").classList.add("active");
-    document.getElementById("doc-subtab-rx-panel").classList.add("hidden");
-    document.getElementById("doc-subtab-calendar-panel").classList.remove("hidden");
-  }
-  playChime("click");
+function openAIModal() {
+  openModal('aiModal');
 }
 
-function checkAllergySafety(medName) {
-  const clean = medName.toLowerCase().trim();
-  const dangerousMeds = ["amoxicillin", "penicillin", "ampicillin", "augmentin", "amoxil"];
-  const isDangerous = dangerousMeds.some(m => clean.includes(m));
-
-  const warnBox = document.getElementById("contraindication-box");
-  if (isDangerous) {
-    warnBox.classList.remove("hidden");
-  } else {
-    warnBox.classList.add("hidden");
-  }
+function initAIChat() {
+  addAIMessage('bot', 'Hello! I\'m QuickCare AI Triage. Describe your symptoms and I\'ll recommend the best specialist for you.');
 }
 
-function autoFixAllergySafeMed() {
-  document.getElementById("rx-med1").value = "Azithromycin 500mg (Macrolide - Allergy Safe)";
-  document.getElementById("rx-dose1").value = "1 Tablet Daily for 3 Days";
-  document.getElementById("contraindication-box").classList.add("hidden");
-  playChime("success");
-  showToast("Switched to Safe Non-Penicillin Antibiotic (Azithromycin)", "success");
-}
-
-function toggleCalendarSlot(slotEl) {
-  if (slotEl.classList.contains("free")) {
-    slotEl.classList.remove("free");
-    slotEl.classList.add("booked");
-    slotEl.innerText = slotEl.innerText.replace("• Open", "• Reserved (Dr. Marcus)");
-    playChime("click");
-    showToast("Calendar Slot Locked for Telehealth", "info");
-  } else if (slotEl.classList.contains("booked")) {
-    slotEl.classList.remove("booked");
-    slotEl.classList.add("free");
-    slotEl.innerText = slotEl.innerText.replace("• Reserved (Dr. Marcus)", "• Open");
-    playChime("click");
-    showToast("Calendar Slot Opened to Public", "info");
-  }
-}
-
-function selectQueuePatient(name, notes) {
-  document.getElementById("rx-patient-name").value = name;
-  document.getElementById("rx-diagnosis").value = notes;
-  
-  if (name.includes("Sarah")) {
-    document.getElementById("allergy-banner").classList.remove("hidden");
-    document.getElementById("rx-med1").value = "Amoxicillin 500mg Capsules";
-    checkAllergySafety("Amoxicillin");
-  } else {
-    document.getElementById("allergy-banner").classList.add("hidden");
-    document.getElementById("contraindication-box").classList.add("hidden");
-    document.getElementById("rx-med1").value = "Hydrocortisone 1% Topical Cream";
-    document.getElementById("rx-dose1").value = "Apply thin layer 2x daily";
-  }
-  showToast(`Loaded Patient Profile: ${name}`, "info");
-}
-
-function generatePrescription(e) {
-  e.preventDefault();
-  const name = document.getElementById("rx-patient-name").value;
-  const date = document.getElementById("rx-date").value;
-  const diagnosis = document.getElementById("rx-diagnosis").value;
-  const med1 = document.getElementById("rx-med1").value;
-  const dose1 = document.getElementById("rx-dose1").value;
-  const dur1 = document.getElementById("rx-dur1").value;
-  const advice = document.getElementById("rx-advice").value;
-  const bp = document.getElementById("vit-bp").value;
-  const hr = document.getElementById("vit-hr").value;
-  const temp = document.getElementById("vit-temp").value;
-
-  const outputDiv = document.getElementById("rx-details-output");
-  outputDiv.innerHTML = `
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; font-size: 13px;">
-      <div><strong>Patient:</strong> ${name}</div>
-      <div><strong>Consultation Date:</strong> ${date}</div>
-      <div><strong>Vitals:</strong> BP ${bp} • HR ${hr} • Temp ${temp}</div>
-      <div><strong>Clinical Status:</strong> Verified Telehealth Review</div>
-    </div>
-    <div style="margin-bottom: 12px; font-size: 13px;"><strong>Assessment & Diagnosis:</strong> ${diagnosis}</div>
-    <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; margin-bottom: 12px; font-size: 13px;">
-      <strong>Prescribed Pharmacotherapy:</strong>
-      <p style="color: #38bdf8; margin-top: 4px; font-weight: 700;">💊 1. ${med1} — ${dose1} (${dur1})</p>
-    </div>
-    <div style="font-size: 12px; color: #94a3b8;"><strong>Physician Instructions:</strong> ${advice}</div>
-  `;
-
-  document.getElementById("rx-pad-date").innerText = `Date: ${date}`;
-  document.getElementById("rx-preview-card").classList.remove("hidden");
-  document.getElementById("rx-preview-card").scrollIntoView({ behavior: 'smooth' });
-  playChime("success");
-  showToast("Digital Rx Generated Successfully", "success");
-}
-
-function pushRxToPatientApp() {
-  playChime("success");
-  showToast("Prescription Pushed to Patient App via Push Notification!", "success");
-  document.getElementById("record-count").innerText = "2";
-}
-
-function viewHistoricalRx() {
-  switchView("doctor-view");
-  generatePrescription(new Event("submit"));
-}
-
-// ==========================================================================
-// IT PM Interactive Agile Tool Suite
-// ==========================================================================
-
-function renderKanban() {
-  const columns = {
-    backlog: document.getElementById("cards-backlog"),
-    progress: document.getElementById("cards-progress"),
-    qa: document.getElementById("cards-qa"),
-    done: document.getElementById("cards-done")
-  };
-
-  Object.values(columns).forEach(col => col.innerHTML = "");
-
-  const counts = { backlog: 0, progress: 0, qa: 0, done: 0 };
-
-  kanbanCards.forEach(card => {
-    counts[card.status]++;
-    const cardEl = document.createElement("div");
-    cardEl.className = "kanban-card";
-    cardEl.title = "Click to advance sprint status";
-    cardEl.onclick = () => advanceCard(card.id);
-    cardEl.innerHTML = `
-      <div class="card-top-row">
-        <span class="card-id">${card.id}</span>
-        <span class="card-pts">${card.pts} pts</span>
-      </div>
-      <div class="card-title">${card.title}</div>
-      <div class="card-bottom-row">
-        <span class="card-epic"><i class="fa-solid fa-tag"></i> ${card.epic}</span>
-        <span class="card-avatar">${card.assignee}</span>
-      </div>
-    `;
-    columns[card.status].appendChild(cardEl);
-  });
-
-  document.getElementById("count-backlog").innerText = counts.backlog;
-  document.getElementById("count-progress").innerText = counts.progress;
-  document.getElementById("count-qa").innerText = counts.qa;
-  document.getElementById("count-done").innerText = counts.done;
-}
-
-function advanceCard(cardId) {
-  const card = kanbanCards.find(c => c.id === cardId);
-  if (!card) return;
-
-  const flow = { backlog: "progress", progress: "qa", qa: "done", done: "backlog" };
-  const prevStatus = card.status;
-  card.status = flow[card.status];
-  renderKanban();
-  playChime("click");
-  showToast(`Moved ${card.id} from ${prevStatus.toUpperCase()} ➔ ${card.status.toUpperCase()}`, "info");
-}
-
-function resetKanban() {
-  kanbanCards = [...initialKanbanCards];
-  renderKanban();
-  showToast("Kanban Board Reset to Baseline", "info");
-}
-
-function openNewStoryModal() {
-  document.getElementById("new-story-modal").classList.remove("hidden");
-  playChime("click");
-}
-
-function submitNewUserStory(e) {
-  e.preventDefault();
-  const title = document.getElementById("new-story-title").value;
-  const epic = document.getElementById("new-story-epic").value;
-  const pts = parseInt(document.getElementById("new-story-pts").value);
-  const assignee = document.getElementById("new-story-assignee").value;
-
-  const newId = `US-${Math.floor(100 + Math.random() * 900)}`;
-  kanbanCards.unshift({
-    id: newId,
-    title: title,
-    epic: epic,
-    pts: pts,
-    status: "backlog",
-    assignee: assignee
-  });
-
-  renderKanban();
-  closeModal("new-story-modal");
-  document.getElementById("new-story-form").reset();
-  playChime("success");
-  showToast(`Added Story ${newId} (${pts} pts) to Product Backlog!`, "success");
-}
-
-// Interactive Risk Matrix Calculator ($P \times I$)
-function updateRiskScore() {
-  const p = parseInt(document.getElementById("input-prob").value);
-  const i = parseInt(document.getElementById("input-imp").value);
-  const score = p * i;
-
-  document.getElementById("lbl-prob").innerText = p;
-  document.getElementById("lbl-imp").innerText = i;
-  document.getElementById("calc-score-val").innerText = score;
-
-  const badge = document.getElementById("calc-score-badge");
-  badge.className = "score-badge";
-
-  if (score >= 15) {
-    badge.classList.add("high");
-    badge.innerText = "CRITICAL / HIGH RISK";
-  } else if (score >= 8) {
-    badge.classList.add("med");
-    badge.innerText = "MEDIUM RISK";
-  } else {
-    badge.classList.add("low");
-    badge.innerText = "LOW RISK";
-  }
-}
-
-// ==========================================================================
-// Agile Planning Poker Estimation Logic
-// ==========================================================================
-
-function castPokerVote(pts) {
-  document.querySelectorAll(".poker-cards-deck .p-card").forEach(c => {
-    c.classList.toggle("active-card", c.innerText === String(pts));
-  });
-
-  document.getElementById("vote-user").innerText = pts === "☕" ? "☕ Break" : `${pts} pts`;
-
-  // Simulated Team Consensus Behavior
-  if (pts === 8) {
-    document.getElementById("vote-la").innerText = "8 pts";
-    document.getElementById("vote-ios").innerText = "8 pts";
-    document.getElementById("vote-qa").innerText = "8 pts";
-    document.getElementById("poker-consensus-status").innerText = "Consensus: 8 Points";
-    document.getElementById("poker-consensus-status").style.borderColor = "#10b981";
-    document.getElementById("poker-consensus-status").style.color = "#10b981";
-  } else if (pts === "☕") {
-    document.getElementById("vote-la").innerText = "5 pts";
-    document.getElementById("vote-ios").innerText = "8 pts";
-    document.getElementById("vote-qa").innerText = "☕";
-    document.getElementById("poker-consensus-status").innerText = "Coffee Break Called";
-  } else {
-    document.getElementById("vote-la").innerText = `${pts} pts`;
-    document.getElementById("vote-ios").innerText = pts > 5 ? `${pts - 2} pts` : `${pts} pts`;
-    document.getElementById("vote-qa").innerText = `${pts} pts`;
-    document.getElementById("poker-consensus-status").innerText = `Estimating: ${pts} Points`;
-  }
-
-  playChime("click");
-  showToast(`Voted ${pts} Story Points on US-301 Video Call!`, "success");
-}
-
-// ==========================================================================
-// Sprint Retrospective Board Logic
-// ==========================================================================
-
-function addRetroNote(colType) {
-  const input = document.getElementById(`input-retro-${colType}`);
-  const text = input.value.trim();
-  if (!text) return;
-
-  const container = document.getElementById(`cards-retro-${colType}`);
-  const card = document.createElement("div");
-  card.className = "retro-card";
-  card.innerHTML = `
-    <p>${text}</p>
-    <div class="retro-card-footer">
-      <span class="retro-author">You (IT PM)</span>
-      <button class="btn-upvote" onclick="upvoteRetro(this)">👍 <span>1</span></button>
-    </div>
-  `;
-
-  container.prepend(card);
-  input.value = "";
-
-  const countBadge = document.getElementById(`count-retro-${colType}`);
-  countBadge.innerText = parseInt(countBadge.innerText) + 1;
-
-  playChime("success");
-  showToast("Added Retrospective Sticky Note", "success");
-}
-
-function upvoteRetro(btn) {
-  const span = btn.querySelector("span");
-  span.innerText = parseInt(span.innerText) + 1;
-  btn.style.borderColor = "#06b6d4";
-  btn.style.color = "#06b6d4";
-  playChime("click");
-}
-
-function resetRetroBoard() {
-  showToast("Retrospective Notes Synced with Jira", "info");
-}
-
-// ==========================================================================
-// Light / Dark Theme Switcher Logic
-// ==========================================================================
-
-let isLightTheme = false;
-
-function toggleTheme() {
-  isLightTheme = !isLightTheme;
-  document.body.classList.toggle("light-theme", isLightTheme);
-  const btn = document.getElementById("theme-toggle-btn");
-  btn.innerHTML = isLightTheme ? `<i class="fa-solid fa-sun"></i>` : `<i class="fa-solid fa-moon"></i>`;
-  playChime("click");
-  showToast(isLightTheme ? "Light Theme Activated" : "Dark Cyber Theme Activated", "info");
-}
-
-// ==========================================================================
-// One-Click CSV Exporter for Agile Backlog & RAID Register
-// ==========================================================================
-
-function exportProjectDataCSV() {
-  let csv = "QUICKCARE TELEHEALTH MVP — PROJECT BACKLOG & RAID REGISTER\n\n";
-  
-  // Section 1: Product Backlog
-  csv += "--- AGILE PRODUCT BACKLOG ---\n";
-  csv += "Story ID,Epic,Story Title,Story Points,Status,Assignee\n";
-  kanbanCards.forEach(c => {
-    csv += `"${c.id}","${c.epic}","${c.title.replace(/"/g, '""')}",${c.pts},"${c.status.toUpperCase()}","${c.assignee}"\n`;
-  });
-
-  csv += "\n--- RAID RISK REGISTER ---\n";
-  csv += "Risk ID,Category,Risk Description,Probability,Impact,Score,Mitigation Strategy,Status\n";
-  csv += '"RSK-01","Technical","WebRTC Video Lag on 3G",3,4,12,"Adaptive bitrate & Twilio fallback","RESOLVED"\n';
-  csv += '"RSK-02","Compliance","HIPAA Privacy Breach",2,5,10,"End-to-end AES-256 encryption & penetration audit","RESOLVED"\n';
-  csv += '"RSK-03","Scope","Automated Insurance Scope Creep",4,4,16,"Defended MVP boundary; shifted to Version 2.0","RESOLVED"\n';
-  csv += '"RSK-04","Vendor","Stripe Test API Sandbox Delay",3,3,9,"PM escalated to security team; cleared in 30m","RESOLVED"\n';
-
-  csv += "\n--- FINANCIAL BUDGET SUMMARY ---\n";
-  csv += "Category,Approved Baseline,Actual Invoiced,Cost Variance\n";
-  csv += '"Engineering & UX Labor","$90,000","$88,200","+$1,800 (Favorable)"\n';
-  csv += '"AWS Cloud & APIs","$8,000","$7,400","+$600 (Favorable)"\n';
-  csv += '"HIPAA Security Audit","$12,000","$12,000","$0 (On Budget)"\n';
-  csv += '"Contingency Reserve","$10,000","$8,800","+$1,200 (Saved)"\n';
-  csv += '"TOTAL PROJECT","$120,000","$116,400","+$3,600 (3% Under Budget)"\n';
-
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.setAttribute("href", url);
-  link.setAttribute("download", `QuickCare_IT_PM_Project_Deliverables_${new Date().toISOString().slice(0,10)}.csv`);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-
-  playChime("success");
-  showToast("Exported QuickCare_IT_PM_Project_Deliverables.csv!", "success");
-}
-
-// ==========================================================================
-// Agile Sprint Capacity & Burndown Simulation Engine
-// ==========================================================================
-
-const sprintBaselines = {
-  1: { name: "Sprint 1 (Auth & User Onboarding)", pts: 28, startY: 20 },
-  2: { name: "Sprint 2 (Doctor Discovery & Booking)", pts: 30, startY: 20 },
-  3: { name: "Sprint 3 (WebRTC Video Room & Stripe)", pts: 33, startY: 20 },
-  4: { name: "Sprint 4: Active (Digital Rx & Release)", pts: 29, startY: 20 }
-};
-
-let activeSimSprint = 4;
-
-function selectSprintView(sprintNum) {
-  activeSimSprint = sprintNum;
-  document.querySelectorAll(".s-chip").forEach((c, idx) => {
-    c.classList.toggle("active", idx + 1 === sprintNum);
-  });
-
-  document.getElementById("burndown-chart-title").innerText = `📉 ${sprintBaselines[sprintNum].name} Burndown`;
-  playChime("click");
-  updateBurndownSim();
-  showToast(`Loaded ${sprintBaselines[sprintNum].name}`, "info");
-}
-
-function updateBurndownSim() {
-  const devs = parseInt(document.getElementById("sim-range-devs").value);
-  const scope = parseInt(document.getElementById("sim-range-scope").value);
-  const sick = parseInt(document.getElementById("sim-range-sick").value);
-
-  document.getElementById("sim-val-devs").innerText = `${devs} Devs`;
-  document.getElementById("sim-val-scope").innerText = scope > 0 ? `+${scope} pts (Creep)` : scope < 0 ? `${scope} pts (Descoped)` : `0 pts`;
-  document.getElementById("sim-val-sick").innerText = `${sick} Days`;
-
-  const basePts = sprintBaselines[activeSimSprint].pts;
-  const totalPts = basePts + scope;
-
-  // Calculate daily burn velocity: Base is ~3.0 pts/day with 6 devs
-  const effectiveDevCapacity = (devs / 6) * (1 - (sick * 0.08));
-  const dailyBurn = (basePts / 10) * effectiveDevCapacity;
-  const totalBurnedIn10Days = dailyBurn * 10;
-  const spillover = Math.max(0, Math.round(totalPts - totalBurnedIn10Days));
-  const completionDay = Math.min(12, (totalPts / dailyBurn)).toFixed(1);
-
-  // Generate SVG polyline points (X: 40 to 400, Y: 20 to 190)
-  const xStart = 40, xEnd = 400;
-  const yStart = 20, yEnd = 190;
-  const yRange = yEnd - yStart;
-
-  const points = [];
-  let remaining = totalPts;
-
-  for (let day = 0; day <= 10; day++) {
-    const x = xStart + (day / 10) * (xEnd - xStart);
-    const dayBurnAmount = (day === 0) ? 0 : dailyBurn * (0.85 + Math.sin(day) * 0.2);
-    remaining = Math.max(0, remaining - dayBurnAmount);
-    
-    // Convert remaining points to Y-coordinate
-    const yFraction = 1 - (remaining / totalPts);
-    const y = yStart + (yFraction * yRange);
-    points.push(`${Math.round(x)},${Math.round(y)}`);
-  }
-
-  const polyline = document.getElementById("burndown-polyline");
-  if (polyline) polyline.setAttribute("points", points.join(" "));
-
-  // Update Dynamic Forecast Alert Banner
-  const banner = document.getElementById("sim-forecast-box");
-  const titleEl = document.getElementById("sim-forecast-title");
-  const descEl = document.getElementById("sim-forecast-desc");
-  const tagEl = document.getElementById("sim-forecast-tag");
-  const iconEl = document.getElementById("sim-forecast-icon");
-
-  banner.className = "sim-forecast-banner";
-
-  if (spillover === 0 && completionDay <= 10) {
-    banner.classList.add("success");
-    iconEl.className = "fa-solid fa-circle-check";
-    titleEl.innerText = "SPRINT ON TRACK: 100% Delivery Projected";
-    descEl.innerText = `At simulated velocity of ${(dailyBurn).toFixed(1)} pts/day, all ${totalPts} points complete on Day ${completionDay} with zero spillover!`;
-    tagEl.innerText = "0 Pt Spillover (Healthy)";
-  } else if (spillover <= 4) {
-    banner.classList.add("warning");
-    iconEl.className = "fa-solid fa-triangle-exclamation";
-    titleEl.innerText = `MODERATE RISK: ~${spillover} Story Points At Risk`;
-    descEl.innerText = `Velocity dropped due to team capacity constraints. Projected completion: Day ${completionDay}. Recommend fast-tracking QA.`;
-    tagEl.innerText = `+${spillover} Pts Spillover (Warning)`;
-  } else {
-    banner.classList.add("danger");
-    iconEl.className = "fa-solid fa-circle-xmark";
-    titleEl.innerText = `CRITICAL SPILLOVER: +${spillover} Points Delayed!`;
-    descEl.innerText = `Team capacity cannot sustain scope (${totalPts} pts). PM Action: Immediately descope non-essential stories or request developer augmentation!`;
-    tagEl.innerText = `+${spillover} Pts Spillover (Critical)`;
-  }
-}
-
-function resetBurndownSim() {
-  document.getElementById("sim-range-devs").value = 6;
-  document.getElementById("sim-range-scope").value = 0;
-  document.getElementById("sim-range-sick").value = 0;
-  updateBurndownSim();
-  playChime("click");
-  showToast("Reset to Standard 6-Dev Baseline Velocity", "info");
-}
-
-// ==========================================================================
-// QuickCare AI Clinical Symptom Checker & Smart Doctor Matcher
-// ==========================================================================
-
-function openAiTriageModal() {
-  document.getElementById("ai-triage-modal").classList.remove("hidden");
-  playChime("click");
-}
-
-function sendAiQuickSymptom(text) {
-  document.getElementById("ai-chat-input").value = text;
-  handleAiChatSubmit(new Event("submit"));
-}
-
-function handleAiChatSubmit(e) {
-  e.preventDefault();
-  const input = document.getElementById("ai-chat-input");
-  const query = input.value.trim();
-  if (!query) return;
-
-  const messagesBox = document.getElementById("ai-chat-messages");
-
-  // Append Patient Message
-  const userRow = document.createElement("div");
-  userRow.className = "ai-bubble-row user";
-  userRow.innerHTML = `<div class="ai-bubble"><p>${query}</p></div>`;
-  messagesBox.appendChild(userRow);
-  input.value = "";
-  messagesBox.scrollTop = messagesBox.scrollHeight;
-
-  // Append Simulated AI Typing Indicator
-  const typingRow = document.createElement("div");
-  typingRow.className = "ai-bubble-row bot";
-  typingRow.id = "ai-typing-indicator";
-  typingRow.innerHTML = `
-    <div class="ai-mini-avatar"><i class="fa-solid fa-robot"></i></div>
-    <div class="ai-bubble"><p><i class="fa-solid fa-spinner fa-spin"></i> Analyzing clinical symptoms & matching specialists...</p></div>
-  `;
-  messagesBox.appendChild(typingRow);
-  messagesBox.scrollTop = messagesBox.scrollHeight;
-
+function sendAIMessage(quickSym) {
+  const input = document.getElementById('aiChatInput');
+  const msg = quickSym || input.value.trim();
+  if (!msg) return;
+  addAIMessage('user', msg);
+  if (!quickSym) input.value = '';
   setTimeout(() => {
-    typingRow.remove();
-    processAiResponse(query, messagesBox);
-  }, 750);
-}
-
-function processAiResponse(query, messagesBox) {
-  const clean = query.toLowerCase();
-  let matchedDoc = doctors[0]; // Marcus (General)
-  let triageLevel = "MILD (Standard Telehealth)";
-  let triageClass = "mild";
-  let diagnosisNote = "Symptoms suggest acute upper respiratory tract viral infection or seasonal flu.";
-
-  if (clean.includes("skin") || clean.includes("rash") || clean.includes("acne") || clean.includes("itch") || clean.includes("bump")) {
-    matchedDoc = doctors[1]; // Emily (Derm)
-    triageLevel = "MILD (Topical Assessment Needed)";
-    triageClass = "mild";
-    diagnosisNote = "Symptoms are consistent with acute contact dermatitis or localized eczema.";
-  } else if (clean.includes("child") || clean.includes("baby") || clean.includes("kid") || clean.includes("infant") || clean.includes("toddler") || clean.includes("3-year")) {
-    matchedDoc = doctors[2]; // Rajesh (Peds)
-    triageLevel = "MODERATE (Pediatric Care)";
-    triageClass = "mod";
-    diagnosisNote = "Pediatric fever requires weight-based antipyretic dosing and hydration assessment.";
-  } else if (clean.includes("heart") || clean.includes("palpitation") || clean.includes("bp") || clean.includes("chest") || clean.includes("pressure")) {
-    matchedDoc = doctors[3]; // Bennett (Cardio)
-    triageLevel = "MODERATE (Cardiovascular Check)";
-    triageClass = "mod";
-    diagnosisNote = "Cardiac symptoms warrant clinical telemetry review and ECG assessment.";
-  }
-
-  const botRow = document.createElement("div");
-  botRow.className = "ai-bubble-row bot";
-  botRow.innerHTML = `
-    <div class="ai-mini-avatar"><i class="fa-solid fa-robot"></i></div>
-    <div class="ai-bubble">
-      <p>I've reviewed your symptoms:</p>
+    const key = Object.keys(AI_RESPONSES).find(k => msg.toLowerCase().includes(k)) || 'default';
+    const resp = AI_RESPONSES[key];
+    const triageHtml = `
       <div class="ai-triage-card">
-        <span class="triage-level-pill ${triageClass}">Triage: ${triageLevel}</span>
-        <p style="font-size: 11px; color: #94a3b8; margin: 4px 0;"><strong>Assessment:</strong> ${diagnosisNote}</p>
+        <span class="triage-level-pill ${resp.level}">${resp.level === 'mild' ? 'MILD' : 'MODERATE'} CONCERN</span>
+        <p style="font-size:12px;color:var(--text-secondary);margin-top:4px;">${resp.msg}</p>
         <div class="triage-match-box">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <img src="${matchedDoc.image}" alt="${matchedDoc.name}" class="triage-doc-img">
-            <div>
-              <strong style="font-size: 11px; color: white; display: block;">${matchedDoc.name}</strong>
-              <small style="font-size: 10px; color: #38bdf8;">${matchedDoc.specialty} • ${matchedDoc.fee}</small>
-            </div>
+          <img src="${resp.doc.img}" alt="${resp.doc.name}" class="triage-doc-img" />
+          <div style="flex:1;">
+            <div style="font-size:12px;font-weight:700;color:white;">${resp.doc.name}</div>
+            <div style="font-size:11px;color:var(--accent-cyan);">${resp.doc.specialty} · ${resp.doc.wait}</div>
           </div>
-          <button class="btn-sm btn-success" onclick="closeModal('ai-triage-modal'); openBookingModal(${matchedDoc.id})">
-            <i class="fa-solid fa-video"></i> Book Now
-          </button>
+          <button class="btn-book-sm" style="font-size:10px;" onclick="closeModal('aiModal');openBooking(${resp.doc.id})">Book Now</button>
         </div>
       </div>
-      <small style="display: block; font-size: 9px; color: var(--text-muted); margin-top: 6px;">⚠️ AI guidance is for clinical triage & informational purposes only.</small>
-    </div>
-  `;
+    `;
+    addAIMessage('bot', 'Based on your symptoms, here\'s my triage assessment:', triageHtml);
+  }, 900);
+}
 
-  messagesBox.appendChild(botRow);
-  messagesBox.scrollTop = messagesBox.scrollHeight;
-  playChime("success");
+function addAIMessage(role, text, extra) {
+  const container = document.getElementById('aiChatMessages');
+  const row = document.createElement('div');
+  row.className = `ai-bubble-row ${role}`;
+  const avatar = document.createElement('div');
+  avatar.className = 'ai-mini-avatar';
+  avatar.innerHTML = role === 'bot' ? '<i class="fa-solid fa-wand-magic-sparkles"></i>' : 'You';
+  const bubble = document.createElement('div');
+  bubble.className = 'ai-bubble';
+  bubble.innerHTML = text + (extra || '');
+  row.appendChild(avatar);
+  row.appendChild(bubble);
+  container.appendChild(row);
+  container.scrollTop = container.scrollHeight;
 }
 
 // ==========================================================================
-// Pharmacy Home Delivery & Live GPS Tracker Simulation
+//  PHARMACY MODAL
 // ==========================================================================
 
-let currentDeliveryStage = 3; // Initial state: On the Way
-
-const deliveryStages = [
-  {
-    step: 1,
-    fillWidth: "0%",
-    statusTitle: "Prescription Verified",
-    eta: "35 Mins (8:05 PM)",
-    markerPos: "translate(30, 130)",
-    btnText: "Fast-Forward ➔ Dispense Medicine"
-  },
-  {
-    step: 2,
-    fillWidth: "33%",
-    statusTitle: "Medication Dispensed & Sealed",
-    eta: "28 Mins (7:55 PM)",
-    markerPos: "translate(120, 105)",
-    btnText: "Fast-Forward ➔ Hand to Courier"
-  },
-  {
-    step: 3,
-    fillWidth: "66%",
-    statusTitle: "Courier On The Way (Live Map)",
-    eta: "14 Mins (7:42 PM)",
-    markerPos: "translate(250, 72)",
-    btnText: "Fast-Forward ➔ Arrived at Doorstep"
-  },
-  {
-    step: 4,
-    fillWidth: "100%",
-    statusTitle: "Delivered to Doorstep!",
-    eta: "Delivered (Just Now)",
-    markerPos: "translate(360, 30)",
-    btnText: "Order Again / Reset Demo"
-  }
-];
-
-function openPharmacyDeliveryModal(medTitle, docInfo, totalFee) {
-  if (medTitle) document.getElementById("del-med-title").innerText = medTitle;
-  if (docInfo) document.getElementById("del-doc-info").innerText = `Prescribed by ${docInfo}`;
-  if (totalFee) document.getElementById("del-total-cost").innerText = totalFee;
-
-  applyDeliveryStage(currentDeliveryStage);
-  document.getElementById("pharmacy-modal").classList.remove("hidden");
-  playChime("click");
-  showToast("Express Pharmacy Order Live Tracker Connected", "info");
+function openPharmacyModal() {
+  openModal('pharmacyModal');
 }
 
-function advanceDeliveryStage() {
-  currentDeliveryStage = (currentDeliveryStage >= 4) ? 1 : currentDeliveryStage + 1;
-  applyDeliveryStage(currentDeliveryStage);
-  playChime("success");
+// ==========================================================================
+//  DOCTOR PORTAL
+// ==========================================================================
 
-  if (currentDeliveryStage === 4) {
-    showToast("Package Delivered! Handover OTP #4821 Verified.", "success");
-    document.getElementById("pharm-home-tag").innerText = "Delivered (Safe Handover)";
-    document.getElementById("pharm-home-tag").style.background = "rgba(16, 185, 129, 0.3)";
+function selectPatient(el, name, complaint, allergy) {
+  document.querySelectorAll('.queue-item').forEach(q => q.classList.remove('active-queue'));
+  el.classList.add('active-queue');
+  state.currentPatientAllergy = allergy;
+  document.getElementById('currentPatientLabel').innerHTML = `Current Patient: <strong>${name}</strong> — ${complaint}`;
+  const banner = document.getElementById('allergyBanner');
+  if (allergy !== 'none') {
+    banner.style.display = 'flex';
+    banner.querySelector('strong').textContent = `ALLERGY ALERT — ${allergy.charAt(0).toUpperCase() + allergy.slice(1)}`;
+    banner.querySelector('small').textContent = `Patient has documented allergy. Avoid all related drug classes.`;
   } else {
-    showToast(`Delivery Advanced: ${deliveryStages[currentDeliveryStage - 1].statusTitle}`, "info");
-    document.getElementById("pharm-home-tag").innerText = "Courier On The Way";
+    banner.style.display = 'none';
   }
+  document.getElementById('contraindicationBanner').classList.add('hidden');
+  clearRxForm();
+  showToast(`Switched to patient: ${name}`, 'info');
 }
 
-function applyDeliveryStage(stageNum) {
-  const stageData = deliveryStages[stageNum - 1];
-
-  // Update progress bar fill
-  document.getElementById("del-progress-fill").style.width = stageData.fillWidth;
-  document.getElementById("del-eta-timer").innerHTML = `${stageData.eta}`;
-  document.getElementById("btn-advance-del").innerHTML = `<i class="fa-solid fa-forward-step"></i> ${stageData.btnText}`;
-
-  // Update step nodes
-  for (let i = 1; i <= 4; i++) {
-    const node = document.getElementById(`step-node-${i}`);
-    node.className = "del-step";
-    if (i < stageNum) {
-      node.classList.add("done");
-      node.querySelector(".step-circle").innerHTML = `<i class="fa-solid fa-check"></i>`;
-    } else if (i === stageNum) {
-      node.classList.add("active");
-      if (i === 1) node.querySelector(".step-circle").innerHTML = `<i class="fa-solid fa-file-circle-check"></i>`;
-      if (i === 2) node.querySelector(".step-circle").innerHTML = `<i class="fa-solid fa-box-archive"></i>`;
-      if (i === 3) node.querySelector(".step-circle").innerHTML = `<i class="fa-solid fa-motorcycle"></i>`;
-      if (i === 4) node.querySelector(".step-circle").innerHTML = `<i class="fa-solid fa-house-chimney-medical"></i>`;
-    } else {
-      if (i === 1) node.querySelector(".step-circle").innerHTML = `<i class="fa-solid fa-file-circle-check"></i>`;
-      if (i === 2) node.querySelector(".step-circle").innerHTML = `<i class="fa-solid fa-box-archive"></i>`;
-      if (i === 3) node.querySelector(".step-circle").innerHTML = `<i class="fa-solid fa-motorcycle"></i>`;
-      if (i === 4) node.querySelector(".step-circle").innerHTML = `<i class="fa-solid fa-house-chimney-medical"></i>`;
-    }
-  }
-
-  // Move GPS courier pin on SVG map
-  const marker = document.getElementById("del-courier-marker");
-  if (marker) {
-    marker.setAttribute("transform", stageData.markerPos);
-  }
+function switchDocTab(tab) {
+  state.docTab = tab;
+  document.querySelectorAll('.doc-tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+  const btn = document.getElementById('docTab-' + tab);
+  btn.classList.add('active');
+  btn.setAttribute('aria-selected', 'true');
+  document.getElementById('docContent-rx').style.display = tab === 'rx' ? 'block' : 'none';
+  document.getElementById('docContent-calendar').style.display = tab === 'calendar' ? 'block' : 'none';
 }
 
-function simulateDriverCall() {
-  playChime("call");
-  showToast("📞 Calling Driver Carlos Mendez (+1-555-0192)...", "info");
-}
-
-function simulateDriverMessage() {
-  playChime("click");
-  showToast("💬 Carlos Mendez: 'Hi Sarah, I am 3 minutes away from your front porch!'", "success");
-}
-
-// ==========================================================================
-// 1-Click Clinical Presets & Voice Dictation Logic
-// ==========================================================================
-
-const clinicalPresets = {
-  flu: {
-    name: "Sarah Jenkins",
-    diag: "Acute Viral Rhinitis & Upper Respiratory Infection (URI)",
-    bp: "120/80 mmHg",
-    hr: "76 bpm",
-    temp: "99.4 °F",
-    med1: "Azithromycin 500mg Tablets (Allergy Safe)",
-    dose1: "1 Tablet Daily with meals",
-    dur1: "3 Days",
-    med2: "Paracetamol 650mg Tablet",
-    dose2: "1 Tablet as needed for fever/headache",
-    dur2: "5 Days",
-    advice: "Maintain strict bed rest for 48 hours, hydrate with electrolyte fluids, and monitor body temperature. Contact clinic if breathing difficulty arises."
-  },
-  eczema: {
-    name: "Michael Chang",
-    diag: "Subacute Atopic Dermatitis & Localized Contact Eczema",
-    bp: "118/75 mmHg",
-    hr: "72 bpm",
-    temp: "98.6 °F",
-    med1: "Hydrocortisone 1% Topical Ointment",
-    dose1: "Apply thin layer to affected skin 2x daily",
-    dur1: "7 Days",
-    med2: "Cetirizine 10mg Antihistamine",
-    dose2: "1 Tablet at bedtime for pruritus",
-    dur2: "10 Days",
-    advice: "Avoid synthetic soaps and hot water showers. Keep skin moisturized with fragrance-free ceramide lotion within 3 minutes after bathing."
-  },
-  pediatric: {
-    name: "Liam Patel (3 Yrs)",
-    diag: "Pediatric Acute Otitis Media & Viral Pyrexia",
-    bp: "95/60 mmHg",
-    hr: "104 bpm",
-    temp: "101.2 °F",
-    med1: "Amoxicillin 125mg/5ml Oral Suspension",
-    dose1: "5ml by mouth 3x daily",
-    dur1: "7 Days",
-    med2: "Ibuprofen Pediatric 100mg/5ml Suspension",
-    dose2: "3.5ml every 6-8 hours as needed",
-    dur2: "3 Days",
-    advice: "Administer antibiotic with child meals. Ensure adequate fluid intake with oral rehydration. Schedule pediatric review if fever persists past 48h."
-  },
-  cardio: {
-    name: "Elena Rostova",
-    diag: "Essential Hypertension Stage 1 (Maintenance Pharmacotherapy)",
-    bp: "136/84 mmHg",
-    hr: "68 bpm",
-    temp: "98.4 °F",
-    med1: "Amlodipine 5mg Daily Tablets",
-    dose1: "1 Tablet once daily in morning",
-    dur1: "30 Days (Refill)",
-    med2: "Telmisartan 40mg Oral Tablets",
-    dose2: "1 Tablet once daily with water",
-    dur2: "30 Days (Refill)",
-    advice: "Maintain low-sodium dietary habits (< 2g/day), engage in 30 mins moderate walking, and record morning blood pressure readings in digital health log."
-  }
-};
-
-function applyRxPreset(key) {
-  if (key === "clear") {
-    document.getElementById("rx-patient-name").value = "";
-    document.getElementById("rx-diagnosis").value = "";
-    document.getElementById("vit-bp").value = "120/80 mmHg";
-    document.getElementById("vit-hr").value = "72 bpm";
-    document.getElementById("vit-temp").value = "98.6 °F";
-    document.getElementById("rx-med1").value = "";
-    document.getElementById("rx-dose1").value = "";
-    document.getElementById("rx-dur1").value = "";
-    document.getElementById("rx-med2").value = "";
-    document.getElementById("rx-dose2").value = "";
-    document.getElementById("rx-dur2").value = "";
-    document.getElementById("rx-advice").value = "";
-    document.getElementById("contraindication-box").classList.add("hidden");
-    playChime("click");
-    showToast("Prescription Form Cleared", "info");
-    return;
-  }
-
-  const p = clinicalPresets[key];
-  if (!p) return;
-
-  document.getElementById("rx-patient-name").value = p.name;
-  document.getElementById("rx-diagnosis").value = p.diag;
-  document.getElementById("vit-bp").value = p.bp;
-  document.getElementById("vit-hr").value = p.hr;
-  document.getElementById("vit-temp").value = p.temp;
-  document.getElementById("rx-med1").value = p.med1;
-  document.getElementById("rx-dose1").value = p.dose1;
-  document.getElementById("rx-dur1").value = p.dur1;
-  document.getElementById("rx-med2").value = p.med2;
-  document.getElementById("rx-dose2").value = p.dose2;
-  document.getElementById("rx-dur2").value = p.dur2;
-  document.getElementById("rx-advice").value = p.advice;
-
-  // Run allergy safety check on prescribed med
-  checkAllergySafety(p.med1);
-
-  playChime("success");
-  showToast(`Applied Clinical Preset: ${p.diag.split("&")[0]}`, "success");
-}
-
-// Live Speech Recognition / Voice Dictation Studio
-let activeSpeechRecognition = null;
-let isDictating = false;
-
-function toggleVoiceDictation(targetId, btnEl) {
-  const targetEl = document.getElementById(targetId);
-  const spanEl = btnEl.querySelector("span");
-
-  // Check if browser supports Web Speech API
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-  if (isDictating) {
-    // Stop recording
-    if (activeSpeechRecognition) {
-      activeSpeechRecognition.stop();
-    }
-    isDictating = false;
-    btnEl.classList.remove("recording");
-    spanEl.innerText = targetId.includes("diag") ? "Dictate Notes" : "Dictate Voice Notes";
-    playChime("click");
-    showToast("Voice Dictation Stopped", "info");
-    return;
-  }
-
-  if (SpeechRecognition) {
-    try {
-      activeSpeechRecognition = new SpeechRecognition();
-      activeSpeechRecognition.continuous = true;
-      activeSpeechRecognition.interimResults = true;
-      activeSpeechRecognition.lang = 'en-US';
-
-      activeSpeechRecognition.onstart = () => {
-        isDictating = true;
-        btnEl.classList.add("recording");
-        spanEl.innerText = "🔴 Listening... (Speak)";
-        playChime("call");
-        showToast("🎙️ Listening... Speak clinical notes clearly into microphone", "info");
-      };
-
-      activeSpeechRecognition.onresult = (event) => {
-        let transcript = "";
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
-          transcript += event.results[i][0].transcript;
-        }
-        if (transcript.trim()) {
-          targetEl.value = transcript;
-        }
-      };
-
-      activeSpeechRecognition.onerror = (event) => {
-        console.log("Speech recognition error:", event.error);
-        fallbackDictationSimulation(targetId, btnEl, spanEl);
-      };
-
-      activeSpeechRecognition.onend = () => {
-        isDictating = false;
-        btnEl.classList.remove("recording");
-        spanEl.innerText = targetId.includes("diag") ? "Dictate Notes" : "Dictate Voice Notes";
-      };
-
-      activeSpeechRecognition.start();
-    } catch (err) {
-      fallbackDictationSimulation(targetId, btnEl, spanEl);
-    }
+function checkContraindication() {
+  const allergy = state.currentPatientAllergy;
+  if (allergy === 'none') return;
+  const med1 = (document.getElementById('rxMed1').value || '').toLowerCase();
+  const med2 = (document.getElementById('rxMed2').value || '').toLowerCase();
+  const med3 = (document.getElementById('rxMed3').value || '').toLowerCase();
+  const allMeds = [med1, med2, med3];
+  const contraFound = allMeds.find(m => m && PENICILLIN_DRUGS.some(d => m.includes(d)));
+  const banner = document.getElementById('contraindicationBanner');
+  if (contraFound) {
+    banner.classList.remove('hidden');
+    document.getElementById('contraText').textContent = `"${contraFound.charAt(0).toUpperCase() + contraFound.slice(1)}" is a ${allergy}-class drug — CONTRAINDICATED for this patient.`;
   } else {
-    // Fallback simulation for unsupported environments
-    fallbackDictationSimulation(targetId, btnEl, spanEl);
+    banner.classList.add('hidden');
   }
 }
 
-function fallbackDictationSimulation(targetId, btnEl, spanEl) {
-  isDictating = true;
-  btnEl.classList.add("recording");
-  spanEl.innerText = "🔴 Transcribing Voice...";
-  playChime("call");
-  showToast("🎙️ Simulated Speech-to-Text: Dictating clinical findings...", "info");
-
-  setTimeout(() => {
-    const targetEl = document.getElementById(targetId);
-    if (targetId.includes("diag")) {
-      targetEl.value = "Bilateral tonsillar erythema, exudate noted, acute pharyngitis secondary to viral infection.";
-    } else {
-      targetEl.value = "Patient advised to complete full 3-day course, gargle warm salt water 3 times daily, and maintain isolation for 24 hours.";
+function applyPreset(name) {
+  const preset = PRESETS[name];
+  if (!preset) return;
+  document.getElementById('rxDiagnosis').value = preset.diagnosis;
+  preset.meds.forEach((m, i) => {
+    const idx = i + 1;
+    if (document.getElementById(`rxMed${idx}`)) {
+      document.getElementById(`rxMed${idx}`).value = m[0];
+      document.getElementById(`rxDose${idx}`).value = m[1];
+      document.getElementById(`rxFreq${idx}`).value = m[2];
     }
-    isDictating = false;
-    btnEl.classList.remove("recording");
-    spanEl.innerText = targetId.includes("diag") ? "Dictate Notes" : "Dictate Voice Notes";
-    playChime("success");
-    showToast("Transcribed Clinical Voice Note Successfully!", "success");
-  }, 1600);
+  });
+  checkContraindication();
+  showToast(`Preset "${name}" applied`, 'success');
 }
 
-// ==========================================================================
-// Agile 15-Minute Daily Scrum Standup Runner & Blocker Logger
-// ==========================================================================
-
-const scrumTeamMembers = [
-  {
-    name: "David Kim",
-    role: "Lead Architect & Backend Lead",
-    avatar: "👨‍💻",
-    yest: "Completed US-301 WebRTC bitrate adaptive throttling for low-bandwidth 3G connections.",
-    today: "Implementing Stripe webhook tokenization & HIPAA audit log verification.",
-    blocker: "External security team delay on Stripe sandbox API keys.",
-    done: false
-  },
-  {
-    name: "Maya Lin",
-    role: "Mobile App Lead (iOS / Flutter)",
-    avatar: "📱",
-    yest: "Refined doctor specialty filter carousel and camera PiP toggle.",
-    today: "Connecting Web Audio API synthesizer chimes to push notification events.",
-    blocker: "None. All API endpoints ready.",
-    done: false
-  },
-  {
-    name: "Alex Rivera",
-    role: "QA Lead & Security Analyst",
-    avatar: "🧪",
-    yest: "Executed 45 automated regression tests on digital prescription generation.",
-    today: "Conducting penetration test on WebRTC signaling tokens and token expiry.",
-    blocker: "Need 2 additional test accounts with active Stripe test cards.",
-    done: false
-  },
-  {
-    name: "Chloe Dubois",
-    role: "Senior UI/UX Designer",
-    avatar: "🎨",
-    yest: "Finished Figma mockups for Dark/Light mode color palette and hospital prescription pad.",
-    today: "Validating typography contrast ratios for WCAG 2.1 AA accessibility compliance.",
-    blocker: "None.",
-    done: false
-  },
-  {
-    name: "Dr. Marcus Vance",
-    role: "Product Owner & Chief Medical Advisor",
-    avatar: "🩺",
-    yest: "Reviewed clinical accuracy of contraindication warnings for Penicillin cross-reactivity.",
-    today: "Sign-off on Sprint 4 acceptance criteria for digital Rx signature verification.",
-    blocker: "Awaiting state medical board telehealth compliance confirmation.",
-    done: false
-  },
-  {
-    name: "Numesh",
-    role: "IT Project Manager & Scrum Master (You)",
-    avatar: "👑",
-    yest: "Facilitated Sprint Planning Poker session and updated RAID Risk Register.",
-    today: "Unblocking external security review with Stripe team and preparing Exec Status report.",
-    blocker: "None. Team velocity tracking at 30.5 story points.",
-    done: false
-  }
-];
-
-let currentSpeakerIndex = 0;
-let standupTimerInterval = null;
-let isStandupRunning = false;
-let speakerSecondsLeft = 120; // 2 minutes
-let totalSecondsLeft = 900;   // 15 minutes
-
-function renderStandupMembers() {
-  const container = document.getElementById("scrum-members-strip");
-  if (!container) return;
-
-  container.innerHTML = scrumTeamMembers.map((m, idx) => `
-    <div class="member-chip ${idx === currentSpeakerIndex ? 'active' : ''} ${m.done ? 'done' : ''}" onclick="selectStandupSpeaker(${idx})">
-      <span>${m.avatar}</span>
-      <strong>${m.name}</strong>
-      ${m.done ? '<i class="fa-solid fa-check" style="color: var(--accent-emerald);"></i>' : ''}
-    </div>
-  `).join("");
+function clearRxForm() {
+  document.getElementById('rxDiagnosis').value = '';
+  document.getElementById('rxNotes').value = '';
+  ['1', '2', '3'].forEach(i => {
+    document.getElementById('rxMed' + i).value = '';
+    document.getElementById('rxDose' + i).value = '';
+    document.getElementById('rxFreq' + i).value = '';
+  });
+  document.getElementById('rxPreviewCard').style.display = 'none';
+  document.getElementById('contraindicationBanner').classList.add('hidden');
 }
 
-function selectStandupSpeaker(idx) {
-  currentSpeakerIndex = idx;
-  speakerSecondsLeft = 120;
-  updateTimerDisplays();
-  loadSpeakerQuestions(idx);
-  renderStandupMembers();
-  playChime("click");
+function generateRxPreview() {
+  const diag = document.getElementById('rxDiagnosis').value.trim();
+  if (!diag) { showToast('Please enter a diagnosis', 'info'); return; }
+  const now = new Date();
+  document.getElementById('rxPadDate').textContent = now.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+  document.getElementById('rxPadId').textContent = 'Rx #QC-' + Math.floor(Math.random() * 90000 + 10000);
+  const patient = document.getElementById('rxPatientName').value;
+  const meds = [1, 2, 3].map(i => ({
+    drug: document.getElementById('rxMed' + i).value,
+    dose: document.getElementById('rxDose' + i).value,
+    freq: document.getElementById('rxFreq' + i).value,
+  })).filter(m => m.drug);
+  const notes = document.getElementById('rxNotes').value;
+  let body = `<div style="margin-bottom:14px;"><p style="font-size:12px;color:var(--text-muted);">Patient</p><p style="font-size:14px;font-weight:700;color:white;">${patient}</p><p style="font-size:12px;color:var(--accent-cyan);">Diagnosis: ${diag}</p></div>`;
+  body += `<div style="border-top:1px dashed #334155;margin:12px 0;"></div>`;
+  body += `<p style="font-size:13px;font-weight:700;color:white;margin-bottom:10px;">Rx</p>`;
+  meds.forEach((m, i) => {
+    body += `<div style="margin-bottom:10px;padding:10px;background:rgba(255,255,255,0.03);border-radius:6px;"><p style="font-size:14px;font-weight:700;color:var(--accent-cyan);">${i + 1}. ${m.drug}</p><p style="font-size:12px;color:var(--text-secondary);">${m.dose} — ${m.freq}</p></div>`;
+  });
+  if (notes) body += `<div style="margin-top:12px;padding:10px;background:rgba(6,182,212,0.05);border-left:2px solid var(--accent-cyan);border-radius:4px;"><p style="font-size:11px;color:var(--text-muted);">Clinical Notes</p><p style="font-size:12px;color:var(--text-secondary);">${notes}</p></div>`;
+  document.getElementById('rxPadBody').innerHTML = body;
+  document.getElementById('rxPreviewCard').style.display = 'block';
+  document.getElementById('rxPreviewCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  showToast('Prescription generated!', 'success');
 }
 
-function loadSpeakerQuestions(idx) {
-  const member = scrumTeamMembers[idx];
-  document.getElementById("spk-name").innerText = member.name;
-  document.getElementById("spk-role").innerText = member.role;
-  document.getElementById("spk-avatar-icon").innerText = member.avatar;
-  document.getElementById("q-yesterday").value = member.yest;
-  document.getElementById("q-today").value = member.today;
-  document.getElementById("q-blocker").value = member.blocker;
-}
-
-function updateTimerDisplays() {
-  const sMin = String(Math.floor(speakerSecondsLeft / 60)).padStart(2, '0');
-  const sSec = String(speakerSecondsLeft % 60).padStart(2, '0');
-  document.getElementById("clock-speaker").innerText = `${sMin}:${sSec}`;
-
-  const tMin = String(Math.floor(totalSecondsLeft / 60)).padStart(2, '0');
-  const tSec = String(totalSecondsLeft % 60).padStart(2, '0');
-  document.getElementById("clock-total").innerText = `${tMin}:${tSec}`;
-}
-
-function toggleStandupTimer() {
-  const btn = document.getElementById("btn-standup-start");
-  const tag = document.getElementById("standup-status-tag");
-
-  if (!isStandupRunning) {
-    isStandupRunning = true;
-    btn.innerHTML = `<i class="fa-solid fa-pause"></i> Pause Standup`;
-    btn.className = "btn-sm btn-outline";
-    tag.innerText = "Meeting In Progress ⏱️";
-    tag.style.color = "#00f2fe";
-    playChime("call");
-
-    standupTimerInterval = setInterval(() => {
-      if (speakerSecondsLeft > 0) speakerSecondsLeft--;
-      if (totalSecondsLeft > 0) totalSecondsLeft--;
-
-      updateTimerDisplays();
-
-      if (speakerSecondsLeft === 0) {
-        playChime("click");
-        showToast(`Speaker time up for ${scrumTeamMembers[currentSpeakerIndex].name}!`, "info");
-      }
-      if (totalSecondsLeft === 0) {
-        clearInterval(standupTimerInterval);
-        isStandupRunning = false;
-        showToast("Daily Scrum 15-Minute Timebox Completed!", "success");
+function toggleVoiceDictation() {
+  state.voiceRecording = !state.voiceRecording;
+  const btn = document.getElementById('voiceBtn');
+  if (state.voiceRecording) {
+    btn.classList.add('recording');
+    btn.innerHTML = '<i class="fa-solid fa-circle-stop"></i> Recording...';
+    let counter = 0;
+    const phrases = ['Paracetamol 500mg three times daily', 'Amoxicillin 500mg twice daily for 7 days', 'Ibuprofen 400mg as needed'];
+    state.voiceInterval = setInterval(() => {
+      counter++;
+      if (counter === 3) {
+        const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+        const notes = document.getElementById('rxNotes');
+        notes.value = (notes.value ? notes.value + '\n' : '') + randomPhrase;
+        stopVoiceDictation();
+        showToast('Voice note transcribed!', 'success');
       }
     }, 1000);
   } else {
-    isStandupRunning = false;
-    clearInterval(standupTimerInterval);
-    btn.innerHTML = `<i class="fa-solid fa-play"></i> Resume Standup`;
-    btn.className = "btn-sm btn-success";
-    tag.innerText = "Paused ⏸️";
-    tag.style.color = "#fde68a";
-    playChime("click");
+    stopVoiceDictation();
   }
 }
 
-function nextStandupSpeaker() {
-  scrumTeamMembers[currentSpeakerIndex].done = true;
-  saveSpeakerLog();
-
-  currentSpeakerIndex = (currentSpeakerIndex + 1) % scrumTeamMembers.length;
-  speakerSecondsLeft = 120;
-  updateTimerDisplays();
-  loadSpeakerQuestions(currentSpeakerIndex);
-  renderStandupMembers();
-
-  playChime("success");
-  showToast(`Floor handed to ${scrumTeamMembers[currentSpeakerIndex].name} (${scrumTeamMembers[currentSpeakerIndex].role})`, "info");
+function stopVoiceDictation() {
+  state.voiceRecording = false;
+  clearInterval(state.voiceInterval);
+  const btn = document.getElementById('voiceBtn');
+  btn.classList.remove('recording');
+  btn.innerHTML = '<i class="fa-solid fa-microphone"></i> Dictate';
 }
 
-function saveSpeakerLog() {
-  const member = scrumTeamMembers[currentSpeakerIndex];
-  member.yest = document.getElementById("q-yesterday").value;
-  member.today = document.getElementById("q-today").value;
-  member.blocker = document.getElementById("q-blocker").value;
-  showToast(`Saved Standup Notes for ${member.name}`, "info");
+function renderDocCalendar() {
+  const grid = document.getElementById('docCalendarGrid');
+  const days = Object.keys(DOCTOR_CALENDAR);
+  const today = 'Mon';
+  grid.innerHTML = days.map(day => `
+    <div class="calendar-day-col ${day === today ? 'today-col' : ''}">
+      <div class="day-head ${day === today ? 'today' : ''}">
+        <strong>${day}</strong>
+        <span>Sep ${days.indexOf(day) + 1}</span>
+      </div>
+      <div class="day-slots">
+        ${DOCTOR_CALENDAR[day].map(slot => `
+          <div class="slot-item ${slot.type}" onclick="handleSlotClick('${day}','${slot.time}','${slot.type}')">
+            ${slot.time} ${slot.name ? '— ' + slot.name : slot.type === 'free' ? '(Available)' : ''}
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
 }
 
-function escalateCurrentBlocker() {
-  const blockerText = document.getElementById("q-blocker").value.trim();
-  const currentMember = scrumTeamMembers[currentSpeakerIndex];
-
-  if (!blockerText || blockerText.toLowerCase().includes("none")) {
-    showToast("No active blocker entered to escalate", "info");
-    return;
+function handleSlotClick(day, time, type) {
+  if (type === 'free') {
+    showToast(`Slot ${time} on ${day} marked as blocked`, 'info');
+  } else if (type === 'live') {
+    openVideoRoom();
+  } else {
+    showToast(`Appointment at ${time} on ${day} loaded`, 'info');
   }
+}
 
-  // Add to standup action log
-  const logContainer = document.getElementById("standup-action-items");
-  const newRow = document.createElement("div");
-  newRow.className = "standup-item-row blocker";
-  newRow.innerHTML = `
-    <span class="item-tag blocker">ESCALATED</span>
-    <span class="item-text"><strong>${currentMember.name}:</strong> ${blockerText}</span>
-    <span class="item-owner">Owner: IT PM (Numesh)</span>
+function setTodayDate() {
+  const d = new Date();
+  const el = document.getElementById('rxDate');
+  if (el) el.value = d.toISOString().split('T')[0];
+}
+
+// ==========================================================================
+//  IT PM — SUB-TABS
+// ==========================================================================
+
+function switchPMTab(tab, el) {
+  state.pmTab = tab;
+  document.querySelectorAll('.pm-tab-content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.pm-subtab').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+  document.getElementById('pmTab-' + tab).classList.add('active');
+  el.classList.add('active');
+  el.setAttribute('aria-selected', 'true');
+}
+
+// ==========================================================================
+//  KANBAN BOARD
+// ==========================================================================
+
+const COL_CONFIG = [
+  { id: 'todo', label: 'To Do', color: '#64748b' },
+  { id: 'inprogress', label: 'In Progress', color: '#f59e0b' },
+  { id: 'review', label: 'In Review', color: '#6366f1' },
+  { id: 'done', label: 'Done', color: '#10b981' },
+];
+
+function renderKanban() {
+  const board = document.getElementById('kanbanBoard');
+  board.innerHTML = COL_CONFIG.map(col => {
+    const cards = state.kanbanData.filter(c => c.col === col.id);
+    return `
+      <div class="kanban-column" id="col-${col.id}" ondragover="event.preventDefault()" ondrop="dropCard(event,'${col.id}')">
+        <div class="column-header">
+          <span class="col-title" style="color:${col.color}">${col.label}</span>
+          <span class="col-count">${cards.length}</span>
+        </div>
+        <div class="column-cards" id="cards-${col.id}">
+          ${cards.map(c => renderKanbanCard(c)).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderKanbanCard(c) {
+  return `
+    <div class="kanban-card" draggable="true" id="kcard-${c.id}"
+      ondragstart="dragStart(event,'${c.id}','${c.col}')"
+      ondragend="dragEnd(event)">
+      <div class="card-top-row">
+        <span class="card-id">${c.id}</span>
+        <span class="card-pts">${c.pts} pts</span>
+      </div>
+      <div class="card-title">${c.title}</div>
+      <div class="card-bottom-row">
+        <span class="card-epic">${c.epic}</span>
+        <div class="card-avatar">${c.assignee}</div>
+      </div>
+    </div>
   `;
-  logContainer.prepend(newRow);
-
-  playChime("success");
-  showToast(`🚨 Escalated to RAID Register: "${blockerText}" assigned to IT PM!`, "success");
 }
 
-function resetStandupMeeting() {
-  clearInterval(standupTimerInterval);
-  isStandupRunning = false;
-  speakerSecondsLeft = 120;
-  totalSecondsLeft = 900;
-  currentSpeakerIndex = 0;
-  scrumTeamMembers.forEach(m => m.done = false);
-
-  updateTimerDisplays();
-  loadSpeakerQuestions(0);
-  renderStandupMembers();
-
-  const btn = document.getElementById("btn-standup-start");
-  btn.innerHTML = `<i class="fa-solid fa-play"></i> Start Standup`;
-  btn.className = "btn-sm btn-success";
-  document.getElementById("standup-status-tag").innerText = "Ready to Start";
-  document.getElementById("standup-status-tag").style.color = "";
-
-  playChime("click");
-  showToast("Standup Meeting Reset to Baseline 15:00", "info");
+function dragStart(event, cardId, colId) {
+  state.dragCard = cardId;
+  state.dragCol = colId;
+  event.dataTransfer.effectAllowed = 'move';
+  setTimeout(() => { const el = document.getElementById('kcard-' + cardId); if (el) el.style.opacity = '0.4'; }, 0);
 }
 
-// Call render on load
-document.addEventListener("DOMContentLoaded", () => {
-  renderStandupMembers();
-  loadSpeakerQuestions(0);
+function dragEnd(event) {
+  if (state.dragCard) {
+    const el = document.getElementById('kcard-' + state.dragCard);
+    if (el) el.style.opacity = '1';
+  }
+}
+
+function dropCard(event, targetCol) {
+  event.preventDefault();
+  if (!state.dragCard || state.dragCol === targetCol) return;
+  const card = state.kanbanData.find(c => c.id === state.dragCard);
+  if (card) {
+    card.col = targetCol;
+    renderKanban();
+    showToast(`${card.id} moved to ${COL_CONFIG.find(c => c.id === targetCol).label}`, 'info');
+  }
+  state.dragCard = null;
+  state.dragCol = null;
+}
+
+function exportBacklogCSV() {
+  const headers = ['ID', 'Title', 'Epic', 'Story Points', 'Column', 'Assignee'];
+  const rows = state.kanbanData.map(c => [c.id, `"${c.title}"`, c.epic, c.pts, c.col, c.assignee]);
+  const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'QuickCare_Backlog.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Backlog exported as QuickCare_Backlog.csv', 'success');
+}
+
+// ==========================================================================
+//  VELOCITY CHART
+// ==========================================================================
+
+function renderVelocityChart() {
+  const container = document.getElementById('velocityChart');
+  if (!container) return;
+  const max = 35;
+  container.innerHTML = SPRINT_DATA.map((s, i) => `
+    <div class="v-bar-group ${i === state.sprintSelected - 1 ? 'active-sprint-bar' : ''}">
+      <div class="v-bars">
+        <div class="v-bar planned" style="height:${(s.planned / max) * 180}px;">${s.planned}</div>
+        <div class="v-bar actual" style="height:${(s.actual / max) * 180}px;">${s.actual}</div>
+      </div>
+      <span class="v-label">${s.label}</span>
+    </div>
+  `).join('');
+}
+
+// ==========================================================================
+//  BURNDOWN CHART (SVG)
+// ==========================================================================
+
+function renderBurndown(sprintNum) {
+  const svg = document.getElementById('burndownSvg');
+  if (!svg) return;
+  const sprints = { 1: { pts: 29, days: 10 }, 2: { pts: 31, days: 10 }, 3: { pts: 30, days: 10 }, 4: { pts: 32, days: 10 } };
+  const data = sprints[sprintNum || 4];
+  const W = 300, H = 160, pad = 20;
+  const ideal = Array.from({ length: 11 }, (_, i) => ({ x: pad + (i / 10) * (W - 2 * pad), y: pad + (1 - i / 10) * (H - 2 * pad) }));
+  // Simulate actual burndown (slightly better than ideal)
+  const actual = [data.pts, data.pts - 5, data.pts - 11, data.pts - 14, data.pts - 18, data.pts - 22, data.pts - 26, data.pts - 28, data.pts - 30, data.pts - 31, 0].map((v, i) => ({
+    x: pad + (i / 10) * (W - 2 * pad),
+    y: pad + (Math.max(0, v) / data.pts) * (H - 2 * pad),
+  }));
+  const idealPath = ideal.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ');
+  const actualPath = actual.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ');
+  svg.innerHTML = `
+    <line x1="${pad}" y1="${pad}" x2="${pad}" y2="${H - pad}" stroke="#334155" stroke-width="1"/>
+    <line x1="${pad}" y1="${H - pad}" x2="${W - pad}" y2="${H - pad}" stroke="#334155" stroke-width="1"/>
+    <path d="${idealPath}" stroke="#64748b" stroke-width="1.5" fill="none" stroke-dasharray="5,4"/>
+    <path d="${actualPath}" stroke="#00f2fe" stroke-width="2.5" fill="none"/>
+    ${actual.map(p => `<circle cx="${p.x}" cy="${p.y}" r="3" fill="#00f2fe"/>`).join('')}
+  `;
+}
+
+// ==========================================================================
+//  SPRINT SIMULATION
+// ==========================================================================
+
+function selectSprint(num, el) {
+  state.sprintSelected = num;
+  document.querySelectorAll('.sprint-chips .s-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderBurndown(num);
+  renderVelocityChart();
+}
+
+function updateSim(inputEl, valId, suffix, init) {
+  if (!init) {
+    document.getElementById(valId).textContent = inputEl.value + suffix;
+  }
+  const cap = parseInt(document.getElementById('capSlider').value);
+  const scope = parseInt(document.getElementById('scopeSlider').value);
+  const blocks = parseInt(document.getElementById('blockSlider').value);
+  const basePoints = 32;
+  const effectivePts = Math.floor((basePoints * (cap / 100)) - scope - (blocks * 2));
+  const banner = document.getElementById('simForecastBanner');
+  const title = document.getElementById('simForecastTitle');
+  const msg = document.getElementById('simForecastMsg');
+  const pts = document.getElementById('simForecastPts');
+  const icon = document.getElementById('simForecastIcon');
+  pts.textContent = Math.max(0, effectivePts) + ' pts';
+  if (effectivePts >= 30) {
+    banner.className = 'sim-forecast-banner success';
+    title.textContent = 'On Track to Complete';
+    msg.textContent = `All ${effectivePts} sprint points forecasted to be delivered by end of sprint.`;
+    icon.className = 'fa-solid fa-circle-check';
+  } else if (effectivePts >= 20) {
+    banner.className = 'sim-forecast-banner warning';
+    title.textContent = 'At Risk — Scope Review Needed';
+    msg.textContent = `Only ${effectivePts} of 32 points forecast to complete. Consider de-scoping lower priority stories.`;
+    icon.className = 'fa-solid fa-triangle-exclamation';
+  } else {
+    banner.className = 'sim-forecast-banner danger';
+    title.textContent = 'Sprint Failure Likely';
+    msg.textContent = `Only ${Math.max(0, effectivePts)} points forecast. Escalate blockers and reduce scope immediately.`;
+    icon.className = 'fa-solid fa-circle-xmark';
+  }
+}
+
+// ==========================================================================
+//  PLANNING POKER
+// ==========================================================================
+
+const FIBO = [1, 2, 3, 5, 8, 13, 21];
+const TEAM_ROLES = ['Lead Dev', 'FE Eng', 'QA Lead', 'UX Design'];
+
+function renderPokerDeck() {
+  const deck = document.getElementById('pokerDeck');
+  deck.innerHTML = [...FIBO, '?'].map(v => `
+    <div class="p-card ${state.pokerSelectedCard == v ? 'active-card' : ''}" onclick="selectPokerCard(${JSON.stringify(v)})">${v}</div>
+  `).join('');
+}
+
+function renderPokerTeamVotes() {
+  const votes = document.getElementById('pokerTeamVotes');
+  const revealed = state.pokerRevealed;
+  const myVote = state.pokerSelectedCard;
+  votes.innerHTML = [
+    { role: 'You (PM)', vote: myVote, isUser: true },
+    ...TEAM_ROLES.map(r => ({ role: r, vote: state.pokerVotes[r] || null, isUser: false })),
+  ].map(v => `
+    <div class="team-vote-box ${v.isUser ? 'user-vote-box' : ''}">
+      <span class="vote-role">${v.role}</span>
+      <span class="vote-num ${v.isUser ? 'user-vote' : ''}">
+        ${revealed ? (v.vote !== null ? v.vote : '?') : (v.vote !== null ? 'Voted' : '--')}
+      </span>
+    </div>
+  `).join('');
+}
+
+function selectPokerCard(val) {
+  state.pokerSelectedCard = val;
+  // Simulate team members voting
+  TEAM_ROLES.forEach(r => {
+    if (!state.pokerVotes[r]) {
+      const weights = [1, 2, 3, 5, 8, 13, 21];
+      const pick = weights[Math.floor(Math.random() * weights.length)];
+      state.pokerVotes[r] = pick;
+    }
+  });
+  renderPokerDeck();
+  renderPokerTeamVotes();
+  document.getElementById('pokerStatusTag').textContent = 'You Voted';
+  showToast(`You selected ${val} story points`, 'info');
+}
+
+function revealPokerVotes() {
+  if (state.pokerSelectedCard === null) { showToast('Select a card first', 'info'); return; }
+  state.pokerRevealed = true;
+  renderPokerTeamVotes();
+  document.getElementById('pokerStatusTag').textContent = 'Votes Revealed';
+  // Check consensus
+  const allVotes = [state.pokerSelectedCard, ...Object.values(state.pokerVotes)].filter(v => v !== null && v !== '?');
+  const unique = [...new Set(allVotes)];
+  const banner = document.getElementById('pokerConsensusBanner');
+  if (unique.length === 1) {
+    banner.classList.remove('hidden');
+    document.getElementById('pokerConsensusVal').textContent = unique[0];
+    showToast(`Consensus! Story estimated at ${unique[0]} points`, 'success');
+  } else {
+    const avg = Math.round(allVotes.reduce((a, b) => a + Number(b), 0) / allVotes.length);
+    banner.classList.remove('hidden');
+    banner.querySelector('i').style.color = 'var(--accent-amber)';
+    document.getElementById('pokerConsensusMsg').innerHTML = `No consensus. Average: <strong id="pokerConsensusVal">${avg}</strong> pts. Discuss and re-vote.`;
+    showToast(`No consensus — average is ${avg} pts. Discuss!`, 'info');
+  }
+}
+
+function resetPoker() {
+  state.pokerSelectedCard = null;
+  state.pokerRevealed = false;
+  state.pokerVotes = {};
+  state.currentPokerStory = (state.currentPokerStory + 1) % POKER_STORIES.length;
+  const story = POKER_STORIES[state.currentPokerStory];
+  document.getElementById('pokerStoryTitle').textContent = story.title;
+  document.getElementById('pokerStoryDesc').textContent = story.desc;
+  document.querySelector('.poker-badge').textContent = story.id;
+  document.querySelector('.poker-story-meta span:last-child').textContent = 'Epic: ' + story.epic;
+  document.getElementById('pokerStatusTag').textContent = 'Voting Open';
+  document.getElementById('pokerConsensusBanner').classList.add('hidden');
+  renderPokerDeck();
+  renderPokerTeamVotes();
+}
+
+// ==========================================================================
+//  RETROSPECTIVE BOARD
+// ==========================================================================
+
+const RETRO_COLS = [
+  { key: 'well', label: 'Went Well', cls: 'well-col', icon: 'fa-face-smile', color: 'var(--accent-emerald)' },
+  { key: 'slow', label: 'Needs Improvement', cls: 'slow-col', icon: 'fa-face-frown', color: 'var(--accent-rose)' },
+  { key: 'action', label: 'Action Items', cls: 'action-col', icon: 'fa-bolt', color: 'var(--accent-indigo)' },
+];
+
+function renderRetroBoard() {
+  const board = document.getElementById('retroBoard');
+  board.innerHTML = RETRO_COLS.map(col => `
+    <div class="retro-col ${col.cls}">
+      <div class="retro-col-head">
+        <span><i class="fa-solid ${col.icon}" style="color:${col.color};margin-right:6px;"></i>${col.label}</span>
+        <span class="retro-count">${state.retroData[col.key].length}</span>
+      </div>
+      <div class="retro-cards">
+        ${state.retroData[col.key].map((card, i) => `
+          <div class="retro-card">
+            <p>${card.text}</p>
+            <div class="retro-card-footer">
+              <span class="retro-author">${card.author}</span>
+              <button class="btn-upvote" onclick="upvoteRetro('${col.key}',${i})">
+                <i class="fa-solid fa-thumbs-up"></i> ${card.votes}
+              </button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="add-retro-input-row">
+        <input type="text" id="retro-input-${col.key}" placeholder="Add note..." onkeypress="handleRetroEnter(event,'${col.key}')" />
+        <button class="btn-sm btn-success" onclick="addRetroCard('${col.key}')" style="padding:6px 10px;">+</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function upvoteRetro(col, idx) {
+  state.retroData[col][idx].votes++;
+  renderRetroBoard();
+}
+
+function handleRetroEnter(e, col) {
+  if (e.key === 'Enter') addRetroCard(col);
+}
+
+function addRetroCard(col) {
+  const input = document.getElementById('retro-input-' + col);
+  const text = input.value.trim();
+  if (!text) return;
+  state.retroData[col].push({ text, author: 'You', votes: 0 });
+  renderRetroBoard();
+  showToast('Retro note added!', 'success');
+}
+
+// ==========================================================================
+//  BUDGET TRACKER
+// ==========================================================================
+
+function renderBudgetBars() {
+  const container = document.getElementById('budgetBars');
+  container.innerHTML = BUDGET_ITEMS.map(item => {
+    const pct = Math.min(100, Math.round((item.spend / item.budget) * 100));
+    return `
+      <div class="b-prog-item">
+        <div class="b-prog-labels">
+          <span>${item.label}</span>
+          <span>$${item.spend.toLocaleString()} / $${item.budget.toLocaleString()} (${pct}%)</span>
+        </div>
+        <div class="b-prog-track">
+          <div class="b-prog-fill ${item.color}" style="width:0%" data-target="${pct}%"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  // Animate bars
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.b-prog-fill').forEach(el => {
+      el.style.width = el.dataset.target;
+    });
+  });
+}
+
+// ==========================================================================
+//  RAID / RACI
+// ==========================================================================
+
+function updateRiskCalc() {
+  const p = parseInt(document.getElementById('probSlider').value);
+  const i = parseInt(document.getElementById('impactSlider').value);
+  document.getElementById('probVal').textContent = p;
+  document.getElementById('impactVal').textContent = i;
+  const score = p * i;
+  document.getElementById('riskScoreNum').textContent = score;
+  const badge = document.getElementById('riskScoreBadge');
+  if (score >= 15) { badge.className = 'score-badge high'; badge.textContent = 'HIGH'; }
+  else if (score >= 8) { badge.className = 'score-badge med'; badge.textContent = 'MEDIUM'; }
+  else { badge.className = 'score-badge low'; badge.textContent = 'LOW'; }
+}
+
+function renderRAIDTable() {
+  const body = document.getElementById('raidTableBody');
+  body.innerHTML = RAID_ITEMS.map(r => `
+    <tr>
+      <td><strong>${r.id}</strong></td>
+      <td><span class="badge ${r.badge}">${r.type}</span></td>
+      <td style="max-width:220px;">${r.desc}</td>
+      <td>${r.p}&times;${r.i} = <strong>${r.p * r.i}</strong></td>
+      <td><span class="risk-pill ${r.level}">${r.level.toUpperCase()}</span></td>
+      <td style="font-size:12px;color:var(--text-secondary);">${r.mitigation}</td>
+      <td><span class="badge-status ${r.status === 'Resolved' ? 'resolved' : ''}">${r.status}</span></td>
+    </tr>
+  `).join('');
+}
+
+function renderRACITable() {
+  const body = document.getElementById('raciTableBody');
+  const tag = c => {
+    const cls = c === 'R' ? 'r' : c === 'A' ? 'a' : c === 'C' ? 'c' : c === 'I' ? 'i' : 'ar';
+    return `<span class="raci-tag ${cls}">${c}</span>`;
+  };
+  body.innerHTML = RACI_ROWS.map(r => `
+    <tr>
+      <td><strong style="font-size:12px;">${r.task}</strong></td>
+      <td>${tag(r.pm)}</td>
+      <td>${tag(r.dev)}</td>
+      <td>${tag(r.qa)}</td>
+      <td>${tag(r.ux)}</td>
+      <td>${tag(r.po)}</td>
+    </tr>
+  `).join('');
+}
+
+// ==========================================================================
+//  STANDUP RUNNER
+// ==========================================================================
+
+function renderScrumMembers() {
+  const strip = document.getElementById('scrumMembersStrip');
+  strip.innerHTML = SCRUM_MEMBERS.map((m, i) => `
+    <div class="member-chip ${state.standupDone.has(i) ? 'done' : ''} ${state.standupMemberIndex === i ? 'active' : ''}" id="member-chip-${i}" onclick="jumpToMember(${i})">
+      <i class="fa-solid ${m.icon}"></i> ${m.name}
+      ${state.standupDone.has(i) ? '<i class="fa-solid fa-check" style="color:var(--accent-emerald);"></i>' : ''}
+    </div>
+  `).join('');
+}
+
+function startStandup() {
+  if (state.standupActive) return;
+  state.standupActive = true;
+  state.standupTotalSeconds = 0;
+  document.getElementById('standupStartBtn').disabled = true;
+  document.getElementById('standupNextBtn').disabled = false;
+  document.getElementById('standupStatus').textContent = 'Meeting In Progress';
+  // Total timer
+  state.totalStandupTimer = setInterval(() => {
+    state.standupTotalSeconds++;
+    document.getElementById('totalClock').textContent = formatTime(state.standupTotalSeconds);
+  }, 1000);
+  nextSpeaker();
+}
+
+function nextSpeaker() {
+  state.standupMemberIndex++;
+  if (state.standupMemberIndex >= SCRUM_MEMBERS.length) {
+    endStandup(); return;
+  }
+  if (state.standupMemberIndex > 0) {
+    state.standupDone.add(state.standupMemberIndex - 1);
+  }
+  renderScrumMembers();
+  const member = SCRUM_MEMBERS[state.standupMemberIndex];
+  document.getElementById('spkAvatar').innerHTML = `<i class="fa-solid ${member.icon}"></i>`;
+  document.getElementById('spkName').textContent = member.name;
+  document.getElementById('spkRole').textContent = member.role;
+  document.getElementById('speakingBadge').classList.remove('hidden');
+  document.getElementById('q1Input').value = '';
+  document.getElementById('q2Input').value = '';
+  document.getElementById('q3Input').value = '';
+  // Per-speaker timer
+  clearInterval(state.standupTimer);
+  state.standupSpeakerSeconds = 120;
+  document.getElementById('speakerClock').textContent = formatTime(state.standupSpeakerSeconds);
+  state.standupTimer = setInterval(() => {
+    state.standupSpeakerSeconds--;
+    document.getElementById('speakerClock').textContent = formatTime(Math.max(0, state.standupSpeakerSeconds));
+    if (state.standupSpeakerSeconds <= 0) { clearInterval(state.standupTimer); showToast(`Time up for ${member.name}!`, 'info'); }
+  }, 1000);
+}
+
+function endStandup() {
+  state.standupActive = false;
+  clearInterval(state.standupTimer);
+  clearInterval(state.totalStandupTimer);
+  state.standupDone.add(state.standupMemberIndex);
+  document.getElementById('standupStatus').textContent = `Completed in ${formatTime(state.standupTotalSeconds)}`;
+  document.getElementById('speakingBadge').classList.add('hidden');
+  document.getElementById('standupNextBtn').disabled = true;
+  renderScrumMembers();
+  showToast('Standup complete! All blockers logged.', 'success');
+}
+
+function resetStandup() {
+  clearInterval(state.standupTimer);
+  clearInterval(state.totalStandupTimer);
+  state.standupActive = false;
+  state.standupMemberIndex = -1;
+  state.standupDone = new Set();
+  state.standupTotalSeconds = 0;
+  state.standupSpeakerSeconds = 120;
+  document.getElementById('speakerClock').textContent = '02:00';
+  document.getElementById('totalClock').textContent = '00:00';
+  document.getElementById('standupStatus').textContent = 'Not Started';
+  document.getElementById('standupStartBtn').disabled = false;
+  document.getElementById('standupNextBtn').disabled = true;
+  document.getElementById('speakingBadge').classList.add('hidden');
+  document.getElementById('spkName').textContent = 'Select a team member';
+  document.getElementById('spkRole').textContent = 'Click Start to begin the standup';
+  document.getElementById('q1Input').value = '';
+  document.getElementById('q2Input').value = '';
+  document.getElementById('q3Input').value = '';
+  renderScrumMembers();
+}
+
+function jumpToMember(idx) {
+  if (!state.standupActive) return;
+  state.standupMemberIndex = idx - 1;
+  nextSpeaker();
+}
+
+function saveStandupNote() {
+  const q1 = document.getElementById('q1Input').value.trim();
+  const q2 = document.getElementById('q2Input').value.trim();
+  const q3 = document.getElementById('q3Input').value.trim();
+  const member = state.standupMemberIndex >= 0 ? SCRUM_MEMBERS[state.standupMemberIndex] : null;
+  const name = member ? member.name : 'Unknown';
+  const log = document.getElementById('standupLogList');
+  if (log.querySelector('div[style]')) log.innerHTML = '';
+  if (q2) {
+    log.innerHTML += `<div class="standup-item-row action"><span class="item-tag action">TODAY</span><span class="item-text">${q2}</span><span class="item-owner">${name}</span></div>`;
+  }
+  if (q3) {
+    log.innerHTML += `<div class="standup-item-row blocker"><span class="item-tag blocker">BLOCKER</span><span class="item-text">${q3}</span><span class="item-owner">${name}</span></div>`;
+  }
+  showToast('Standup note saved!', 'success');
+}
+
+function escalateToRAID() {
+  const blocker = document.getElementById('q3Input').value.trim();
+  if (!blocker) { showToast('Enter a blocker description first', 'info'); return; }
+  const newRisk = { id: 'I-0' + (RAID_ITEMS.length + 1), type: 'Issue', desc: blocker, p: 4, i: 3, level: 'med', badge: 'scope', mitigation: 'Assigned to Scrum Master for resolution', status: 'Open' };
+  RAID_ITEMS.push(newRisk);
+  renderRAIDTable();
+  showToast('Blocker escalated to RAID log!', 'success');
+  document.getElementById('q3Input').value = '';
+}
+
+// ==========================================================================
+//  THEME TOGGLE
+// ==========================================================================
+
+function toggleTheme() {
+  state.themeLight = !state.themeLight;
+  document.body.classList.toggle('light-theme', state.themeLight);
+  const icon = document.getElementById('themeIcon');
+  icon.className = state.themeLight ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+}
+
+// ==========================================================================
+//  AUDIO TOGGLE
+// ==========================================================================
+
+function toggleAudio() {
+  state.audioOn = !state.audioOn;
+  const icon = document.getElementById('audioIcon');
+  icon.className = state.audioOn ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark';
+}
+
+// ==========================================================================
+//  TOAST NOTIFICATIONS
+// ==========================================================================
+
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  const iconMap = { success: 'fa-circle-check', info: 'fa-circle-info', warning: 'fa-triangle-exclamation' };
+  toast.innerHTML = `<i class="fa-solid ${iconMap[type] || 'fa-circle-info'}" style="color:${type === 'success' ? 'var(--accent-emerald)' : 'var(--accent-cyan)'}"></i>${message}`;
+  container.appendChild(toast);
+  setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(100%)'; toast.style.transition = 'all 0.3s ease'; setTimeout(() => toast.remove(), 300); }, 3500);
+}
+
+// ==========================================================================
+//  MODAL HELPERS
+// ==========================================================================
+
+function openModal(id) {
+  document.getElementById(id).classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+// Close modals on overlay click
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('modal-overlay')) {
+    e.target.classList.add('hidden');
+    document.body.style.overflow = '';
+    if (e.target.id === 'videoModal') endCall();
+  }
 });
 
+// Keyboard shortcut: Escape closes modals
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay:not(.hidden)').forEach(m => {
+      m.classList.add('hidden');
+      document.body.style.overflow = '';
+      if (m.id === 'videoModal') endCall();
+    });
+  }
+});
 
+// ==========================================================================
+//  UTILITIES
+// ==========================================================================
 
-
-
-
-
+function formatTime(totalSeconds) {
+  const m = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+  const s = (totalSeconds % 60).toString().padStart(2, '0');
+  return `${m}:${s}`;
+}

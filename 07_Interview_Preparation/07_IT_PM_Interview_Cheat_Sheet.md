@@ -70,3 +70,7 @@ Always structure your behavioral interview answers using the **STAR** method:
 | **RACI Matrix** | Clarifies who is **R**esponsible, **A**ccountable, **C**onsulted, and **I**nformed. |
 | **RAID Log** | Tracks **R**isks, **A**ssumptions, **I**ssues, and **D**ependencies. |
 | **UAT** | **User Acceptance Testing:** Final business validation before production release. |
+| **CFD (Cumulative Flow Diagram)**| Stacked area graph showing work distribution across workflow states over time. |
+| **Lead Time** | Total calendar duration from story backlog intake to production release (4.2 days). |
+| **Cycle Time** | Active engineering duration from development start to definition of done (1.8 days). |
+| **Little's Law** | Principle stating $\text{Cycle Time} = \text{WIP} / \text{Throughput}$; proving WIP limits directly reduce cycle time. |

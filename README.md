@@ -17,7 +17,7 @@ Experience the full interactive simulation directly in your browser:
 ### What You Can Test Live:
 1. **Patient Mobile Experience:** Real-time doctor search (*search "fever" or "skin"*), verified patient ratings modal, 15-minute consult booking, Stripe checkout simulation (Rs. 15,675 fee breakdown), express pharmacy delivery tracker with driver GPS, and live video consultation room with webcam & mic controls.
 2. **Doctor Consultation Portal:** Weekly schedule manager (Mon-Fri), patient queue switcher, penicillin allergy high-alert banner, contraindication auto-detection engine, voice dictation notes, and official printable digital prescription pad.
-3. **IT PM & Scrum Master Control Center:** Interactive Agile Kanban board (drag & drop cards), Agile Planning Poker Fibonacci estimation game (`1` to `13` & `Break`), Sprint Retrospective sticky note board with upvoting, live budget reconciliation (Rs. 38.41M spend, +Rs. 1.188M favorable variance), Agile Earned Value Management (EVM) calculator (PV, EV, AC, CPI, SPI), RAID risk matrix calculator ($P \times I$), RACI matrix, 15-min Daily Standup Runner, and one-click Executive Status Report & CSV Backlog Exporter!
+3. **IT PM & Scrum Master Control Center:** Interactive Agile Kanban board (drag & drop cards), Agile Planning Poker Fibonacci estimation game (`1` to `13` & `Break`), Sprint Retrospective sticky note board with upvoting, live budget reconciliation (Rs. 38.41M spend, +Rs. 1.188M favorable variance), Agile Earned Value Management (EVM) calculator (PV, EV, AC, CPI, SPI), Cumulative Flow Diagram (CFD) with Little's Law & Cycle Time simulator, RAID risk matrix calculator ($P \times I$), RACI matrix, 15-min Daily Standup Runner, and one-click Executive Status Report & CSV Backlog Exporter!
 
 ---
 

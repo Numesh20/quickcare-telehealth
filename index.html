@@ -504,6 +504,7 @@
           <button class="pm-subtab" onclick="switchPMTab('raid', this)" role="tab"><i class="fa-solid fa-shield-halved"></i> RAID/RACI</button>
           <button class="pm-subtab" onclick="switchPMTab('standup', this)" role="tab"><i class="fa-solid fa-users"></i> Standup</button>
           <button class="pm-subtab highlight-tab" onclick="switchPMTab('evm', this)" role="tab"><i class="fa-solid fa-scale-balanced"></i> Agile EVM</button>
+          <button class="pm-subtab" onclick="switchPMTab('cfd', this)" role="tab"><i class="fa-solid fa-chart-area"></i> CFD &amp; Flow</button>
         </div>
 
         <!-- ---- KANBAN ---- -->
@@ -984,6 +985,147 @@
               <h5><i class="fa-solid fa-compass"></i> Cost &amp; Schedule Indices</h5>
               <div class="formula-code">CPI = EV / AC &nbsp;|&nbsp; SPI = EV / PV</div>
               <p>CPI &gt; 1.0 indicates cost efficiency; SPI &ge; 1.0 proves on-schedule milestone completion.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ---- CUMULATIVE FLOW DIAGRAM (CFD) & FLOW METRICS ---- -->
+        <div class="pm-tab-content" id="pmTab-cfd">
+          <div class="cfd-header-row">
+            <div>
+              <h3 style="font-size:16px;font-weight:700;"><i class="fa-solid fa-chart-area" style="color:var(--accent-cyan);margin-right:8px;"></i> Sprint 4 — Cumulative Flow Diagram &amp; Flow Metrics</h3>
+              <small style="color:var(--text-secondary);">Little's Law, Cycle Time, Lead Time &amp; WIP Optimization (14-Day Cadence)</small>
+            </div>
+            <div class="cfd-header-actions">
+              <button class="btn-sm btn-outline" onclick="resetWipSim()"><i class="fa-solid fa-rotate-left"></i> Reset WIP Limits</button>
+            </div>
+          </div>
+
+          <!-- Flow KPI Grid -->
+          <div class="cfd-kpi-grid">
+            <div class="cfd-kpi-card">
+              <span class="cfd-kpi-label">Average Lead Time</span>
+              <h3 id="leadTimeDisplay">4.2 Days</h3>
+              <small>Backlog intake to Production Done</small>
+            </div>
+            <div class="cfd-kpi-card">
+              <span class="cfd-kpi-label">Average Cycle Time</span>
+              <h3 id="cycleTimeDisplay" style="color:var(--accent-cyan);">1.8 Days</h3>
+              <small>Active Dev Start to Definition of Done</small>
+            </div>
+            <div class="cfd-kpi-card">
+              <span class="cfd-kpi-label">Current Active WIP</span>
+              <h3 id="activeWipDisplay">5 Stories</h3>
+              <small id="wipBreakdownDisplay">3 in Dev · 2 in QA Review</small>
+            </div>
+            <div class="cfd-kpi-card">
+              <span class="cfd-kpi-label">Flow Efficiency</span>
+              <h3 id="flowEfficiencyDisplay" style="color:var(--accent-emerald);">42.8%</h3>
+              <small>Active Value-Add / Elapsed Time</small>
+            </div>
+          </div>
+
+          <!-- CFD Visualization Container -->
+          <div class="cfd-chart-container">
+            <div class="cfd-chart-header">
+              <div class="cfd-title-group">
+                <h4 style="font-size:14px;font-weight:700;margin:0 0 2px 0;"><i class="fa-solid fa-layer-group" style="color:var(--accent-cyan);margin-right:6px;"></i> Work In Progress Flow Distribution (Sprint 4)</h4>
+                <span style="font-size:12px;color:var(--text-secondary);">32 Committed Story Points across 14 Sprint Days</span>
+              </div>
+              <div class="cfd-legend">
+                <div class="cfd-legend-item"><span class="legend-swatch done"></span> Done (MVP)</div>
+                <div class="cfd-legend-item"><span class="legend-swatch qa"></span> QA &amp; Review</div>
+                <div class="cfd-legend-item"><span class="legend-swatch dev"></span> In Development</div>
+                <div class="cfd-legend-item"><span class="legend-swatch backlog"></span> Product Backlog</div>
+              </div>
+            </div>
+
+            <!-- SVG Cumulative Flow Diagram -->
+            <div class="cfd-svg-wrapper" id="cfdSvgWrapper">
+              <!-- Rendered dynamically by JavaScript -->
+            </div>
+
+            <!-- Day Inspector Timeline Buttons -->
+            <div class="cfd-timeline-strip">
+              <span style="font-size:11px;color:var(--text-muted);font-weight:700;">Inspect Day:</span>
+              <div class="day-buttons-grid" id="cfdDayButtons"></div>
+            </div>
+
+            <!-- Selected Day Breakdown Box -->
+            <div class="cfd-day-detail-card" id="cfdDayDetailCard">
+              <div class="detail-header">
+                <strong id="detailDayLabel">Day 7 (Mid-Sprint Checkpoint)</strong>
+                <span class="detail-throughput" id="detailThroughput">Velocity: 16 pts in flight</span>
+              </div>
+              <div class="detail-distribution-row">
+                <div class="dist-item"><span class="dot done"></span> Done: <strong id="detDone">10 pts</strong></div>
+                <div class="dist-item"><span class="dot qa"></span> In QA: <strong id="detQa">6 pts</strong></div>
+                <div class="dist-item"><span class="dot dev"></span> In Dev: <strong id="detDev">8 pts</strong></div>
+                <div class="dist-item"><span class="dot backlog"></span> Backlog: <strong id="detBacklog">8 pts</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Little's Law & WIP Limit Simulator -->
+          <div class="wip-sim-container">
+            <div class="wip-sim-header">
+              <div>
+                <h4 style="font-size:14px;font-weight:700;"><i class="fa-solid fa-traffic-light" style="color:var(--accent-amber);margin-right:6px;"></i> Little's Law &amp; WIP Bottleneck Simulator</h4>
+                <small style="color:var(--text-secondary);">Observe how limiting Work-in-Progress (WIP) accelerates delivery cycle times</small>
+              </div>
+              <div class="wip-alert-pill" id="wipAlertPill">
+                <span class="pulse-dot green"></span> <strong>Optimal Flow (Kanban Balanced)</strong>
+              </div>
+            </div>
+
+            <div class="wip-sliders-grid">
+              <div class="wip-slider-box">
+                <div class="slider-header">
+                  <span>Development Column WIP Limit:</span>
+                  <strong id="wipDevVal">3 Stories</strong>
+                </div>
+                <input type="range" id="wipDevSlider" min="1" max="8" value="3" oninput="updateWipSim()" />
+                <div class="slider-ticks"><span>1 (Starved)</span><span>3 (Optimal)</span><span>8 (Overloaded)</span></div>
+              </div>
+
+              <div class="wip-slider-box">
+                <div class="slider-header">
+                  <span>QA Review Column WIP Limit:</span>
+                  <strong id="wipQaVal">2 Stories</strong>
+                </div>
+                <input type="range" id="wipQaSlider" min="1" max="6" value="2" oninput="updateWipSim()" />
+                <div class="slider-ticks"><span>1 (Strict)</span><span>2 (Optimal)</span><span>6 (Bottleneck)</span></div>
+              </div>
+            </div>
+
+            <div class="wip-diagnosis-banner" id="wipDiagnosisBanner">
+              <i class="fa-solid fa-circle-check" id="wipDiagIcon" style="color:var(--accent-emerald);font-size:18px;"></i>
+              <div class="wip-diag-content">
+                <strong id="wipDiagTitle">Balanced Agile Flow</strong>
+                <p id="wipDiagMsg">With Dev WIP at 3 and QA WIP at 2, context switching is minimized. Stories transition smoothly without queue starvation or review bottlenecks.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Agile Flow Principles Reference Guide -->
+          <div class="cfd-theory-grid">
+            <div class="cfd-theory-card">
+              <h5><i class="fa-solid fa-stopwatch"></i> Lead Time vs. Cycle Time</h5>
+              <p><strong>Lead Time</strong> measures total duration from story creation to user hands (4.2 days). <strong>Cycle Time</strong> measures only active work duration once work begins (1.8 days).</p>
+            </div>
+            <div class="cfd-theory-card">
+              <h5><i class="fa-solid fa-square-root-variable"></i> Little's Law Formula</h5>
+              <div class="formula-code">Cycle Time = WIP / Throughput</div>
+              <p>Mathematically proves that reducing Work In Progress (WIP) directly shortens Cycle Time without adding headcount.</p>
+            </div>
+            <div class="cfd-theory-card">
+              <h5><i class="fa-solid fa-bars-staggered"></i> CFD Horizontal &amp; Vertical Bands</h5>
+              <p><strong>Horizontal distance</strong> between top and bottom bands represents Cycle Time. <strong>Vertical distance</strong> at any point shows total Work In Progress (WIP).</p>
+            </div>
+            <div class="cfd-theory-card">
+              <h5><i class="fa-solid fa-percent"></i> Flow Efficiency Metric</h5>
+              <div class="formula-code">Flow Eff. = (Touch Time / Lead Time) &times; 100</div>
+              <p>Highlights waste spent waiting in queues. QuickCare achieved 42.8%, well above industry standard of 15-25%.</p>
             </div>
           </div>
         </div>

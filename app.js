@@ -209,6 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setTodayDate();
   updateRiskCalc();
   initAIChat();
+  initCfd();
   updateSim(null, null, null, true);
 });
 
@@ -1523,4 +1524,243 @@ VELOCITY & QUALITY METRICS:
   }).catch(() => {
     showToast('Copied governance summary to clipboard', 'info');
   });
+}
+
+// ==========================================================================
+//  CUMULATIVE FLOW DIAGRAM (CFD) & LITTLE'S LAW STUDIO
+// ==========================================================================
+
+const CFD_DAYS = [
+  { day: 1, done: 0, qa: 0, dev: 6, backlog: 26 },
+  { day: 2, done: 0, qa: 2, dev: 8, backlog: 22 },
+  { day: 3, done: 2, qa: 4, dev: 8, backlog: 18 },
+  { day: 4, done: 5, qa: 4, dev: 8, backlog: 15 },
+  { day: 5, done: 8, qa: 5, dev: 7, backlog: 12 },
+  { day: 6, done: 10, qa: 5, dev: 7, backlog: 10 },
+  { day: 7, done: 10, qa: 6, dev: 8, backlog: 8 },
+  { day: 8, done: 14, qa: 5, dev: 7, backlog: 6 },
+  { day: 9, done: 17, qa: 5, dev: 6, backlog: 4 },
+  { day: 10, done: 20, qa: 4, dev: 6, backlog: 2 },
+  { day: 11, done: 23, qa: 4, dev: 5, backlog: 0 },
+  { day: 12, done: 26, qa: 3, dev: 3, backlog: 0 },
+  { day: 13, done: 29, qa: 2, dev: 1, backlog: 0 },
+  { day: 14, done: 32, qa: 0, dev: 0, backlog: 0 },
+];
+
+let selectedCfdDayIndex = 6; // Default: Day 7 (Mid-Sprint Checkpoint)
+
+function initCfd() {
+  renderCfdSvg();
+  renderCfdDayButtons();
+  showCfdDayDetails(selectedCfdDayIndex);
+  updateWipSim();
+}
+
+function renderCfdSvg() {
+  const container = document.getElementById('cfdSvgWrapper');
+  if (!container) return;
+
+  const width = 760;
+  const height = 240;
+  const padL = 40;
+  const padR = 20;
+  const padT = 20;
+  const padB = 30;
+  const plotW = width - padL - padR;
+  const plotH = height - padT - padB;
+  const maxPts = 32;
+
+  const n = CFD_DAYS.length;
+  const xStep = plotW / (n - 1);
+
+  const pointsDone = [];
+  const pointsQa = [];
+  const pointsDev = [];
+  const pointsBacklog = [];
+
+  CFD_DAYS.forEach((d, i) => {
+    const x = padL + i * xStep;
+    const yDone = padT + plotH - (d.done / maxPts) * plotH;
+    const yQa = padT + plotH - ((d.done + d.qa) / maxPts) * plotH;
+    const yDev = padT + plotH - ((d.done + d.qa + d.dev) / maxPts) * plotH;
+    const yBacklog = padT + plotH - ((d.done + d.qa + d.dev + d.backlog) / maxPts) * plotH;
+
+    pointsDone.push({ x, y: yDone });
+    pointsQa.push({ x, y: yQa });
+    pointsDev.push({ x, y: yDev });
+    pointsBacklog.push({ x, y: yBacklog });
+  });
+
+  const polyDone = `${pointsDone.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')} ${pointsDone[n - 1].x.toFixed(1)},${padT + plotH} ${pointsDone[0].x.toFixed(1)},${padT + plotH}`;
+  const polyQa = `${pointsQa.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')} ${pointsDone.slice().reverse().map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')}`;
+  const polyDev = `${pointsDev.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')} ${pointsQa.slice().reverse().map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')}`;
+  const polyBacklog = `${pointsBacklog.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')} ${pointsDev.slice().reverse().map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')}`;
+
+  let gridHtml = '';
+  [0, 8, 16, 24, 32].forEach(val => {
+    const y = padT + plotH - (val / maxPts) * plotH;
+    gridHtml += `
+      <line x1="${padL}" y1="${y}" x2="${width - padR}" y2="${y}" stroke="rgba(255,255,255,0.08)" stroke-dasharray="4,4" />
+      <text x="${padL - 8}" y="${y + 3}" fill="#64748b" font-size="9" text-anchor="end">${val}p</text>
+    `;
+  });
+
+  let dayLabelsHtml = '';
+  [1, 3, 5, 7, 9, 11, 14].forEach(dNum => {
+    const idx = dNum - 1;
+    const x = padL + idx * xStep;
+    dayLabelsHtml += `
+      <text x="${x}" y="${height - 8}" fill="#94a3b8" font-size="9" text-anchor="middle">D${dNum}</text>
+    `;
+  });
+
+  const selX = padL + selectedCfdDayIndex * xStep;
+
+  container.innerHTML = `
+    <svg viewBox="0 0 ${width} ${height}" class="cfd-svg" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="cfdGradDone" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#10b981" stop-opacity="0.9"/>
+          <stop offset="100%" stop-color="#059669" stop-opacity="0.75"/>
+        </linearGradient>
+        <linearGradient id="cfdGradQa" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.85"/>
+          <stop offset="100%" stop-color="#0891b2" stop-opacity="0.65"/>
+        </linearGradient>
+        <linearGradient id="cfdGradDev" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.85"/>
+          <stop offset="100%" stop-color="#d97706" stop-opacity="0.65"/>
+        </linearGradient>
+        <linearGradient id="cfdGradBacklog" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#64748b" stop-opacity="0.65"/>
+          <stop offset="100%" stop-color="#475569" stop-opacity="0.45"/>
+        </linearGradient>
+      </defs>
+
+      ${gridHtml}
+
+      <polygon points="${polyBacklog}" fill="url(#cfdGradBacklog)" class="cfd-layer" />
+      <polygon points="${polyDev}" fill="url(#cfdGradDev)" class="cfd-layer" />
+      <polygon points="${polyQa}" fill="url(#cfdGradQa)" class="cfd-layer" />
+      <polygon points="${polyDone}" fill="url(#cfdGradDone)" class="cfd-layer" />
+
+      <polyline points="${pointsDone.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')}" fill="none" stroke="#34d399" stroke-width="1.5" />
+      <polyline points="${pointsQa.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')}" fill="none" stroke="#38bdf8" stroke-width="1.5" />
+      <polyline points="${pointsDev.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')}" fill="none" stroke="#fbbf24" stroke-width="1.5" />
+      <polyline points="${pointsBacklog.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')}" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,3" />
+
+      ${dayLabelsHtml}
+
+      <line x1="${selX}" y1="${padT}" x2="${selX}" y2="${padT + plotH}" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="3,3" />
+      <circle cx="${selX}" cy="${padT}" r="3.5" fill="#38bdf8" />
+    </svg>
+  `;
+}
+
+function renderCfdDayButtons() {
+  const container = document.getElementById('cfdDayButtons');
+  if (!container) return;
+
+  container.innerHTML = CFD_DAYS.map((d, i) => `
+    <button class="cfd-day-btn ${i === selectedCfdDayIndex ? 'active' : ''}" onclick="selectCfdDay(${i})">
+      D${d.day}
+    </button>
+  `).join('');
+}
+
+function selectCfdDay(index) {
+  selectedCfdDayIndex = index;
+  renderCfdDayButtons();
+  renderCfdSvg();
+  showCfdDayDetails(index);
+}
+
+function showCfdDayDetails(index) {
+  const d = CFD_DAYS[index];
+  if (!d) return;
+
+  const lbl = document.getElementById('detailDayLabel');
+  const tp = document.getElementById('detailThroughput');
+  const dDone = document.getElementById('detDone');
+  const dQa = document.getElementById('detQa');
+  const dDev = document.getElementById('detDev');
+  const dBacklog = document.getElementById('detBacklog');
+
+  if (lbl) lbl.textContent = `Day ${d.day} (Sprint Flow Snapshot)`;
+  const inFlight = d.dev + d.qa;
+  if (tp) tp.textContent = `WIP In-Flight: ${inFlight} pts · Delivered: ${d.done}/32 pts`;
+  if (dDone) dDone.textContent = `${d.done} pts`;
+  if (dQa) dQa.textContent = `${d.qa} pts`;
+  if (dDev) dDev.textContent = `${d.dev} pts`;
+  if (dBacklog) dBacklog.textContent = `${d.backlog} pts`;
+}
+
+function updateWipSim() {
+  const devSlider = document.getElementById('wipDevSlider');
+  const qaSlider = document.getElementById('wipQaSlider');
+  if (!devSlider || !qaSlider) return;
+
+  const devWip = parseInt(devSlider.value, 10);
+  const qaWip = parseInt(qaSlider.value, 10);
+  const totalWip = devWip + qaWip;
+
+  const devValEl = document.getElementById('wipDevVal');
+  const qaValEl = document.getElementById('wipQaVal');
+  const wipDisp = document.getElementById('activeWipDisplay');
+  const wipBreakdown = document.getElementById('wipBreakdownDisplay');
+
+  if (devValEl) devValEl.textContent = `${devWip} Stories`;
+  if (qaValEl) qaValEl.textContent = `${qaWip} Stories`;
+  if (wipDisp) wipDisp.textContent = `${totalWip} Stories`;
+  if (wipBreakdown) wipBreakdown.textContent = `${devWip} in Dev · ${qaWip} in QA Review`;
+
+  const throughput = 2.28;
+  const cycleTime = (totalWip / throughput).toFixed(1);
+  const leadTime = (parseFloat(cycleTime) + 2.4).toFixed(1);
+  const touchTime = 1.8;
+  const flowEfficiency = Math.min(85, Math.round((touchTime / parseFloat(leadTime)) * 100));
+
+  const ctDisp = document.getElementById('cycleTimeDisplay');
+  const ltDisp = document.getElementById('leadTimeDisplay');
+  const feDisp = document.getElementById('flowEfficiencyDisplay');
+
+  if (ctDisp) ctDisp.textContent = `${cycleTime} Days`;
+  if (ltDisp) ltDisp.textContent = `${leadTime} Days`;
+  if (feDisp) feDisp.textContent = `${flowEfficiency}%`;
+
+  const alertPill = document.getElementById('wipAlertPill');
+  const diagIcon = document.getElementById('wipDiagIcon');
+  const diagTitle = document.getElementById('wipDiagTitle');
+  const diagMsg = document.getElementById('wipDiagMsg');
+
+  if (devWip > 4) {
+    if (alertPill) alertPill.innerHTML = '<span class="pulse-dot red"></span> <strong>Dev Multitasking Overload</strong>';
+    if (diagIcon) { diagIcon.className = 'fa-solid fa-triangle-exclamation'; diagIcon.style.color = '#ef4444'; }
+    if (diagTitle) diagTitle.textContent = 'High Context-Switching Waste';
+    if (diagMsg) diagMsg.textContent = `Dev WIP is ${devWip} stories. Multitasking increases cognitive load and cycle time jumps to ${cycleTime} days (Little's Law). Recommend enforcing WIP limit = 3.`;
+  } else if (qaWip > 3) {
+    if (alertPill) alertPill.innerHTML = '<span class="pulse-dot amber"></span> <strong>QA Review Bottleneck</strong>';
+    if (diagIcon) { diagIcon.className = 'fa-solid fa-circle-exclamation'; diagIcon.style.color = '#f59e0b'; }
+    if (diagTitle) diagTitle.textContent = 'Testing Choke Point & Verification Starvation';
+    if (diagMsg) diagMsg.textContent = `QA WIP is ${qaWip} stories. User stories are waiting for verification. Recommend Scrum Master swarm developers to assist with QA test execution.`;
+  } else if (devWip === 1 && qaWip === 1) {
+    if (alertPill) alertPill.innerHTML = '<span class="pulse-dot amber"></span> <strong>Over-Constrained WIP</strong>';
+    if (diagIcon) { diagIcon.className = 'fa-solid fa-circle-info'; diagIcon.style.color = '#06b6d4'; }
+    if (diagTitle) diagTitle.textContent = 'Potential Idle Capacity';
+    if (diagMsg) diagMsg.textContent = 'WIP is very low. Cycle time is ultra-fast, but developer capacity may be underutilized if a single story hits an unexpected blocker.';
+  } else {
+    if (alertPill) alertPill.innerHTML = '<span class="pulse-dot green"></span> <strong>Optimal Flow (Kanban Balanced)</strong>';
+    if (diagIcon) { diagIcon.className = 'fa-solid fa-circle-check'; diagIcon.style.color = 'var(--accent-emerald)'; }
+    if (diagTitle) diagTitle.textContent = 'Balanced Agile Flow';
+    if (diagMsg) diagMsg.textContent = `With Dev WIP at ${devWip} and QA WIP at ${qaWip}, context switching is minimized. Stories transition smoothly without queue starvation or review bottlenecks (Cycle Time: ${cycleTime} days).`;
+  }
+}
+
+function resetWipSim() {
+  const devSlider = document.getElementById('wipDevSlider');
+  const qaSlider = document.getElementById('wipQaSlider');
+  if (devSlider) devSlider.value = 3;
+  if (qaSlider) qaSlider.value = 2;
+  updateWipSim();
+  showToast('Kanban WIP limits restored to optimal baseline (3 Dev, 2 QA).', 'info');
 }

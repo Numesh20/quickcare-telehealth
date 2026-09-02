@@ -1368,3 +1368,159 @@ function formatTime(totalSeconds) {
   const s = (totalSeconds % 60).toString().padStart(2, '0');
   return `${m}:${s}`;
 }
+
+// ==========================================================================
+//  AGILE EARNED VALUE MANAGEMENT (EVM) & EXECUTIVE REPORT
+// ==========================================================================
+
+const EVM_BASELINE = {
+  plannedPoints: 32,
+  plannedValue: 9900000,
+  actualCost: 9603000,
+  ratePerPoint: 9900000 / 32, // Rs. 309,375 per point
+};
+
+function onEvmSliderChange() {
+  const pointsSlider = document.getElementById('evmPointsSlider');
+  const spendSlider = document.getElementById('evmSpendSlider');
+  if (!pointsSlider || !spendSlider) return;
+
+  const points = parseInt(pointsSlider.value, 10);
+  const ac = parseInt(spendSlider.value, 10);
+  const pv = EVM_BASELINE.plannedValue;
+  const ev = Math.round(points * EVM_BASELINE.ratePerPoint);
+
+  const pointsValEl = document.getElementById('sliderPointsVal');
+  const spendValEl = document.getElementById('sliderSpendVal');
+  if (pointsValEl) pointsValEl.textContent = `${points} pts`;
+  if (spendValEl) spendValEl.textContent = `Rs. ${ac.toLocaleString()}`;
+
+  const evDisp = document.getElementById('evmEvDisplay');
+  const evPts = document.getElementById('evmEvPoints');
+  const acDisp = document.getElementById('evmAcDisplay');
+  if (evDisp) evDisp.textContent = `Rs. ${ev.toLocaleString()}`;
+  if (evPts) evPts.textContent = `Delivered: ${points} Story Points`;
+  if (acDisp) acDisp.textContent = `Rs. ${ac.toLocaleString()}`;
+
+  const cv = ev - ac;
+  const cvEl = document.getElementById('evmCvDisplay');
+  const cvSub = document.getElementById('evmCvSub');
+  if (cvEl) {
+    cvEl.textContent = (cv >= 0 ? '+' : '') + `Rs. ${cv.toLocaleString()}`;
+    cvEl.style.color = cv >= 0 ? 'var(--accent-emerald)' : '#ef4444';
+  }
+  if (cvSub) {
+    cvSub.textContent = cv >= 0 ? 'Under Budget / Favorable' : 'Over Budget / Unfavorable';
+  }
+
+  const sv = ev - pv;
+  const svPoints = points - EVM_BASELINE.plannedPoints;
+  const svEl = document.getElementById('evmSvDisplay');
+  const svSub = document.getElementById('evmSvSub');
+  if (svEl) {
+    svEl.textContent = (sv >= 0 ? '+' : '') + `Rs. ${sv.toLocaleString()} (${svPoints >= 0 ? '+' : ''}${svPoints} pts)`;
+    svEl.style.color = sv >= 0 ? 'var(--accent-emerald)' : '#ef4444';
+  }
+  if (svSub) {
+    svSub.textContent = sv >= 0 ? (sv === 0 ? '100% On Schedule' : 'Ahead of Schedule') : 'Behind Schedule';
+  }
+
+  const cpi = ac > 0 ? (ev / ac) : 1;
+  const spi = pv > 0 ? (ev / pv) : 1;
+
+  const cpiVal = document.getElementById('evmCpiVal');
+  const spiVal = document.getElementById('evmSpiVal');
+  if (cpiVal) cpiVal.textContent = cpi.toFixed(2);
+  if (spiVal) spiVal.textContent = spi.toFixed(2);
+
+  const cpiPct = Math.min(100, Math.max(10, Math.round(cpi * 80)));
+  const spiPct = Math.min(100, Math.max(10, Math.round(spi * 80)));
+  const cpiBar = document.getElementById('cpiBar');
+  const spiBar = document.getElementById('spiBar');
+  if (cpiBar) cpiBar.style.width = `${cpiPct}%`;
+  if (spiBar) spiBar.style.width = `${spiPct}%`;
+
+  const cpiBadge = document.getElementById('cpiBadge');
+  const cpiDesc = document.getElementById('cpiDesc');
+  if (cpiBadge && cpiDesc) {
+    if (cpi >= 1.0) {
+      cpiBadge.className = 'index-score-badge green';
+      const sub = cpiBadge.querySelector('.index-subtext');
+      if (sub) sub.textContent = 'Favorable';
+      cpiDesc.textContent = `Every Rs. 1.00 spent generated Rs. ${cpi.toFixed(2)} in earned software value.`;
+    } else {
+      cpiBadge.className = 'index-score-badge red';
+      const sub = cpiBadge.querySelector('.index-subtext');
+      if (sub) sub.textContent = 'Unfavorable';
+      cpiDesc.textContent = `Every Rs. 1.00 spent generated only Rs. ${cpi.toFixed(2)} in software value (Cost Overrun).`;
+    }
+  }
+
+  const spiBadge = document.getElementById('spiBadge');
+  const spiDesc = document.getElementById('spiDesc');
+  if (spiBadge && spiDesc) {
+    if (spi >= 1.0) {
+      spiBadge.className = 'index-score-badge cyan';
+      const sub = spiBadge.querySelector('.index-subtext');
+      if (sub) sub.textContent = spi === 1 ? 'On Track' : 'Ahead';
+      spiDesc.textContent = `Sprint completed ${Math.round(spi * 100)}% of committed velocity on schedule.`;
+    } else {
+      spiBadge.className = 'index-score-badge red';
+      const sub = spiBadge.querySelector('.index-subtext');
+      if (sub) sub.textContent = 'Delayed';
+      spiDesc.textContent = `Sprint is pacing at ${Math.round(spi * 100)}% of commitment (Schedule Slippage).`;
+    }
+  }
+
+  const statusEl = document.getElementById('evmSimStatus');
+  if (statusEl) {
+    if (cpi >= 1.0 && spi >= 1.0) {
+      statusEl.innerHTML = '<span class="pulse-dot green"></span> Health: <strong>Optimal Performance (Under Budget & On Time)</strong>';
+    } else if (cpi >= 1.0 && spi < 1.0) {
+      statusEl.innerHTML = '<span class="pulse-dot amber"></span> Health: <strong>Schedule Risk (Cost Controlled, Velocity Lagging)</strong>';
+    } else if (cpi < 1.0 && spi >= 1.0) {
+      statusEl.innerHTML = '<span class="pulse-dot amber"></span> Health: <strong>Budget Pressure (On Schedule, Higher Spend)</strong>';
+    } else {
+      statusEl.innerHTML = '<span class="pulse-dot red"></span> Health: <strong>Critical Review Required (Over Budget & Delayed)</strong>';
+    }
+  }
+}
+
+function resetEvmSim() {
+  const pointsSlider = document.getElementById('evmPointsSlider');
+  const spendSlider = document.getElementById('evmSpendSlider');
+  if (pointsSlider) pointsSlider.value = EVM_BASELINE.plannedPoints;
+  if (spendSlider) spendSlider.value = EVM_BASELINE.actualCost;
+  onEvmSliderChange();
+  showToast('Agile EVM baseline metrics restored.', 'info');
+}
+
+function openExecutiveReportModal() {
+  openModal('execReportModal');
+}
+
+function copyExecutiveReport() {
+  const brief = `QUICKCARE TELEHEALTH MVP — EXECUTIVE PROJECT GOVERNANCE BRIEF
+Project Manager / Scrum Master: Numesh Ravindra
+Project Sponsor: VP of Digital Health
+Lifecycle: 15 Weeks (4 Sprints) · Dec 15, 2026
+
+FINANCIAL & EVM PERFORMANCE:
+- Approved Baseline Budget: Rs. 39,600,000 ($120,000 USD)
+- Total Actual Expenditure: Rs. 38,412,000 ($116,400 USD)
+- Net Cost Variance (CV): +Rs. 1,188,000 Favorable (+3.0% Under Budget)
+- Cost Performance Index (CPI): 1.03 (Under Budget / High Cost Efficiency)
+- Schedule Performance Index (SPI): 1.00 (100% On Time)
+
+VELOCITY & QUALITY METRICS:
+- Total Story Points Delivered: 122 Points (101.6% of commitment)
+- Average Velocity: 30.75 Points / Sprint
+- QA Test Pass Rate: 99.3% (141/142 test cases signed off, 0 critical defects)
+- HIPAA & PCI-DSS Level 1: Fully certified & audited`;
+
+  navigator.clipboard.writeText(brief).then(() => {
+    showToast('Executive governance summary copied to clipboard!', 'success');
+  }).catch(() => {
+    showToast('Copied governance summary to clipboard', 'info');
+  });
+}

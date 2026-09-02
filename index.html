@@ -503,6 +503,7 @@
           <button class="pm-subtab" onclick="switchPMTab('budget', this)" role="tab"><i class="fa-solid fa-money-bill-trend-up"></i> Budget</button>
           <button class="pm-subtab" onclick="switchPMTab('raid', this)" role="tab"><i class="fa-solid fa-shield-halved"></i> RAID/RACI</button>
           <button class="pm-subtab" onclick="switchPMTab('standup', this)" role="tab"><i class="fa-solid fa-users"></i> Standup</button>
+          <button class="pm-subtab highlight-tab" onclick="switchPMTab('evm', this)" role="tab"><i class="fa-solid fa-scale-balanced"></i> Agile EVM</button>
         </div>
 
         <!-- ---- KANBAN ---- -->
@@ -842,6 +843,151 @@
           </div>
         </div>
 
+        <!-- ---- AGILE EARNED VALUE MANAGEMENT (EVM) ---- -->
+        <div class="pm-tab-content" id="pmTab-evm">
+          <div class="evm-header-row">
+            <div>
+              <h3 style="font-size:16px;font-weight:700;"><i class="fa-solid fa-scale-balanced" style="color:var(--accent-cyan);margin-right:8px;"></i> Sprint 4 &amp; Project Closure — Agile EVM Center</h3>
+              <small style="color:var(--text-secondary);">Integrated Scope, Schedule, and Financial Governance (LKR / USD)</small>
+            </div>
+            <div class="evm-header-actions">
+              <button class="btn-sm btn-outline" onclick="resetEvmSim()"><i class="fa-solid fa-rotate-left"></i> Reset Baseline</button>
+              <button class="btn-sm btn-primary" onclick="openExecutiveReportModal()"><i class="fa-solid fa-file-contract"></i> Executive Report</button>
+            </div>
+          </div>
+
+          <!-- Top EVM Metrics Row -->
+          <div class="evm-kpi-grid">
+            <div class="evm-kpi-card">
+              <span class="evm-kpi-label">Planned Value (PV)</span>
+              <h3 id="evmPvDisplay">Rs. 9,900,000</h3>
+              <small>Commitment: 32 Story Points</small>
+            </div>
+            <div class="evm-kpi-card">
+              <span class="evm-kpi-label">Earned Value (EV)</span>
+              <h3 id="evmEvDisplay" style="color:var(--accent-cyan);">Rs. 9,900,000</h3>
+              <small id="evmEvPoints">Delivered: 32 Story Points</small>
+            </div>
+            <div class="evm-kpi-card">
+              <span class="evm-kpi-label">Actual Cost (AC)</span>
+              <h3 id="evmAcDisplay">Rs. 9,603,000</h3>
+              <small>Sprint 4 Incurred Labor &amp; Infra</small>
+            </div>
+            <div class="evm-kpi-card">
+              <span class="evm-kpi-label">Cost Variance (CV = EV - AC)</span>
+              <h3 id="evmCvDisplay" style="color:var(--accent-emerald);">+Rs. 297,000</h3>
+              <small id="evmCvSub">Under Budget (+Rs. 1.188M Total)</small>
+            </div>
+            <div class="evm-kpi-card">
+              <span class="evm-kpi-label">Schedule Variance (SV = EV - PV)</span>
+              <h3 id="evmSvDisplay" style="color:var(--accent-emerald);">Rs. 0 (0 pts)</h3>
+              <small id="evmSvSub">100% On Schedule</small>
+            </div>
+          </div>
+
+          <!-- Performance Indices & Gauges -->
+          <div class="evm-indices-grid">
+            <div class="evm-index-card">
+              <div class="index-card-head">
+                <div>
+                  <span class="index-tag">Cost Efficiency</span>
+                  <h4>Cost Performance Index (CPI = EV / AC)</h4>
+                </div>
+                <div class="index-score-badge" id="cpiBadge">
+                  <strong id="evmCpiVal">1.03</strong>
+                  <span class="index-subtext">Favorable</span>
+                </div>
+              </div>
+              <div class="evm-progress-track">
+                <div class="evm-progress-fill green" id="cpiBar" style="width: 82%;"></div>
+                <div class="evm-marker" style="left: 80%;" title="Baseline 1.00"></div>
+              </div>
+              <div class="index-footer">
+                <span id="cpiDesc">Every Rs. 1.00 spent generated Rs. 1.03 in earned business software value.</span>
+                <span class="benchmark">Benchmark: &gt; 1.00</span>
+              </div>
+            </div>
+
+            <div class="evm-index-card">
+              <div class="index-card-head">
+                <div>
+                  <span class="index-tag">Schedule Efficiency</span>
+                  <h4>Schedule Performance Index (SPI = EV / PV)</h4>
+                </div>
+                <div class="index-score-badge" id="spiBadge">
+                  <strong id="evmSpiVal">1.00</strong>
+                  <span class="index-subtext">On Track</span>
+                </div>
+              </div>
+              <div class="evm-progress-track">
+                <div class="evm-progress-fill cyan" id="spiBar" style="width: 80%;"></div>
+                <div class="evm-marker" style="left: 80%;" title="Baseline 1.00"></div>
+              </div>
+              <div class="index-footer">
+                <span id="spiDesc">Sprint completed 100% of committed work within the planned sprint window.</span>
+                <span class="benchmark">Benchmark: = 1.00</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive EVM Sensitivity Simulator -->
+          <div class="evm-sim-container">
+            <div class="evm-sim-header">
+              <div>
+                <h4 style="font-size:14px;font-weight:700;"><i class="fa-solid fa-sliders" style="color:var(--accent-purple);margin-right:6px;"></i> Interactive EVM Sensitivity Tester</h4>
+                <small style="color:var(--text-secondary);">Test what happens to CPI and SPI if team velocity or expenses fluctuate</small>
+              </div>
+              <div class="evm-sim-status" id="evmSimStatus">
+                <span class="pulse-dot green"></span> Health: <strong>Optimal Performance</strong>
+              </div>
+            </div>
+
+            <div class="evm-sliders-grid">
+              <div class="evm-slider-box">
+                <div class="slider-header">
+                  <span>Sprint Completed Points (Earned Value):</span>
+                  <strong id="sliderPointsVal">32 pts</strong>
+                </div>
+                <input type="range" id="evmPointsSlider" min="16" max="40" step="1" value="32" oninput="onEvmSliderChange()" />
+                <div class="slider-ticks"><span>16 pts (Lagging)</span><span>32 pts (Baseline)</span><span>40 pts (Ahead)</span></div>
+              </div>
+
+              <div class="evm-slider-box">
+                <div class="slider-header">
+                  <span>Actual Incurred Spend (AC):</span>
+                  <strong id="sliderSpendVal">Rs. 9,603,000</strong>
+                </div>
+                <input type="range" id="evmSpendSlider" min="7500000" max="13000000" step="100000" value="9603000" oninput="onEvmSliderChange()" />
+                <div class="slider-ticks"><span>Rs. 7.5M (Frugal)</span><span>Rs. 9.6M (Actual)</span><span>Rs. 13M (Overrun)</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- EVM Concept & Formula Reference Guide -->
+          <div class="evm-ref-grid">
+            <div class="evm-ref-card">
+              <h5><i class="fa-solid fa-calculator"></i> Planned Value (PV)</h5>
+              <div class="formula-code">PV = Planned Points &times; Rate per Point</div>
+              <p>Baseline budget authorized for scheduled sprint workload (Rs. 9.90M for Sprint 4).</p>
+            </div>
+            <div class="evm-ref-card">
+              <h5><i class="fa-solid fa-trophy"></i> Earned Value (EV)</h5>
+              <div class="formula-code">EV = Completed Points &times; Rate per Point</div>
+              <p>The quantifiable value of software actually completed and accepted by Product Owner.</p>
+            </div>
+            <div class="evm-ref-card">
+              <h5><i class="fa-solid fa-coins"></i> Actual Cost (AC)</h5>
+              <div class="formula-code">AC = Incurred Labor + Infra + Tooling</div>
+              <p>Total real expenses spent executing the sprint work items across the two-week cycle.</p>
+            </div>
+            <div class="evm-ref-card">
+              <h5><i class="fa-solid fa-compass"></i> Cost &amp; Schedule Indices</h5>
+              <div class="formula-code">CPI = EV / AC &nbsp;|&nbsp; SPI = EV / PV</div>
+              <p>CPI &gt; 1.0 indicates cost efficiency; SPI &ge; 1.0 proves on-schedule milestone completion.</p>
+            </div>
+          </div>
+        </div>
+
       </div><!-- /pm-dashboard -->
     </section>
   </main>
@@ -1097,6 +1243,92 @@
         <div class="driver-actions">
           <button class="btn-driver-call" onclick="showToast('Calling Roshan Kumara...','info')"><i class="fa-solid fa-phone"></i> Call</button>
           <button class="btn-driver-chat" onclick="showToast('Opening chat with driver','info')"><i class="fa-solid fa-comment"></i> Chat</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       MODAL: EXECUTIVE STATUS & EVM CLOSURE REPORT
+       ===================================================================== -->
+  <div class="modal-overlay hidden" id="execReportModal" role="dialog" aria-modal="true" aria-label="Executive Status Report">
+    <div class="modal-card exec-report-card">
+      <button class="modal-close" onclick="closeModal('execReportModal')" aria-label="Close">&times;</button>
+      <div class="exec-report-header">
+        <div class="exec-brand">
+          <i class="fa-solid fa-shield-halved" style="color:var(--accent-cyan);font-size:24px;"></i>
+          <div>
+            <h3 style="font-size:18px;font-weight:800;margin:0;">QuickCare Telehealth MVP — Executive Project Governance Brief</h3>
+            <span style="font-size:12px;color:var(--text-secondary);">Sprint 4 Final &amp; Project Closure Report · HIPAA-Compliant Telehealth Delivery</span>
+          </div>
+        </div>
+        <div class="exec-actions">
+          <button class="btn-sm btn-outline" onclick="copyExecutiveReport()"><i class="fa-solid fa-copy"></i> Copy Brief</button>
+          <button class="btn-sm btn-primary" onclick="window.print()"><i class="fa-solid fa-print"></i> Print PDF</button>
+        </div>
+      </div>
+
+      <div class="exec-meta-banner">
+        <div class="exec-meta-item"><span>Project Manager:</span><strong>Numesh Ravindra (IT PM / Scrum Master)</strong></div>
+        <div class="exec-meta-item"><span>Sponsor:</span><strong>VP of Digital Health</strong></div>
+        <div class="exec-meta-item"><span>Project Status:</span><strong style="color:var(--accent-emerald);">[COMPLETED / PRODUCTION READY]</strong></div>
+        <div class="exec-meta-item"><span>Audit Certification:</span><strong style="color:var(--accent-cyan);">HIPAA &amp; PCI-DSS Level 1 Signed Off</strong></div>
+      </div>
+
+      <div class="exec-summary-grid">
+        <div class="exec-sum-card">
+          <span class="sum-lbl">Approved Baseline Budget</span>
+          <h4>Rs. 39,600,000 <small>($120,000 USD)</small></h4>
+          <span class="sum-stat green">Funded CapEx + OpEx</span>
+        </div>
+        <div class="exec-sum-card">
+          <span class="sum-lbl">Actual Incurred Spend</span>
+          <h4>Rs. 38,412,000 <small>($116,400 USD)</small></h4>
+          <span class="sum-stat green">Favorable Variance: +Rs. 1,188,000</span>
+        </div>
+        <div class="exec-sum-card">
+          <span class="sum-lbl">Cumulative CPI</span>
+          <h4 style="color:var(--accent-emerald);">1.03 <small>Cost Performance Index</small></h4>
+          <span class="sum-stat green">3.0% Under Budget</span>
+        </div>
+        <div class="exec-sum-card">
+          <span class="sum-lbl">Cumulative SPI</span>
+          <h4 style="color:var(--accent-cyan);">1.00 <small>Schedule Performance Index</small></h4>
+          <span class="sum-stat green">100% On-Time Delivery (15 Wks)</span>
+        </div>
+      </div>
+
+      <div class="exec-sections-container">
+        <div class="exec-section">
+          <h5>1. Executive Summary &amp; Business Value Realization</h5>
+          <p>The QuickCare Telehealth MVP software development initiative was delivered across 15 weeks (4 execution sprints). The application successfully passed end-to-end integration across WebRTC video consultations, automated allergy contraindication checks, express pharmacy delivery tracking, and Stripe digital billing in Sri Lankan Rupees (LKR).</p>
+        </div>
+
+        <div class="exec-section">
+          <h5>2. Agile Team Velocity &amp; Quality Metrics</h5>
+          <div class="exec-metrics-table">
+            <div class="emt-row header"><span>Metric</span><span>Target Baseline</span><span>Actual Delivered</span><span>Status</span></div>
+            <div class="emt-row"><span>Total Story Points</span><span>120 Points</span><span>122 Points</span><span class="badge-ok">101.6% Delivered</span></div>
+            <div class="emt-row"><span>Average Velocity</span><span>30.0 pts / sprint</span><span>30.75 pts / sprint</span><span class="badge-ok">Predictable</span></div>
+            <div class="emt-row"><span>QA Test Pass Rate</span><span>&gt; 98.0%</span><span>99.3% (141/142 tests)</span><span class="badge-ok">Zero Blockers</span></div>
+            <div class="emt-row"><span>Critical Risks (RAID)</span><span>4 Identified</span><span>4 Mitigated / Closed</span><span class="badge-ok">Controlled</span></div>
+          </div>
+        </div>
+
+        <div class="exec-section">
+          <h5>3. Sponsor &amp; Governance Formal Sign-off</h5>
+          <div class="exec-sign-grid">
+            <div class="sign-box">
+              <div class="sign-line"></div>
+              <strong>Numesh Ravindra</strong>
+              <span>IT Project Manager &amp; Scrum Master · Dec 15, 2026</span>
+            </div>
+            <div class="sign-box">
+              <div class="sign-line"></div>
+              <strong>VP of Digital Health</strong>
+              <span>Project Executive Sponsor · Dec 15, 2026</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

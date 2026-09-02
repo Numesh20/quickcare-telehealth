@@ -15,13 +15,13 @@ In Agile, we break large concepts down into manageable pieces:
 * **EPIC-02: Doctor Discovery & Scheduling** (Search doctors, filter by specialty, select calendar slots)
 * **EPIC-03: Video Consultation Room** (Live 1-on-1 video call, mute/unmute, call end)
 * **EPIC-04: Payment & Checkout** (Credit card entry, Stripe processing, invoice receipt)
-* **EPIC-05: Digital Prescriptions & Medical History** (Doctor writes prescription, patient downloads PDF)
+* **EPIC-05: Digital Prescriptions & Pharmacy** (Doctor writes prescription, allergy check, patient downloads PDF, pharmacy tracking)
 
 ---
 
 ## 3. Detailed User Stories & Acceptance Criteria
 
-### 🔹 Story US-101: Patient Registration via OTP
+### Story US-101: Patient Registration via OTP
 * **Epic:** EPIC-01 (Authentication)
 * **Priority:** High (Must-Have)
 * **Story Points:** 3 Points
@@ -38,23 +38,23 @@ In Agile, we break large concepts down into manageable pieces:
 
 ---
 
-### 🔹 Story US-201: Doctor Search & Filtering
+### Story US-201: Doctor Search & Filtering
 * **Epic:** EPIC-02 (Discovery)
 * **Priority:** High (Must-Have)
 * **Story Points:** 5 Points
 * **User Story:**
   > *As a* sick patient,  
-  > *I want to* search for doctors by medical specialty (e.g., General Physician, Dermatologist, Pediatrician),  
+  > *I want to* search for doctors by medical specialty (e.g., Cardiology, General Physician, Dermatology, Pediatrics),  
   > *So that* I can find the right specialist for my health issue.
 * **Acceptance Criteria:**
   - [ ] Search bar allows typing specialty or doctor name.
-  - [ ] Filter chips displayed for top 5 specialties.
-  - [ ] Search results show Doctor Name, Photo, Specialty, Years of Experience, and Consultation Fee.
+  - [ ] Filter chips displayed for top specialties.
+  - [ ] Search results show Doctor Name, Photo, Specialty, Years of Experience, and Consultation Fee (in LKR).
   - [ ] Results load in under 2 seconds.
 
 ---
 
-### 🔹 Story US-301: 1-on-1 Telehealth Video Call
+### Story US-301: 1-on-1 Telehealth Video Call
 * **Epic:** EPIC-03 (Video Room)
 * **Priority:** Critical (Must-Have)
 * **Story Points:** 8 Points
@@ -65,41 +65,42 @@ In Agile, we break large concepts down into manageable pieces:
 * **Acceptance Criteria:**
   - [ ] "Join Call" button activates 5 minutes before scheduled start time.
   - [ ] Camera and Microphone permissions requested automatically on first launch.
-  - [ ] Call controls available: Toggle Mic (Mute/Unmute), Toggle Camera (On/Off), Switch Front/Back Camera, End Call.
+  - [ ] Call controls available: Toggle Mic (Mute/Unmute), Toggle Camera (On/Off), End Call.
   - [ ] Call session is end-to-end encrypted (HIPAA compliance).
   - [ ] If call drops due to internet, user can reconnect within 2 minutes without re-authenticating.
 
 ---
 
-### 🔹 Story US-401: Secure In-App Payment (Stripe)
+### Story US-401: Secure In-App Payment (Stripe)
 * **Epic:** EPIC-04 (Payment)
 * **Priority:** Critical (Must-Have)
 * **Story Points:** 5 Points
 * **User Story:**
   > *As a* patient,  
-  > *I want to* pay the consultation fee using my Credit/Debit card or Apple Pay / Google Pay,  
+  > *I want to* pay the consultation fee using my Credit/Debit card or digital wallet,  
   > *So that* my booking is confirmed immediately.
 * **Acceptance Criteria:**
-  - [ ] Displays clear breakdown: Consultation Fee + Processing Fee = Total Amount.
+  - [ ] Displays clear breakdown: Consultation Fee (Rs. 14,850) + Platform Fee (Rs. 825) = Total Rs. 15,675.
   - [ ] Card details collected using secure Stripe SDK (no raw card data stored on our servers).
-  - [ ] Instant payment receipt sent to user's registered email.
+  - [ ] Instant payment receipt and digital invoice generated.
   - [ ] On successful payment, appointment status changes to "Confirmed".
 
 ---
 
-### 🔹 Story US-501: Digital Prescription PDF Generation
+### Story US-501: Digital Prescription PDF & Allergy Check
 * **Epic:** EPIC-05 (Prescriptions)
-* **Priority:** Medium (Must-Have)
-* **Story Points:** 3 Points
+* **Priority:** High (Must-Have)
+* **Story Points:** 5 Points
 * **User Story:**
   > *As a* doctor,  
-  > *I want to* enter medications, dosage instructions, and digital signature after a consultation,  
-  > *So that* the patient can download an official PDF prescription.
+  > *I want to* enter medications and receive an automatic contraindication alert if a prescribed drug clashes with patient allergies,  
+  > *So that* I can safely issue an official digital prescription pad.
 * **Acceptance Criteria:**
-  - [ ] Form contains: Medication Name, Dosage, Frequency, Duration (days), and Special Instructions.
-  - [ ] System automatically embeds Doctor's License Number and Digital Signature.
+  - [ ] Form contains: Medication Name, Dosage, Frequency, Duration (days), and Physician Instructions.
+  - [ ] System automatically validates against patient allergies (e.g. Penicillin allergy alert).
+  - [ ] System automatically embeds Doctor's License Number and Digital Signature Seal.
   - [ ] Generates a standardized, printable PDF file.
-  - [ ] Patient receives a push notification: "Your prescription is ready to download".
+  - [ ] Patient receives immediate notification with 1-click option to order express home delivery.
 
 ---
 
@@ -113,6 +114,6 @@ In Agile, we break large concepts down into manageable pieces:
 | **US-202** | Calendar Time-Slot Selection | Scheduling | High | 5 | Sprint 2 |
 | **US-401** | Stripe Payment Integration | Payments | Critical | 5 | Sprint 3 |
 | **US-301** | 1-on-1 Video Consultation Call | Video Room | Critical | 8 | Sprint 3 |
-| **US-501** | Digital Prescription PDF | Prescriptions | Medium | 3 | Sprint 4 |
-| **US-601** | Push Notifications (Reminders) | Notifications | Low | 2 | Sprint 4 |
-| **TOTAL** | | | | **31 Points** | Sprints 1–4 |
+| **US-501** | Digital Prescription PDF & Allergy Check | Prescriptions | High | 5 | Sprint 4 |
+| **US-601** | Push Notifications & Delivery Tracking | Notifications | Medium | 3 | Sprint 4 |
+| **TOTAL** | | | | **34 Points** | Sprints 1-4 |

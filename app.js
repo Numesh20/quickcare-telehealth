@@ -210,6 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateRiskCalc();
   initAIChat();
   initCfd();
+  initRadar();
   updateSim(null, null, null, true);
 });
 
@@ -1764,3 +1765,275 @@ function resetWipSim() {
   updateWipSim();
   showToast('Kanban WIP limits restored to optimal baseline (3 Dev, 2 QA).', 'info');
 }
+
+// ==========================================================================
+//  AGILE SQUAD HEALTH RADAR & MATURITY ASSESSMENT (SPOTIFY SQUAD MODEL)
+// ==========================================================================
+
+const RADAR_CONFIG = {
+  centerX: 200,
+  centerY: 175,
+  maxRadius: 125,
+  benchmarkScores: [3.8, 3.4, 3.5, 3.7, 3.6],
+  dimensions: [
+    {
+      id: 'predict',
+      name: 'Predictability & Cadence',
+      score: 4.5,
+      icon: 'fa-chart-line',
+      color: '#06b6d4',
+      coachingLow: 'Velocity fluctuates across sprints. Break stories into smaller increments (< 3 points) and limit work-in-progress to reduce carry-over.'
+    },
+    {
+      id: 'quality',
+      name: 'CI/CD & Code Quality',
+      score: 4.2,
+      icon: 'fa-code-merge',
+      color: '#10b981',
+      coachingLow: 'Regression defects slipping into staging. Enforce automated unit test thresholds (> 80% coverage) and block PRs without peer review.'
+    },
+    {
+      id: 'safety',
+      name: 'Psychological Safety',
+      score: 4.6,
+      icon: 'fa-hand-holding-heart',
+      color: '#a855f7',
+      coachingLow: 'Team members reluctant to flag blockers in standups. Run blameless retrospectives, celebrate learning from mistakes, and rotate facilitation.'
+    },
+    {
+      id: 'value',
+      name: 'Product Value & Impact',
+      score: 4.0,
+      icon: 'fa-bullseye',
+      color: '#f59e0b',
+      coachingLow: 'Developers disconnected from end-user feedback. Invite clinicians to sprint reviews and share patient NPS ratings after every release.'
+    },
+    {
+      id: 'learning',
+      name: 'Continuous Learning',
+      score: 4.4,
+      icon: 'fa-graduation-cap',
+      color: '#f43f5e',
+      coachingLow: 'Retrospective action items are forgotten mid-sprint. Assign an explicit owner and track them as Kanban cards in the active sprint backlog.'
+    }
+  ]
+};
+
+function getRadarPoint(index, score, maxRadius) {
+  const angle = (index * 2 * Math.PI / 5) - (Math.PI / 2);
+  const r = (score / 5.0) * maxRadius;
+  return {
+    x: RADAR_CONFIG.centerX + r * Math.cos(angle),
+    y: RADAR_CONFIG.centerY + r * Math.sin(angle)
+  };
+}
+
+function initRadar() {
+  const svg = document.getElementById('radarSvg');
+  if (!svg) return;
+
+  // 1. Draw Concentric Pentagons (Grid Rings 1 to 5)
+  const ringsGroup = document.getElementById('radarGridRings');
+  if (ringsGroup) {
+    let ringsHtml = '';
+    for (let level = 1; level <= 5; level++) {
+      const pts = [];
+      for (let i = 0; i < 5; i++) {
+        const pt = getRadarPoint(i, level, RADAR_CONFIG.maxRadius);
+        pts.push(`${pt.x.toFixed(1)},${pt.y.toFixed(1)}`);
+      }
+      const isOuter = level === 5;
+      ringsHtml += `
+        <polygon points="${pts.join(' ')}" 
+          fill="${level % 2 === 0 ? 'rgba(255,255,255,0.015)' : 'transparent'}" 
+          stroke="rgba(255,255,255,${isOuter ? '0.2' : '0.08'})" 
+          stroke-width="${isOuter ? '1.5' : '1'}" />
+      `;
+    }
+    ringsGroup.innerHTML = ringsHtml;
+  }
+
+  // 2. Draw 5 Radial Axis Lines
+  const axisGroup = document.getElementById('radarAxisLines');
+  if (axisGroup) {
+    let axisHtml = '';
+    for (let i = 0; i < 5; i++) {
+      const pt = getRadarPoint(i, 5, RADAR_CONFIG.maxRadius);
+      axisHtml += `
+        <line x1="${RADAR_CONFIG.centerX}" y1="${RADAR_CONFIG.centerY}" 
+              x2="${pt.x.toFixed(1)}" y2="${pt.y.toFixed(1)}" 
+              stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="2,2" />
+      `;
+    }
+    axisGroup.innerHTML = axisHtml;
+  }
+
+  // 3. Draw Axis Labels
+  const labelsGroup = document.getElementById('radarAxisLabels');
+  if (labelsGroup) {
+    const labelNames = ['Predictability', 'CI/CD Quality', 'Psych Safety', 'User Value', 'Learning'];
+    let labelsHtml = '';
+    for (let i = 0; i < 5; i++) {
+      const pt = getRadarPoint(i, 5.6, RADAR_CONFIG.maxRadius);
+      let anchor = 'middle';
+      if (pt.x < RADAR_CONFIG.centerX - 10) anchor = 'end';
+      else if (pt.x > RADAR_CONFIG.centerX + 10) anchor = 'start';
+
+      labelsHtml += `
+        <text x="${pt.x.toFixed(1)}" y="${(pt.y + 4).toFixed(1)}" 
+              text-anchor="${anchor}" fill="#94a3b8" font-size="11" font-weight="700">
+          ${labelNames[i]}
+        </text>
+      `;
+    }
+    labelsGroup.innerHTML = labelsHtml;
+  }
+
+  // 4. Draw Benchmark Polygon (Dashed Purple)
+  const benchPoly = document.getElementById('radarBenchmarkPoly');
+  if (benchPoly) {
+    const bPts = RADAR_CONFIG.benchmarkScores.map((score, i) => {
+      const pt = getRadarPoint(i, score, RADAR_CONFIG.maxRadius);
+      return `${pt.x.toFixed(1)},${pt.y.toFixed(1)}`;
+    });
+    benchPoly.setAttribute('points', bPts.join(' '));
+  }
+
+  // 5. Render Team Shape & Action Plan
+  renderRadarPolygon();
+  renderCoachingPlan();
+}
+
+function renderRadarPolygon() {
+  const teamPoly = document.getElementById('radarTeamPoly');
+  const pointsGroup = document.getElementById('radarTeamPoints');
+  if (!teamPoly) return;
+
+  const pts = [];
+  let pointsHtml = '';
+
+  RADAR_CONFIG.dimensions.forEach((dim, i) => {
+    const pt = getRadarPoint(i, dim.score, RADAR_CONFIG.maxRadius);
+    pts.push(`${pt.x.toFixed(1)},${pt.y.toFixed(1)}`);
+
+    pointsHtml += `
+      <circle cx="${pt.x.toFixed(1)}" cy="${pt.y.toFixed(1)}" r="5" fill="${dim.color}" stroke="#ffffff" stroke-width="2" />
+    `;
+  });
+
+  teamPoly.setAttribute('points', pts.join(' '));
+  if (pointsGroup) pointsGroup.innerHTML = pointsHtml;
+
+  // Calculate Overall Average Score
+  const total = RADAR_CONFIG.dimensions.reduce((sum, d) => sum + d.score, 0);
+  const avg = (total / RADAR_CONFIG.dimensions.length).toFixed(2);
+
+  // Update Score Displays
+  const overallEl = document.getElementById('radarOverallScore');
+  const legendEl = document.getElementById('legendTeamScore');
+  const statusEl = document.getElementById('radarMaturityStatus');
+
+  if (overallEl) overallEl.textContent = `${avg} / 5.0`;
+  if (legendEl) legendEl.textContent = avg;
+
+  if (statusEl) {
+    if (avg >= 4.2) {
+      statusEl.textContent = 'High-Performing Squad';
+      statusEl.className = 'r-status-tag success';
+    } else if (avg >= 3.5) {
+      statusEl.textContent = 'Maturing Agile Squad';
+      statusEl.className = 'r-status-tag';
+      statusEl.style.color = 'var(--accent-cyan)';
+    } else {
+      statusEl.textContent = 'Developing Squad (Needs Coaching)';
+      statusEl.className = 'r-status-tag warning';
+    }
+  }
+}
+
+function updateRadarDimension(dimId, value) {
+  const num = parseFloat(value);
+  const dim = RADAR_CONFIG.dimensions.find(d => d.id === dimId);
+  if (!dim) return;
+
+  dim.score = num;
+
+  // Update badge next to slider
+  const badge = document.getElementById(`val-dim-${dimId}`);
+  if (badge) badge.textContent = num.toFixed(1);
+
+  renderRadarPolygon();
+  renderCoachingPlan();
+}
+
+function renderCoachingPlan() {
+  const container = document.getElementById('coachingPlanBody');
+  if (!container) return;
+
+  // Find lowest scoring dimension
+  const sorted = [...RADAR_CONFIG.dimensions].sort((a, b) => a.score - b.score);
+  const lowest = sorted[0];
+
+  container.innerHTML = `
+    <div class="coaching-plan-grid">
+      <div class="coaching-action-card focus">
+        <div class="coaching-card-top">
+          <span class="coaching-dimension-title"><i class="fa-solid ${lowest.icon}" style="color:${lowest.color};"></i> ${lowest.name} (${lowest.score.toFixed(1)})</span>
+          <span class="coaching-priority-pill primary">Primary Coaching Focus</span>
+        </div>
+        <p><strong>Scrum Master Intervention:</strong> ${lowest.coachingLow}</p>
+      </div>
+
+      <div class="coaching-action-card high">
+        <div class="coaching-card-top">
+          <span class="coaching-dimension-title"><i class="fa-solid ${sorted[sorted.length - 1].icon}" style="color:${sorted[sorted.length - 1].color};"></i> ${sorted[sorted.length - 1].name} (${sorted[sorted.length - 1].score.toFixed(1)})</span>
+          <span class="coaching-priority-pill success">Squad Strength</span>
+        </div>
+        <p><strong>Sustain Pattern:</strong> Share practices across the department. Use this strong pillar to mentor junior engineering squads.</p>
+      </div>
+    </div>
+  `;
+}
+
+function resetRadarBaseline() {
+  const baselines = { predict: 4.5, quality: 4.2, safety: 4.6, value: 4.0, learning: 4.4 };
+
+  RADAR_CONFIG.dimensions.forEach(dim => {
+    dim.score = baselines[dim.id];
+    const slider = document.querySelector(`input[oninput*="${dim.id}"]`);
+    if (slider) slider.value = baselines[dim.id];
+    const badge = document.getElementById(`val-dim-${dim.id}`);
+    if (badge) badge.textContent = baselines[dim.id].toFixed(1);
+  });
+
+  renderRadarPolygon();
+  renderCoachingPlan();
+  playChime('click');
+  showToast('Health Radar restored to Sprint 4 baseline.', 'info');
+}
+
+function exportRadarHealthCSV() {
+  const total = RADAR_CONFIG.dimensions.reduce((sum, d) => sum + d.score, 0);
+  const avg = (total / RADAR_CONFIG.dimensions.length).toFixed(2);
+
+  const headers = ['Dimension', 'Squad Score', 'Industry Benchmark', 'Delta', 'Coaching Recommendation'];
+  const rows = RADAR_CONFIG.dimensions.map((d, i) => {
+    const bench = RADAR_CONFIG.benchmarkScores[i];
+    const delta = (d.score - bench).toFixed(1);
+    return [`"${d.name}"`, d.score.toFixed(1), bench.toFixed(1), delta >= 0 ? `+${delta}` : delta, `"${d.coachingLow}"`];
+  });
+
+  rows.push(['"OVERALL SQUAD MATURITY"', avg, '3.6', (avg - 3.6).toFixed(2), '"Target benchmark achieved"']);
+
+  const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `QuickCare_Squad_Health_Radar_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  playChime('success');
+  showToast('Agile Squad Health Radar CSV exported!', 'success');
+}
+

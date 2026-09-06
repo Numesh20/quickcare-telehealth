@@ -505,6 +505,7 @@
           <button class="pm-subtab" onclick="switchPMTab('standup', this)" role="tab"><i class="fa-solid fa-users"></i> Standup</button>
           <button class="pm-subtab highlight-tab" onclick="switchPMTab('evm', this)" role="tab"><i class="fa-solid fa-scale-balanced"></i> Agile EVM</button>
           <button class="pm-subtab" onclick="switchPMTab('cfd', this)" role="tab"><i class="fa-solid fa-chart-area"></i> CFD &amp; Flow</button>
+          <button class="pm-subtab highlight-tab" onclick="switchPMTab('radar', this)" role="tab"><i class="fa-solid fa-chart-pie"></i> Health Radar</button>
         </div>
 
         <!-- ---- KANBAN ---- -->
@@ -1126,6 +1127,139 @@
               <h5><i class="fa-solid fa-percent"></i> Flow Efficiency Metric</h5>
               <div class="formula-code">Flow Eff. = (Touch Time / Lead Time) &times; 100</div>
               <p>Highlights waste spent waiting in queues. QuickCare achieved 42.8%, well above industry standard of 15-25%.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ---- AGILE SQUAD HEALTH RADAR & MATURITY ASSESSMENT ---- -->
+        <div class="pm-tab-content" id="pmTab-radar">
+          <!-- Master Header -->
+          <div class="radar-master-header">
+            <div class="radar-header-info">
+              <h3><i class="fa-solid fa-radar"></i> Agile Squad Health Radar &amp; Maturity Assessment</h3>
+              <p>Continuous team health diagnostic across 5 core Agile dimensions based on the Spotify Squad Framework</p>
+            </div>
+            <div class="radar-kpi-badges">
+              <div class="radar-kpi-box">
+                <span class="r-lbl">Squad Health Score</span>
+                <strong id="radarOverallScore" class="r-val high">4.34 / 5.0</strong>
+              </div>
+              <div class="radar-kpi-box">
+                <span class="r-lbl">Maturity Status</span>
+                <strong id="radarMaturityStatus" class="r-status-tag success">High-Performing Squad</strong>
+              </div>
+              <div class="radar-kpi-box">
+                <span class="r-lbl">Industry Benchmark</span>
+                <strong class="r-val">3.60 / 5.0</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2-Column Grid: Radar Chart + Diagnostic Sliders -->
+          <div class="radar-main-grid">
+            <!-- Left: SVG Spider / Radar Chart -->
+            <div class="radar-chart-card">
+              <div class="radar-card-head">
+                <h4><i class="fa-solid fa-chart-pie"></i> 5-Dimension Radar Profile</h4>
+                <span class="radar-sub-tag">Spotify Squad Model</span>
+              </div>
+              
+              <div class="radar-svg-wrapper">
+                <svg viewBox="0 0 400 360" class="radar-svg" id="radarSvg">
+                  <!-- Concentric Pentagons (Grid Rings 1 to 5) rendered by JS -->
+                  <g id="radarGridRings"></g>
+                  <!-- 5 Radial Axis Lines -->
+                  <g id="radarAxisLines"></g>
+                  <!-- Industry Benchmark Polygon (Dashed) -->
+                  <polygon id="radarBenchmarkPoly" class="radar-poly-benchmark" />
+                  <!-- Live Team Assessment Polygon (Gradient Fill) -->
+                  <polygon id="radarTeamPoly" class="radar-poly-team" />
+                  <!-- Interactive Data Points -->
+                  <g id="radarTeamPoints"></g>
+                  <!-- Axis Dimension Labels -->
+                  <g id="radarAxisLabels"></g>
+                </svg>
+              </div>
+
+              <div class="radar-legend-bar">
+                <span><span class="radar-legend-dot team"></span> QuickCare Scrum Squad (Live: <span id="legendTeamScore">4.34</span>)</span>
+                <span><span class="radar-legend-dot benchmark"></span> Industry Telehealth Benchmark (3.60)</span>
+              </div>
+            </div>
+
+            <!-- Right: Dimension Sliders & Evaluator -->
+            <div class="radar-sliders-card">
+              <div class="radar-card-head">
+                <h4><i class="fa-solid fa-sliders"></i> Diagnostic Dimension Sliders</h4>
+                <button class="btn-sm btn-outline" onclick="resetRadarBaseline()"><i class="fa-solid fa-rotate-left"></i> Reset Baseline</button>
+              </div>
+
+              <div class="radar-sliders-list">
+                <!-- Dimension 1: Predictability -->
+                <div class="radar-slider-row">
+                  <div class="r-slider-label">
+                    <strong><i class="fa-solid fa-chart-line" style="color:var(--accent-cyan);"></i> Sprint Predictability &amp; Cadence</strong>
+                    <span class="slider-val-badge" id="val-dim-predict">4.5</span>
+                  </div>
+                  <input type="range" class="radar-range" min="1.0" max="5.0" step="0.1" value="4.5" oninput="updateRadarDimension('predict', this.value)" />
+                  <small>Consistent 30.5 pts velocity, minimal carry-over, commitment reliability &gt; 90%.</small>
+                </div>
+
+                <!-- Dimension 2: CI/CD Quality -->
+                <div class="radar-slider-row">
+                  <div class="r-slider-label">
+                    <strong><i class="fa-solid fa-code-merge" style="color:var(--accent-emerald);"></i> CI/CD &amp; Code Quality Gates</strong>
+                    <span class="slider-val-badge" id="val-dim-quality">4.2</span>
+                  </div>
+                  <input type="range" class="radar-range" min="1.0" max="5.0" step="0.1" value="4.2" oninput="updateRadarDimension('quality', this.value)" />
+                  <small>Automated regression tests (142 QA cases), zero critical defects, GitHub Actions CI.</small>
+                </div>
+
+                <!-- Dimension 3: Psychological Safety -->
+                <div class="radar-slider-row">
+                  <div class="r-slider-label">
+                    <strong><i class="fa-solid fa-hand-holding-heart" style="color:var(--accent-purple);"></i> Psychological Safety &amp; Trust</strong>
+                    <span class="slider-val-badge" id="val-dim-safety">4.6</span>
+                  </div>
+                  <input type="range" class="radar-range" min="1.0" max="5.0" step="0.1" value="4.6" oninput="updateRadarDimension('safety', this.value)" />
+                  <small>Blameless retrospectives, transparent blocker escalation, open debate encouraged.</small>
+                </div>
+
+                <!-- Dimension 4: Value & Impact -->
+                <div class="radar-slider-row">
+                  <div class="r-slider-label">
+                    <strong><i class="fa-solid fa-bullseye" style="color:var(--accent-amber);"></i> Product Value &amp; User Alignment</strong>
+                    <span class="slider-val-badge" id="val-dim-value">4.0</span>
+                  </div>
+                  <input type="range" class="radar-range" min="1.0" max="5.0" step="0.1" value="4.0" oninput="updateRadarDimension('value', this.value)" />
+                  <small>Clinical accuracy validations, patient NPS score 4.8/5.0, PO sprint demo sign-offs.</small>
+                </div>
+
+                <!-- Dimension 5: Continuous Learning -->
+                <div class="radar-slider-row">
+                  <div class="r-slider-label">
+                    <strong><i class="fa-solid fa-graduation-cap" style="color:var(--accent-rose);"></i> Continuous Improvement &amp; Learning</strong>
+                    <span class="slider-val-badge" id="val-dim-learning">4.4</span>
+                  </div>
+                  <input type="range" class="radar-range" min="1.0" max="5.0" step="0.1" value="4.4" oninput="updateRadarDimension('learning', this.value)" />
+                  <small>100% retro action items assigned, knowledge transfer KIs maintained, rapid tech adoption.</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dynamic Scrum Master Coaching Action Plan -->
+          <div class="radar-coaching-plan-card">
+            <div class="coaching-plan-header">
+              <div>
+                <h4><i class="fa-solid fa-clipboard-check"></i> Automated Scrum Master Coaching Plan</h4>
+                <p>Targeted coaching interventions generated dynamically based on your squad's lowest dimension</p>
+              </div>
+              <button class="btn-sm btn-primary" onclick="exportRadarHealthCSV()"><i class="fa-solid fa-file-csv"></i> Export Health Report CSV</button>
+            </div>
+
+            <div class="coaching-plan-body" id="coachingPlanBody">
+              <!-- Dynamically rendered by JavaScript -->
             </div>
           </div>
         </div>

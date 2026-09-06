@@ -250,7 +250,7 @@ function renderDoctorList(docs) {
         <div class="doc-meta">
           <h5>${d.name}</h5>
           <span class="doc-specialty">${d.specialty}</span>
-          <div class="doc-rating">★ ${d.rating} <span style="color:var(--text-muted);">(${d.reviews.toLocaleString()} reviews)</span></div>
+          <div class="doc-rating"><i class="fa-solid fa-star" style="color:var(--accent-amber);"></i> ${d.rating} <span style="color:var(--text-muted);">(${d.reviews.toLocaleString()} reviews)</span></div>
         </div>
         <span style="font-size:10px;color:var(--accent-emerald);">${d.wait}</span>
       </div>
@@ -275,7 +275,7 @@ function renderBookingDoctors() {
         <div class="doc-meta">
           <h5>${d.name}</h5>
           <span class="doc-specialty">${d.specialty}</span>
-          <div class="doc-rating">★ ${d.rating}</div>
+          <div class="doc-rating"><i class="fa-solid fa-star" style="color:var(--accent-amber);"></i> ${d.rating}</div>
         </div>
       </div>
       <div class="doc-card-bottom">
@@ -346,7 +346,7 @@ function openBooking(doctorId) {
   state.selectedSlot = null;
   document.getElementById('bookingDocInfo').innerHTML = `
     <img src="${doc.img}" alt="${doc.name}" />
-    <div><h4>${doc.name}</h4><span>${doc.specialty} · ★ ${doc.rating}</span></div>
+    <div><h4>${doc.name}</h4><span>${doc.specialty} · <i class="fa-solid fa-star" style="color:var(--accent-amber);"></i> ${doc.rating}</span></div>
   `;
   const slotGrid = document.getElementById('bookingSlotGrid');
   slotGrid.innerHTML = SLOTS.map(s => `
@@ -393,13 +393,13 @@ function openReviews(doctorId) {
   const doc = DOCTORS.find(d => d.id === doctorId);
   state.selectedStarRating = 0;
   document.getElementById('reviewsDocName').textContent = doc.name;
-  document.getElementById('reviewsDocRating').textContent = `★ ${doc.rating} · ${doc.reviews.toLocaleString()} consultations`;
+  document.getElementById('reviewsDocRating').innerHTML = `<i class="fa-solid fa-star" style="color:var(--accent-amber);"></i> ${doc.rating} · ${doc.reviews.toLocaleString()} consultations`;
   const reviews = SAMPLE_REVIEWS[doctorId] || [];
   document.getElementById('reviewsList').innerHTML = reviews.map(r => `
     <div class="review-item">
       <div class="review-user-row">
         <strong>${r.user}</strong>
-        <span>${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</span>
+        <span>${'<i class="fa-solid fa-star" style="color:var(--accent-amber);font-size:11px;"></i>'.repeat(r.rating)}${'<i class="fa-regular fa-star" style="color:var(--text-muted);font-size:11px;"></i>'.repeat(5 - r.rating)}</span>
       </div>
       <div class="review-text">${r.text}</div>
     </div>
@@ -425,7 +425,7 @@ function submitReview() {
   if (!text) { showToast('Please write a review', 'info'); return; }
   const newItem = document.createElement('div');
   newItem.className = 'review-item';
-  newItem.innerHTML = `<div class="review-user-row"><strong>You</strong><span>${'★'.repeat(state.selectedStarRating)}${'☆'.repeat(5 - state.selectedStarRating)}</span></div><div class="review-text">${text}</div>`;
+  newItem.innerHTML = `<div class="review-user-row"><strong>You</strong><span>${'<i class="fa-solid fa-star" style="color:var(--accent-amber);font-size:11px;"></i>'.repeat(state.selectedStarRating)}${'<i class="fa-regular fa-star" style="color:var(--text-muted);font-size:11px;"></i>'.repeat(5 - state.selectedStarRating)}</span></div><div class="review-text">${text}</div>`;
   document.getElementById('reviewsList').prepend(newItem);
   document.getElementById('reviewTextInput').value = '';
   updateStarDisplay(0);

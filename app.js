@@ -211,6 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initAIChat();
   initCfd();
   initRadar();
+  initNotifications();
   updateSim(null, null, null, true);
 });
 
@@ -2036,4 +2037,206 @@ function exportRadarHealthCSV() {
   playChime('success');
   showToast('Agile Squad Health Radar CSV exported!', 'success');
 }
+
+// ==========================================================================
+//  LIVE IN-APP NOTIFICATION CENTER & AUDIO ALERT DRAWER
+// ==========================================================================
+
+const NOTIFICATIONS_DATA = [
+  {
+    id: 'notif-1',
+    category: 'clinical',
+    icon: 'fa-file-prescription',
+    title: 'Digital Prescription Signed & Issued',
+    msg: 'Dr. Sandya Perera approved your Azithromycin 500mg consultation prescription (#QC-9842).',
+    time: '12 mins ago',
+    read: false,
+    action: 'rx'
+  },
+  {
+    id: 'notif-2',
+    category: 'pharmacy',
+    icon: 'fa-truck-fast',
+    title: 'Express Pharmacy Courier Dispatched',
+    msg: 'Roshan Kumara is en route with your sealed medication package. ETA: 18 mins.',
+    time: '25 mins ago',
+    read: false,
+    action: 'pharmacy'
+  },
+  {
+    id: 'notif-3',
+    category: 'agile',
+    icon: 'fa-triangle-exclamation',
+    title: 'RAID Risk Escalation Logged',
+    msg: 'External API key delay logged as active project impediment. Assigned to IT PM (Numesh).',
+    time: '1 hour ago',
+    read: false,
+    action: 'raid'
+  },
+  {
+    id: 'notif-4',
+    category: 'agile',
+    icon: 'fa-chart-pie',
+    title: 'Squad Health Radar Updated',
+    msg: 'Sprint 4 team maturity score confirmed at 4.34 / 5.0 (High-Performing Squad status).',
+    time: '2 hours ago',
+    read: true,
+    action: 'radar'
+  }
+];
+
+let activeNotifFilter = 'all';
+
+function initNotifications() {
+  renderNotifications();
+  updateNotifBadge();
+}
+
+function renderNotifications() {
+  const container = document.getElementById('notifList');
+  if (!container) return;
+
+  const filtered = activeNotifFilter === 'all' 
+    ? NOTIFICATIONS_DATA 
+    : NOTIFICATIONS_DATA.filter(n => n.category === activeNotifFilter);
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div class="notif-empty-state">
+        <i class="fa-solid fa-bell-slash"></i>
+        <strong>No Notifications</strong>
+        <span>You are all caught up across all channels.</span>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = filtered.map(n => `
+    <div class="notif-item-card ${n.read ? 'read' : 'unread'} ${n.category}" onclick="clickNotification('${n.id}')">
+      <div class="notif-item-top">
+        <div class="notif-item-icon ${n.category}">
+          <i class="fa-solid ${n.icon}"></i>
+        </div>
+        <span class="notif-item-title">${n.title}</span>
+        <span class="notif-item-time">${n.time}</span>
+      </div>
+      <p class="notif-item-msg">${n.msg}</p>
+    </div>
+  `).join('');
+}
+
+function updateNotifBadge() {
+  const unreadCount = NOTIFICATIONS_DATA.filter(n => !n.read).length;
+  const badge = document.getElementById('notifBadge');
+  const countPill = document.getElementById('notifCountPill');
+
+  if (badge) {
+    badge.textContent = unreadCount;
+    badge.style.display = unreadCount > 0 ? 'flex' : 'none';
+  }
+
+  if (countPill) {
+    countPill.textContent = unreadCount > 0 ? `${unreadCount} Unread` : 'All Read';
+    countPill.style.background = unreadCount > 0 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)';
+    countPill.style.color = unreadCount > 0 ? '#f87171' : '#34d399';
+    countPill.style.borderColor = unreadCount > 0 ? 'rgba(239, 68, 68, 0.4)' : 'rgba(16, 185, 129, 0.4)';
+  }
+}
+
+function toggleNotifDrawer() {
+  const overlay = document.getElementById('notifDrawerOverlay');
+  if (!overlay) return;
+
+  if (overlay.classList.contains('hidden')) {
+    overlay.classList.remove('hidden');
+    playChime('click');
+  } else {
+    closeNotifDrawer();
+  }
+}
+
+function closeNotifDrawer() {
+  const overlay = document.getElementById('notifDrawerOverlay');
+  if (overlay) overlay.classList.add('hidden');
+}
+
+function handleDrawerBackdropClick(event) {
+  if (event.target.id === 'notifDrawerOverlay') {
+    closeNotifDrawer();
+  }
+}
+
+function filterNotifs(category, el) {
+  activeNotifFilter = category;
+  document.querySelectorAll('.notif-chip').forEach(c => c.classList.remove('active'));
+  if (el) el.classList.add('active');
+  renderNotifications();
+}
+
+function markAllNotifsRead() {
+  NOTIFICATIONS_DATA.forEach(n => n.read = true);
+  renderNotifications();
+  updateNotifBadge();
+  playChime('success');
+  showToast('All notifications marked as read', 'info');
+}
+
+function clickNotification(id) {
+  const notif = NOTIFICATIONS_DATA.find(n => n.id === id);
+  if (!notif) return;
+
+  notif.read = true;
+  renderNotifications();
+  updateNotifBadge();
+
+  closeNotifDrawer();
+
+  // Route to corresponding action
+  if (notif.action === 'rx') {
+    switchView('patient');
+    switchPatientScreen('history');
+    showToast('Navigated to your digital prescription record', 'info');
+  } else if (notif.action === 'pharmacy') {
+    openPharmacyModal();
+  } else if (notif.action === 'raid') {
+    switchView('pm');
+    const raidBtn = document.querySelector(".pm-subtab[onclick*='raid']");
+    if (raidBtn) switchPMTab('raid', raidBtn);
+    showToast('Navigated to active RAID risk register', 'info');
+  } else if (notif.action === 'radar') {
+    switchView('pm');
+    const radarBtn = document.querySelector(".pm-subtab[onclick*='radar']");
+    if (radarBtn) switchPMTab('radar', radarBtn);
+    showToast('Navigated to Agile Squad Health Radar', 'info');
+  }
+}
+
+function clearAllNotifs() {
+  NOTIFICATIONS_DATA.length = 0;
+  renderNotifications();
+  updateNotifBadge();
+  playChime('click');
+  showToast('Notification feed cleared', 'info');
+}
+
+function simulateIncomingAlert() {
+  const newAlert = {
+    id: 'notif-' + Date.now(),
+    category: 'clinical',
+    icon: 'fa-bell',
+    title: 'Urgent Video Consultation Queue',
+    msg: 'Patient Kasun Fernando entered triage queue for general physician review.',
+    time: 'Just now',
+    read: false,
+    action: 'rx'
+  };
+
+  NOTIFICATIONS_DATA.unshift(newAlert);
+  renderNotifications();
+  updateNotifBadge();
+
+  playChime('call');
+  showToast('New Alert: Patient Kasun Fernando entered consultation queue', 'success');
+}
+
 

@@ -45,6 +45,10 @@
       </nav>
 
       <div class="header-actions">
+        <button class="notif-bell-btn" id="notifBellBtn" title="Notifications" onclick="toggleNotifDrawer()" aria-label="Open notifications">
+          <i class="fa-solid fa-bell"></i>
+          <span class="notif-badge" id="notifBadge">3</span>
+        </button>
         <button class="audio-toggle-btn" id="audioToggleBtn" title="Toggle sound" onclick="toggleAudio()">
           <i class="fa-solid fa-volume-high" id="audioIcon"></i>
         </button>
@@ -1607,6 +1611,48 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       DRAWER: LIVE IN-APP NOTIFICATION CENTER
+       ===================================================================== -->
+  <div class="notif-drawer-overlay hidden" id="notifDrawerOverlay" onclick="handleDrawerBackdropClick(event)">
+    <div class="notif-drawer" id="notifDrawer" role="dialog" aria-modal="true" aria-label="Notifications Drawer">
+      
+      <!-- Drawer Header -->
+      <div class="notif-drawer-header">
+        <div class="notif-title-row">
+          <h4><i class="fa-solid fa-bell"></i> Notifications</h4>
+          <span class="notif-count-pill" id="notifCountPill">3 Unread</span>
+        </div>
+        <div class="notif-header-btns">
+          <button class="btn-notif-action" onclick="markAllNotifsRead()"><i class="fa-solid fa-check-double"></i> Mark all read</button>
+          <button class="btn-notif-close" onclick="closeNotifDrawer()">&times;</button>
+        </div>
+      </div>
+
+      <!-- Filter Categories -->
+      <div class="notif-filters">
+        <button class="notif-chip active" onclick="filterNotifs('all', this)">All</button>
+        <button class="notif-chip" onclick="filterNotifs('clinical', this)"><i class="fa-solid fa-stethoscope"></i> Clinical</button>
+        <button class="notif-chip" onclick="filterNotifs('pharmacy', this)"><i class="fa-solid fa-truck-fast"></i> Pharmacy</button>
+        <button class="notif-chip" onclick="filterNotifs('agile', this)"><i class="fa-solid fa-chart-gantt"></i> Agile PM</button>
+      </div>
+
+      <!-- Feed List -->
+      <div class="notif-list" id="notifList"></div>
+
+      <!-- Footer Buttons -->
+      <div class="notif-drawer-footer">
+        <button class="btn-sm btn-outline" style="flex:1;" onclick="simulateIncomingAlert()">
+          <i class="fa-solid fa-satellite-dish"></i> Test Alert
+        </button>
+        <button class="btn-sm btn-primary" style="flex:1;" onclick="clearAllNotifs()">
+          <i class="fa-solid fa-trash-can"></i> Clear All
+        </button>
+      </div>
+
     </div>
   </div>
 
